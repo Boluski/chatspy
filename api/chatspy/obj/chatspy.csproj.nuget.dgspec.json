@@ -50,6 +50,10 @@
             "HotChocolate.Data.EntityFramework": {
               "target": "Package",
               "version": "[13.9.11, )"
+            },
+            "Pomelo.EntityFrameworkCore.MySql": {
+              "target": "Package",
+              "version": "[8.0.2, )"
             }
           },
           "imports": [

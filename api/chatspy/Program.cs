@@ -16,6 +16,8 @@ builder.Services.AddDbContext<ChatspyContext>(options =>
 
 builder.Services.AddGraphQLServer().RegisterDbContext<ChatspyContext>().AddQueryType<Query>();
 
+// builder.Services.AddGraphQLServer().AddQueryType<Query>();
+
 var app = builder.Build();
 
 app.MapGraphQL();

@@ -41,7 +41,7 @@ namespace chatspy.Migrations
 
                     b.HasKey("Username");
 
-                    b.ToTable("UserModel");
+                    b.ToTable("Users");
                 });
 
             modelBuilder.Entity("chatspy.Models.WorkspaceModel", b =>
@@ -55,7 +55,6 @@ namespace chatspy.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("createdByUsername")
-                        .IsRequired()
                         .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
@@ -69,9 +68,7 @@ namespace chatspy.Migrations
                 {
                     b.HasOne("chatspy.Models.UserModel", "createdBy")
                         .WithMany()
-                        .HasForeignKey("createdByUsername")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("createdByUsername");
 
                     b.Navigation("createdBy");
                 });

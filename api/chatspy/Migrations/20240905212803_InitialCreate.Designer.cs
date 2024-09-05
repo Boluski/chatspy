@@ -12,7 +12,7 @@ using chatspy.Data;
 namespace chatspy.Migrations
 {
     [DbContext(typeof(ChatspyContext))]
-    [Migration("20240830201438_InitialCreate")]
+    [Migration("20240905212803_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,6 +25,28 @@ namespace chatspy.Migrations
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
 
+            modelBuilder.Entity("chatspy.Models.UserModel", b =>
+                {
+                    b.Property<string>("Username")
+                        .HasColumnType("varchar(255)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ProfilePicture")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Username");
+
+                    b.ToTable("Users");
+                });
+
             modelBuilder.Entity("chatspy.Models.WorkspaceModel", b =>
                 {
                     b.Property<Guid>("Id")
@@ -35,9 +57,23 @@ namespace chatspy.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("createdByUsername")
+                        .HasColumnType("varchar(255)");
+
                     b.HasKey("Id");
 
+                    b.HasIndex("createdByUsername");
+
                     b.ToTable("Workspaces");
+                });
+
+            modelBuilder.Entity("chatspy.Models.WorkspaceModel", b =>
+                {
+                    b.HasOne("chatspy.Models.UserModel", "createdBy")
+                        .WithMany()
+                        .HasForeignKey("createdByUsername");
+
+                    b.Navigation("createdBy");
                 });
 #pragma warning restore 612, 618
         }

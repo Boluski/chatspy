@@ -1,11 +1,32 @@
 using System;
+using chatspy.Data;
+using chatspy.Models;
 
 namespace chatspy.TypeSchema;
 
 public class Query
 {
-    public User GetUser() =>
-        new User
+    public User GetUser([Service] ChatspyContext dbContext)
+    {
+        // UserModel firstUser = new UserModel
+        // {
+        //     Username = "boluski",
+        //     Email = "ajibols96@gmail.com",
+        //     FullName = "Boluwatife Ajibola",
+        //     ProfilePicture = "some url",
+        // };
+        // dbContext.Users.Add(firstUser);
+
+        UserModel myUser = dbContext.Users.Single(b => b.Username == "boluski");
+        WorkspaceModel firstWorkspace = new WorkspaceModel
+        {
+            Name = "Spellblaze",
+            createdBy = myUser,
+        };
+
+        dbContext.Workspaces.Add(firstWorkspace);
+        dbContext.SaveChanges();
+        return new User
         {
             Username = "boluski",
             FullName = "Boluwatife Ajibola",
@@ -18,4 +39,5 @@ public class Query
                 new Workspace { Name = "chatspy" },
             },
         };
+    }
 }

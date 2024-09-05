@@ -17,17 +17,17 @@ public class Query
         // };
         // dbContext.Users.Add(firstUser);
 
-        UserModel myUser = dbContext.Users.Single(b => b.Username == "boluski");
-        WorkspaceModel firstWorkspace = new WorkspaceModel
-        {
-            Name = "Spellblaze2",
-            createdBy = myUser.Username,
-        };
+        // UserModel myUser = dbContext.Users.Single(b => b.Username == "boluski");
+        // WorkspaceModel firstWorkspace = new WorkspaceModel
+        // {
+        //     Name = "Spellblaze2",
+        //     createdBy = myUser.Username,
+        // };
 
-        firstWorkspace.Users.Add(myUser);
+        // firstWorkspace.Users.Add(myUser);
 
-        dbContext.Workspaces.Add(firstWorkspace);
-        dbContext.SaveChanges();
+        // dbContext.Workspaces.Add(firstWorkspace);
+        // dbContext.SaveChanges();
         return new User
         {
             Username = "boluski",

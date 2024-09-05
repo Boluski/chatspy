@@ -10,4 +10,5 @@ public class WorkspaceModel
     public string createdBy { get; set; }
 
     public List<UserModel> Users { get; } = [];
+    public ICollection<ChannelModel> Channels { get; } = [];
 }

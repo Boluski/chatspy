@@ -20,9 +20,11 @@ public class Query
         UserModel myUser = dbContext.Users.Single(b => b.Username == "boluski");
         WorkspaceModel firstWorkspace = new WorkspaceModel
         {
-            Name = "Spellblaze",
-            createdBy = myUser,
+            Name = "Spellblaze2",
+            createdBy = myUser.Username,
         };
+
+        firstWorkspace.Users.Add(myUser);
 
         dbContext.Workspaces.Add(firstWorkspace);
         dbContext.SaveChanges();

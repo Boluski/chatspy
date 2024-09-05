@@ -10,5 +10,5 @@ public class UserModel
     public string FullName { get; set; }
     public string Email { get; set; }
     public string ProfilePicture { get; set; }
-    // public List<WorkspaceModel> Workspaces { get; } = [];
+    public List<WorkspaceModel> Workspaces { get; } = [];
 }

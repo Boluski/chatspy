@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using chatspy.Data;
 
@@ -11,9 +12,11 @@ using chatspy.Data;
 namespace chatspy.Migrations
 {
     [DbContext(typeof(ChatspyContext))]
-    partial class ChatspyContextModelSnapshot : ModelSnapshot
+    [Migration("20240905220548_InitialCreate2")]
+    partial class InitialCreate2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,21 +24,6 @@ namespace chatspy.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             MySqlModelBuilderExtensions.AutoIncrementColumns(modelBuilder);
-
-            modelBuilder.Entity("UserModelWorkspaceModel", b =>
-                {
-                    b.Property<string>("UsersUsername")
-                        .HasColumnType("varchar(255)");
-
-                    b.Property<Guid>("WorkspacesId")
-                        .HasColumnType("char(36)");
-
-                    b.HasKey("UsersUsername", "WorkspacesId");
-
-                    b.HasIndex("WorkspacesId");
-
-                    b.ToTable("UserModelWorkspaceModel");
-                });
 
             modelBuilder.Entity("chatspy.Models.UserModel", b =>
                 {
@@ -54,7 +42,12 @@ namespace chatspy.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<Guid?>("WorkspaceModelId")
+                        .HasColumnType("char(36)");
+
                     b.HasKey("Username");
+
+                    b.HasIndex("WorkspaceModelId");
 
                     b.ToTable("Users");
                 });
@@ -69,28 +62,35 @@ namespace chatspy.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("createdBy")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<string>("createdByUsername")
+                        .HasColumnType("varchar(255)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("createdByUsername");
 
                     b.ToTable("Workspaces");
                 });
 
-            modelBuilder.Entity("UserModelWorkspaceModel", b =>
+            modelBuilder.Entity("chatspy.Models.UserModel", b =>
                 {
-                    b.HasOne("chatspy.Models.UserModel", null)
-                        .WithMany()
-                        .HasForeignKey("UsersUsername")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("chatspy.Models.WorkspaceModel", null)
+                        .WithMany("Users")
+                        .HasForeignKey("WorkspaceModelId");
+                });
+
+            modelBuilder.Entity("chatspy.Models.WorkspaceModel", b =>
+                {
+                    b.HasOne("chatspy.Models.UserModel", "createdBy")
                         .WithMany()
-                        .HasForeignKey("WorkspacesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("createdByUsername");
+
+                    b.Navigation("createdBy");
+                });
+
+            modelBuilder.Entity("chatspy.Models.WorkspaceModel", b =>
+                {
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }

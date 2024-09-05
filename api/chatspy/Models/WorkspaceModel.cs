@@ -6,6 +6,8 @@ public class WorkspaceModel
 {
     public Guid Id { get; set; }
     public string Name { get; set; }
-    public UserModel createdBy { get; set; }
-    // public List<UserModel> Users { get; } = [];
+
+    public string createdBy { get; set; }
+
+    public List<UserModel> Users { get; } = [];
 }

@@ -81,4 +81,28 @@ public class Mutation
 
         return user;
     }
+
+    [UseMutationConvention]
+    public async Task<Workspace> CreateWorkspace(
+        [Service] ChatspyContext dbContext,
+        string Username,
+        string name
+    )
+    {
+        var dbUser = dbContext.Users.Single(dbUser => dbUser.Username == Username);
+        WorkspaceModel dbWorkspace = new() { Name = name, createdBy = dbUser.Username };
+        dbWorkspace.Users.Add(dbUser);
+        dbContext.Workspaces.Add(dbWorkspace);
+        await dbContext.SaveChangesAsync();
+
+        Workspace workspace =
+            new()
+            {
+                Id = dbWorkspace.Id,
+                Name = dbWorkspace.Name,
+                CreatedBy = dbWorkspace.createdBy,
+            };
+
+        return workspace;
+    }
 }

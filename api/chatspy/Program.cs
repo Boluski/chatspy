@@ -14,7 +14,13 @@ builder.Services.AddDbContext<ChatspyContext>(options =>
         .EnableDetailedErrors()
 );
 
-builder.Services.AddGraphQLServer().RegisterDbContext<ChatspyContext>().AddQueryType<Query>();
+builder
+    .Services.AddGraphQLServer()
+    .AddDefaultTransactionScopeHandler()
+    // .AddMutationConventions()
+    .RegisterDbContext<ChatspyContext>()
+    .AddQueryType<Query>()
+    .AddMutationType<Mutation>();
 
 // builder.Services.AddGraphQLServer().AddQueryType<Query>();
 

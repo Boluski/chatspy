@@ -8,6 +8,7 @@ namespace chatspy.TypeSchema;
 
 public class Mutation
 {
+    [UseMutationConvention]
     public async Task<User> CreateUser(
         [Service] ChatspyContext dbContext,
         string FullName,
@@ -36,34 +37,20 @@ public class Mutation
         };
     }
 
-    public async Task<User> UpdateUser(
+    [UseMutationConvention]
+    public async Task<User?> UpdateUser(
         [Service] ChatspyContext dbContext,
-        string Username,
-        string FullName,
-        string Email,
-        string ProfilePicture
+        [ID] string Username,
+        string? FullName,
+        string? Email,
+        string? ProfilePicture
     )
     {
         var dbUser = dbContext.Users.Single(b => b.Username == Username);
-        dbUser.Email = Email;
-        dbUser.ProfilePicture = ProfilePicture;
-        dbUser.FullName = FullName;
+        dbUser.Email = Email ?? dbUser.Email;
+        dbUser.ProfilePicture = ProfilePicture ?? dbUser.ProfilePicture;
+        dbUser.FullName = FullName ?? dbUser.FullName;
         await dbContext.SaveChangesAsync();
-
-        // List<Workspace> userWorkspaces = [];
-
-        // var Workspaces = User.Workspaces.ToList();
-
-        // Workspaces.ForEach(b =>
-        //     userWorkspaces.Add(
-        //         new Workspace
-        //         {
-        //             Id = b.Id,
-        //             Name = b.Name,
-        //             CreatedBy = b.createdBy,
-        //         }
-        //     )
-        // );
 
         var user = new User
         {
@@ -71,7 +58,6 @@ public class Mutation
             FullName = dbUser.FullName,
             Email = dbUser.Email,
             ProfilePicture = dbUser.ProfilePicture,
-            // Workspaces = userWorkspaces,
         };
         return user;
     }

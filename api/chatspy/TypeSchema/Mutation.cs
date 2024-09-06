@@ -3,6 +3,7 @@ using chatspy.Data;
 using chatspy.Models;
 using chatspy.Utils;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
+using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace chatspy.TypeSchema;
 
@@ -59,6 +60,25 @@ public class Mutation
             Email = dbUser.Email,
             ProfilePicture = dbUser.ProfilePicture,
         };
+        return user;
+    }
+
+    [UseMutationConvention]
+    public async Task<User?> DeleteUser([Service] ChatspyContext dbContext, [ID] string Username)
+    {
+        var dbUser = dbContext.Users.Single(dbUser => dbUser.Username == Username);
+        dbContext.Remove(dbUser);
+        await dbContext.SaveChangesAsync();
+
+        User user =
+            new()
+            {
+                Username = dbUser.Username,
+                Email = dbUser.Email,
+                ProfilePicture = dbUser.ProfilePicture,
+                FullName = dbUser.FullName,
+            };
+
         return user;
     }
 }

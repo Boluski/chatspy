@@ -3,14 +3,12 @@ using chatspy.Data;
 using chatspy.Models;
 using chatspy.Utils;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using Microsoft.Extensions.Configuration.UserSecrets;
 
 namespace chatspy.TypeSchema;
 
 public class Mutation
 {
-    // Creates a new user and generates the username.
+    [GraphQLDescription("Creates a new user and generates the username.")]
     public async Task<User> CreateUser(
         ChatspyContext dbContext,
         string FullName,
@@ -39,7 +37,7 @@ public class Mutation
         };
     }
 
-    // Updates a user's meta data based on the username.
+    [GraphQLDescription("Updates a user's meta data based on the username.")]
     public async Task<User?> UpdateUser(
         ChatspyContext dbContext,
         [ID] string Username,
@@ -64,7 +62,7 @@ public class Mutation
         return user;
     }
 
-    // Deletes a user based on the username.
+    [GraphQLDescription("Deletes a user based on the username.")]
     public async Task<User?> DeleteUser(ChatspyContext dbContext, [ID] string Username)
     {
         var dbUser = await dbContext.Users.SingleAsync(dbUser => dbUser.Username == Username);
@@ -83,7 +81,7 @@ public class Mutation
         return user;
     }
 
-    // Creates a new workspace and generates the guid.
+    [GraphQLDescription("Creates a new workspace and generates the guid.")]
     public async Task<Workspace> CreateWorkspace(
         ChatspyContext dbContext,
         string Username,
@@ -107,6 +105,30 @@ public class Mutation
         return workspace;
     }
 
+    [GraphQLDescription("Updates the workspace name or/and the createdBy fields with its Id.")]
+    public async Task<Workspace?> UpdateWorkspace(
+        ChatspyContext dbContext,
+        [ID] Guid Id,
+        string? name,
+        string? createdBy
+    )
+    {
+        var dbWorkspace = await dbContext.Workspaces.SingleAsync(w => w.Id == Id);
+        dbWorkspace.Name = name ?? dbWorkspace.Name;
+        dbWorkspace.CreatedBy = createdBy ?? dbWorkspace.CreatedBy;
+        await dbContext.SaveChangesAsync();
+
+        var workspace = new Workspace
+        {
+            Id = dbWorkspace.Id,
+            Name = dbWorkspace.Name,
+            CreatedBy = dbWorkspace.CreatedBy,
+        };
+
+        return workspace;
+    }
+
+    [GraphQLDescription("Deletes a workspace based on its ID.")]
     public async Task<Workspace?> DeleteWorkspace(ChatspyContext dbContext, [ID] Guid Id)
     {
         var dbWorkspace = await dbContext.Workspaces.SingleAsync(w => w.Id == Id);
@@ -120,6 +142,52 @@ public class Mutation
 
         dbContext.Remove(dbWorkspace);
         await dbContext.SaveChangesAsync();
+        return workspace;
+    }
+
+    [GraphQLDescription("Adds a user to a workspace based on the workspaceId and the username.")]
+    public async Task<Workspace?> AddUserToWorkspace(
+        ChatspyContext dbContext,
+        Guid workspaceID,
+        string username
+    )
+    {
+        var dbWorkspace = await dbContext.Workspaces.SingleAsync(w => w.Id == workspaceID);
+        var dbUser = await dbContext.Users.SingleAsync(u => u.Username == username);
+        dbWorkspace.Users.Add(dbUser);
+        await dbContext.SaveChangesAsync();
+
+        var workspace = new Workspace
+        {
+            Id = dbWorkspace.Id,
+            Name = dbWorkspace.Name,
+            CreatedBy = dbWorkspace.CreatedBy,
+        };
+
+        return workspace;
+    }
+
+    [GraphQLDescription(
+        "Removes a user from a workspace based on the workspaceId and the username."
+    )]
+    public async Task<Workspace?> RemoveUserFromWorkspace(
+        ChatspyContext dbContext,
+        Guid workspaceID,
+        string username
+    )
+    {
+        var dbWorkspace = await dbContext.Workspaces.SingleAsync(w => w.Id == workspaceID);
+        var dbUser = await dbContext.Users.SingleAsync(u => u.Username == username);
+        dbWorkspace.Users.Remove(dbUser);
+        await dbContext.SaveChangesAsync();
+
+        var workspace = new Workspace
+        {
+            Id = dbWorkspace.Id,
+            Name = dbWorkspace.Name,
+            CreatedBy = dbWorkspace.CreatedBy,
+        };
+
         return workspace;
     }
 }

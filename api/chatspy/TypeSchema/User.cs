@@ -1,4 +1,6 @@
 using System;
+using chatspy.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace chatspy.TypeSchema;
 
@@ -8,5 +10,22 @@ public class User
     public string FullName { get; set; }
     public string Email { get; set; }
     public string ProfilePicture { get; set; }
-    public List<Workspace> Workspaces { get; set; }
+
+    public async Task<List<Workspace>> Workspaces(ChatspyContext dbContext)
+    {
+        Console.WriteLine("Username::", Username);
+        var dbUserWorkspaces = await dbContext
+            .Workspaces.Where(w => w.Users.Any(u => u.Username == Username))
+            .ToListAsync();
+
+        var Workspaces = dbUserWorkspaces
+            .Select(w => new Workspace
+            {
+                Id = w.Id,
+                Name = w.Name,
+                CreatedBy = w.createdBy,
+            })
+            .ToList();
+        return Workspaces;
+    }
 }

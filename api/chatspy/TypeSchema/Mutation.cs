@@ -11,7 +11,7 @@ public class Mutation
 {
     [UseMutationConvention]
     public async Task<User> CreateUser(
-        [Service] ChatspyContext dbContext,
+        ChatspyContext dbContext,
         string FullName,
         string Email,
         string ProfilePicture
@@ -40,7 +40,7 @@ public class Mutation
 
     [UseMutationConvention]
     public async Task<User?> UpdateUser(
-        [Service] ChatspyContext dbContext,
+        ChatspyContext dbContext,
         [ID] string Username,
         string? FullName,
         string? Email,
@@ -64,7 +64,7 @@ public class Mutation
     }
 
     [UseMutationConvention]
-    public async Task<User?> DeleteUser([Service] ChatspyContext dbContext, [ID] string Username)
+    public async Task<User?> DeleteUser(ChatspyContext dbContext, [ID] string Username)
     {
         var dbUser = dbContext.Users.Single(dbUser => dbUser.Username == Username);
         dbContext.Remove(dbUser);
@@ -84,7 +84,7 @@ public class Mutation
 
     [UseMutationConvention]
     public async Task<Workspace> CreateWorkspace(
-        [Service] ChatspyContext dbContext,
+        ChatspyContext dbContext,
         string Username,
         string name
     )

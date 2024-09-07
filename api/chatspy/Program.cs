@@ -22,9 +22,19 @@ builder
     .AddQueryType<Query>()
     .AddMutationType<Mutation>();
 
-// builder.Services.AddGraphQLServer().AddQueryType<Query>();
+// Enable Apollo Sandbox
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins("https://studio.apollographql.com").AllowAnyHeader().AllowAnyMethod();
+    });
+});
 
 var app = builder.Build();
+
+// Enable Apollo Sandbox
+app.UseCors();
 
 app.MapGraphQL();
 

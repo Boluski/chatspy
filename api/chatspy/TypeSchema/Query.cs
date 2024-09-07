@@ -37,16 +37,7 @@ public class Query
             {
                 Id = dbWorkspace.Id,
                 Name = dbWorkspace.Name,
-                CreatedBy = dbWorkspace.createdBy,
-                Users = dbWorkspace
-                    .Users.Select(u => new User
-                    {
-                        Username = u.Username,
-                        Email = u.Email,
-                        FullName = u.FullName,
-                        ProfilePicture = u.ProfilePicture,
-                    })
-                    .ToList(),
+                CreatedBy = dbWorkspace.CreatedBy,
             })
             .ToList();
 

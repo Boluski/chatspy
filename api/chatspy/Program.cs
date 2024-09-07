@@ -17,7 +17,7 @@ builder.Services.AddDbContext<ChatspyContext>(options =>
 builder
     .Services.AddGraphQLServer()
     .AddDefaultTransactionScopeHandler()
-    .AddMutationConventions()
+    .AddMutationConventions(applyToAllMutations: true)
     .RegisterDbContext<ChatspyContext>()
     .AddQueryType<Query>()
     .AddMutationType<Mutation>();

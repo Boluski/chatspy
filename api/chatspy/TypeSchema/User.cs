@@ -13,7 +13,6 @@ public class User
 
     public async Task<List<Workspace>> Workspaces(ChatspyContext dbContext)
     {
-        Console.WriteLine("Username::", Username);
         var dbUserWorkspaces = await dbContext
             .Workspaces.Where(w => w.Users.Any(u => u.Username == Username))
             .ToListAsync();
@@ -23,7 +22,7 @@ public class User
             {
                 Id = w.Id,
                 Name = w.Name,
-                CreatedBy = w.createdBy,
+                CreatedBy = w.CreatedBy,
             })
             .ToList();
         return Workspaces;

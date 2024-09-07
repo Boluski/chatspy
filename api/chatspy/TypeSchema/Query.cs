@@ -7,6 +7,7 @@ namespace chatspy.TypeSchema;
 
 public class Query
 {
+    [GraphQLDescription("Returns all the users.")]
     public async Task<List<User>> GetUsers(ChatspyContext dbContext)
     {
         var dbUsers = await dbContext.Users.Include(u => u.Workspaces).ToListAsync();
@@ -28,6 +29,7 @@ public class Query
         return Users;
     }
 
+    [GraphQLDescription("Returns all the workspaces.")]
     public List<Workspace> GetWorkspaces(ChatspyContext dbContext)
     {
         List<WorkspaceModel> dbWorkspaces = dbContext.Workspaces.Include(w => w.Users).ToList();

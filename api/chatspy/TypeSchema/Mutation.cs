@@ -176,8 +176,11 @@ public class Mutation
         string username
     )
     {
-        var dbWorkspace = await dbContext.Workspaces.SingleAsync(w => w.Id == workspaceID);
+        var dbWorkspace = await dbContext
+            .Workspaces.Include(w => w.Users)
+            .SingleAsync(w => w.Id == workspaceID);
         var dbUser = await dbContext.Users.SingleAsync(u => u.Username == username);
+
         dbWorkspace.Users.Remove(dbUser);
         await dbContext.SaveChangesAsync();
 

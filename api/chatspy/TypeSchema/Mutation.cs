@@ -239,4 +239,51 @@ public class Mutation
 
         return Channel;
     }
+
+    [GraphQLDescription(
+        "Updates the name of a channel. This should be used only for public and private channels."
+    )]
+    public async Task<Channel?> UpdateChannelName(
+        ChatspyContext dbContext,
+        Guid channelId,
+        string name
+    )
+    {
+        var dbChannel = await dbContext.Channels.SingleAsync(c => c.Id == channelId);
+        dbChannel.Name = name;
+        await dbContext.SaveChangesAsync();
+
+        var Channel = new Channel
+        {
+            Id = dbChannel.Id,
+            Name = dbChannel.Name,
+            Type = (ChannelType)dbChannel.Type,
+        };
+
+        return Channel;
+    }
+
+    [GraphQLDescription(
+        "Adds a user to a private channel based on the username and the channelId."
+    )]
+    public async Task<Channel?> AddUserToChannel(
+        ChatspyContext dbContext,
+        Guid privateChannelId,
+        string username
+    )
+    {
+        var dbUser = await dbContext.Users.SingleAsync(u => u.Username == username);
+        var dbChannel = await dbContext.Channels.SingleAsync(c => c.Id == privateChannelId);
+        dbChannel.Users.Add(dbUser);
+        await dbContext.SaveChangesAsync();
+
+        var Channel = new Channel
+        {
+            Id = dbChannel.Id,
+            Name = dbChannel.Name,
+            Type = (ChannelType)dbChannel.Type,
+        };
+
+        return Channel;
+    }
 }

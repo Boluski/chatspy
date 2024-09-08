@@ -263,6 +263,23 @@ public class Mutation
         return Channel;
     }
 
+    [GraphQLDescription("Deletes a channel based on its Id.")]
+    public async Task<Channel?> DeleteChannel(ChatspyContext dbContext, Guid channelId)
+    {
+        var dbChannel = await dbContext.Channels.SingleAsync(c => c.Id == channelId);
+        dbContext.Channels.Remove(dbChannel);
+        await dbContext.SaveChangesAsync();
+
+        var Channel = new Channel
+        {
+            Id = dbChannel.Id,
+            Name = dbChannel.Name,
+            Type = (ChannelType)dbChannel.Type,
+        };
+
+        return Channel;
+    }
+
     [GraphQLDescription(
         "Adds a user to a private channel based on the username and the channelId."
     )]

@@ -10,7 +10,7 @@ public class Query
     [GraphQLDescription("Returns all the users.")]
     public async Task<List<User>> GetUsers(ChatspyContext dbContext)
     {
-        var dbUsers = await dbContext.Users.Include(u => u.Workspaces).ToListAsync();
+        var dbUsers = await dbContext.Users.ToListAsync();
         List<User> Users = dbUsers
             .Select(dbUser =>
             {
@@ -30,9 +30,9 @@ public class Query
     }
 
     [GraphQLDescription("Returns all the workspaces.")]
-    public List<Workspace> GetWorkspaces(ChatspyContext dbContext)
+    public async Task<List<Workspace>> GetWorkspaces(ChatspyContext dbContext)
     {
-        List<WorkspaceModel> dbWorkspaces = dbContext.Workspaces.Include(w => w.Users).ToList();
+        List<WorkspaceModel> dbWorkspaces = await dbContext.Workspaces.ToListAsync();
 
         List<Workspace> Workspaces = dbWorkspaces
             .Select(dbWorkspace => new Workspace
@@ -44,5 +44,21 @@ public class Query
             .ToList();
 
         return Workspaces;
+    }
+
+    [GraphQLDescription("Returns all the channels.")]
+    public async Task<List<Channel>> GetChannels(ChatspyContext dbContext)
+    {
+        List<ChannelModel> dbChannels = await dbContext.Channels.ToListAsync();
+
+        List<Channel> Channels = dbChannels
+            .Select(dbChannel => new Channel
+            {
+                Id = dbChannel.Id,
+                Name = dbChannel.Name,
+                Type = (ChannelType)dbChannel.Type,
+            })
+            .ToList();
+        return Channels;
     }
 }

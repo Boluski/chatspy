@@ -193,4 +193,41 @@ public class Mutation
 
         return workspace;
     }
+
+    [GraphQLDescription(
+        "Creates a new channel in a workspace based on the workspaceId and channel type."
+    )]
+    public async Task<Channel?> CreateChannel(
+        ChatspyContext dbContext,
+        Guid workspaceId,
+        string name,
+        ChannelType type,
+        string? username
+    )
+    {
+        var dbWorkspace = await dbContext.Workspaces.SingleAsync(w => w.Id == workspaceId);
+        var dbChannel = new ChannelModel
+        {
+            Name = name,
+            Type = (int)type,
+            Workspace = dbWorkspace,
+        };
+        if (username != null && type == ChannelType.Private)
+        {
+            var dbUser = await dbContext.Users.SingleAsync(u => u.Username == username);
+            dbChannel.Users.Add(dbUser);
+        }
+
+        await dbContext.Channels.AddAsync(dbChannel);
+        await dbContext.SaveChangesAsync();
+
+        var Channel = new Channel
+        {
+            Id = dbChannel.Id,
+            Name = dbChannel.Name,
+            Type = (ChannelType)dbChannel.Type,
+        };
+
+        return Channel;
+    }
 }

@@ -202,7 +202,8 @@ public class Mutation
         Guid workspaceId,
         string name,
         ChannelType type,
-        string? username
+        string? rootUsername,
+        string? directUsername
     )
     {
         var dbWorkspace = await dbContext.Workspaces.SingleAsync(w => w.Id == workspaceId);
@@ -212,10 +213,18 @@ public class Mutation
             Type = (int)type,
             Workspace = dbWorkspace,
         };
-        if (username != null && type == ChannelType.Private)
+        if (rootUsername != null && type == ChannelType.Private)
         {
-            var dbUser = await dbContext.Users.SingleAsync(u => u.Username == username);
+            var dbUser = await dbContext.Users.SingleAsync(u => u.Username == rootUsername);
             dbChannel.Users.Add(dbUser);
+        }
+
+        if (rootUsername != null && directUsername != null && type == ChannelType.Private)
+        {
+            var dbRootUser = await dbContext.Users.SingleAsync(u => u.Username == rootUsername);
+            var dbDirectUser = await dbContext.Users.SingleAsync(u => u.Username == directUsername);
+            dbChannel.Users.Add(dbRootUser);
+            dbChannel.Users.Add(dbDirectUser);
         }
 
         await dbContext.Channels.AddAsync(dbChannel);

@@ -61,4 +61,26 @@ public class Query
             .ToList();
         return Channels;
     }
+
+    public async Task<List<Message>> GetMessages(ChatspyContext dbContext)
+    {
+        var dbMessages = await dbContext.Messages.Include(m => m.User).ToListAsync();
+
+        var messages = dbMessages
+            .Select(dbMessage => new Message
+            {
+                Id = dbMessage.Id,
+                Text = dbMessage.Text,
+                Date = dbMessage.Date,
+                User = new User
+                {
+                    Username = dbMessage.User.Username,
+                    Email = dbMessage.User.Email,
+                    FullName = dbMessage.User.FullName,
+                    ProfilePicture = dbMessage.User.ProfilePicture,
+                },
+            })
+            .ToList();
+        return messages;
+    }
 }

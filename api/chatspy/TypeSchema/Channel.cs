@@ -46,7 +46,20 @@ public class Channel
         return users;
     }
 
-    public List<Message> Messages { get; set; }
+    public List<Message> Messages(ChatspyContext dbContext)
+    {
+        var dbMessage = dbContext.Messages.Where(m => m.Channel.Id == Id).ToList();
+
+        var Message = dbMessage
+            .Select(m => new Message
+            {
+                Id = m.Id,
+                Date = m.Date,
+                Text = m.Text,
+            })
+            .ToList();
+        return Message;
+    }
 }
 
 public enum ChannelType

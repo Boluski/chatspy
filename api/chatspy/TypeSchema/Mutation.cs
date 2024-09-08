@@ -303,4 +303,32 @@ public class Mutation
 
         return Channel;
     }
+
+    public async Task<Message> CreateMessage(
+        ChatspyContext dbContext,
+        Guid channelId,
+        string username,
+        string text
+    )
+    {
+        var dbChannel = await dbContext.Channels.SingleAsync(c => c.Id == channelId);
+        var dbUser = await dbContext.Users.SingleAsync(u => u.Username == username);
+        var dbMessage = new MessageModel
+        {
+            Text = text,
+            Date = DateTime.Now,
+            Channel = dbChannel,
+            User = dbUser,
+        };
+        await dbContext.Messages.AddAsync(dbMessage);
+        await dbContext.SaveChangesAsync();
+
+        var Message = new Message
+        {
+            Id = dbMessage.Id,
+            Date = dbMessage.Date,
+            Text = dbMessage.Text,
+        };
+        return Message;
+    }
 }

@@ -8,5 +8,6 @@ public class MessageModel
     public string Text { get; set; }
     public DateTime Date { get; set; }
     public ChannelModel Channel { get; set; } = null!;
+    public UserModel User { get; set; } = null!;
     public ICollection<ThreadModel> Threads { get; } = [];
 }

@@ -219,7 +219,7 @@ public class Mutation
             dbChannel.Users.Add(dbUser);
         }
 
-        if (rootUsername != null && directUsername != null && type == ChannelType.Private)
+        if (rootUsername != null && directUsername != null && type == ChannelType.Direct)
         {
             var dbRootUser = await dbContext.Users.SingleAsync(u => u.Username == rootUsername);
             var dbDirectUser = await dbContext.Users.SingleAsync(u => u.Username == directUsername);

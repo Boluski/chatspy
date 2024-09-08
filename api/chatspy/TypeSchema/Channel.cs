@@ -15,7 +15,10 @@ public class Channel
     {
         List<User> users;
         List<UserModel> dbUsers = null!;
-        var dbChannel = await dbContext.Channels.SingleAsync(c => c.Id == Id);
+        var dbChannel = await dbContext
+            .Channels.Include(c => c.Workspace.Users)
+            .Include(c => c.Users)
+            .SingleAsync(c => c.Id == Id);
 
         if (Type == ChannelType.Private)
         {

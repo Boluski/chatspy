@@ -29,5 +29,20 @@ public class Workspace
         return Users;
     }
 
-    public List<Channel> Channels { get; set; }
+    public async Task<List<Channel>> Channels(ChatspyContext dbContext)
+    {
+        var dbWorkspaceChannels = await dbContext
+            .Channels.Where(c => c.Workspace.Id == Id)
+            .ToListAsync();
+
+        var Channels = dbWorkspaceChannels
+            .Select(c => new Channel
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Type = (ChannelType)c.Type,
+            })
+            .ToList();
+        return Channels;
+    }
 }

@@ -8,6 +8,6 @@ public class ChannelModel
     public int Type { get; set; }
     public string Name { get; set; }
     public WorkspaceModel Workspace { get; set; } = null!;
-    public ICollection<UserModel> Users { get; } = [];
+    public List<UserModel> Users { get; } = [];
     public ICollection<MessageModel> Messages { get; } = [];
 }

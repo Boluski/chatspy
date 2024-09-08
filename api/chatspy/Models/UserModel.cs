@@ -11,4 +11,5 @@ public class UserModel
     public string Email { get; set; }
     public string ProfilePicture { get; set; }
     public List<WorkspaceModel> Workspaces { get; } = [];
+    public List<ChannelModel> Channels { get; } = [];
 }

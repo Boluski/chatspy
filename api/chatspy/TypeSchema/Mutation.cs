@@ -364,4 +364,67 @@ public class Mutation
         };
         return Message;
     }
+
+    [GraphQLDescription("Creates a new thread based on the username and messageId")]
+    public async Task<Thread> CreateThread(
+        ChatspyContext dbContext,
+        string username,
+        Guid messageID,
+        string text
+    )
+    {
+        var dbMessage = await dbContext.Messages.SingleAsync(m => m.Id == messageID);
+        var dbUser = await dbContext.Users.SingleAsync(u => u.Username == username);
+
+        var dbThread = new ThreadModel
+        {
+            Text = text,
+            Date = DateTime.Now,
+            Message = dbMessage,
+            User = dbUser,
+        };
+        await dbContext.Threads.AddAsync(dbThread);
+        await dbContext.SaveChangesAsync();
+
+        var Thread = new Thread
+        {
+            Id = dbThread.Id,
+            Date = dbThread.Date,
+            Text = dbThread.Text,
+        };
+        return Thread;
+    }
+
+    [GraphQLDescription("Edits the thread's text based on it's Id.")]
+    public async Task<Thread> EditThread(ChatspyContext dbContext, Guid threadId, string text)
+    {
+        var dbThread = await dbContext.Threads.SingleAsync(t => t.Id == threadId);
+        dbThread.Text = text;
+        await dbContext.SaveChangesAsync();
+
+        var Thread = new Thread
+        {
+            Id = dbThread.Id,
+            Date = dbThread.Date,
+            Text = dbThread.Text,
+        };
+
+        return Thread;
+    }
+
+    [GraphQLDescription("Deletes a thread based on it's Id.")]
+    public async Task<Thread> DeleteThread(ChatspyContext dbContext, Guid threadId)
+    {
+        var dbThread = await dbContext.Threads.SingleAsync(t => t.Id == threadId);
+        dbContext.Remove(dbThread);
+        await dbContext.SaveChangesAsync();
+
+        var Thread = new Thread
+        {
+            Id = dbThread.Id,
+            Date = dbThread.Date,
+            Text = dbThread.Text,
+        };
+        return Thread;
+    }
 }

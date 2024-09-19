@@ -324,20 +324,11 @@ public class Mutation
         await dbContext.Messages.AddAsync(dbMessage);
         await dbContext.SaveChangesAsync();
 
-        var User = new User
-        {
-            Username = dbMessage.User.Username,
-            Email = dbMessage.User.Email,
-            FullName = dbMessage.User.FullName,
-            ProfilePicture = dbMessage.User.ProfilePicture,
-        };
-
         var Message = new Message
         {
             Id = dbMessage.Id,
             Date = dbMessage.Date,
             Text = dbMessage.Text,
-            User = User,
         };
         return Message;
     }
@@ -345,26 +336,15 @@ public class Mutation
     [GraphQLDescription("Edits the message's text based on it's Id.")]
     public async Task<Message> EditMessage(ChatspyContext dbContext, Guid messageId, string text)
     {
-        var dbMessage = await dbContext
-            .Messages.Include(m => m.User)
-            .SingleAsync(m => m.Id == messageId);
+        var dbMessage = await dbContext.Messages.SingleAsync(m => m.Id == messageId);
         dbMessage.Text = text;
         await dbContext.SaveChangesAsync();
-
-        var User = new User
-        {
-            Username = dbMessage.User.Username,
-            Email = dbMessage.User.Email,
-            FullName = dbMessage.User.FullName,
-            ProfilePicture = dbMessage.User.ProfilePicture,
-        };
 
         var Message = new Message
         {
             Id = dbMessage.Id,
             Date = dbMessage.Date,
             Text = dbMessage.Text,
-            User = User,
         };
         return Message;
     }
@@ -372,26 +352,15 @@ public class Mutation
     [GraphQLDescription("Deletes a message based on it's Id.")]
     public async Task<Message> DeleteMessage(ChatspyContext dbContext, Guid messageId)
     {
-        var dbMessage = await dbContext
-            .Messages.Include(m => m.User)
-            .SingleAsync(m => m.Id == messageId);
+        var dbMessage = await dbContext.Messages.SingleAsync(m => m.Id == messageId);
         dbContext.Remove(dbMessage);
         await dbContext.SaveChangesAsync();
-
-        var User = new User
-        {
-            Username = dbMessage.User.Username,
-            Email = dbMessage.User.Email,
-            FullName = dbMessage.User.FullName,
-            ProfilePicture = dbMessage.User.ProfilePicture,
-        };
 
         var Message = new Message
         {
             Id = dbMessage.Id,
             Date = dbMessage.Date,
             Text = dbMessage.Text,
-            User = User,
         };
         return Message;
     }

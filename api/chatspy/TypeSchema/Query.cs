@@ -72,13 +72,13 @@ public class Query
                 Id = dbMessage.Id,
                 Text = dbMessage.Text,
                 Date = dbMessage.Date,
-                User = new User
-                {
-                    Username = dbMessage.User.Username,
-                    Email = dbMessage.User.Email,
-                    FullName = dbMessage.User.FullName,
-                    ProfilePicture = dbMessage.User.ProfilePicture,
-                },
+                // User = new User
+                // {
+                //     Username = dbMessage.User.Username,
+                //     Email = dbMessage.User.Email,
+                //     FullName = dbMessage.User.FullName,
+                //     ProfilePicture = dbMessage.User.ProfilePicture,
+                // },
             })
             .ToList();
         return messages;

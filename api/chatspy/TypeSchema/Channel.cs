@@ -1,4 +1,3 @@
-using System;
 using chatspy.Data;
 using chatspy.Models;
 using Microsoft.EntityFrameworkCore;

@@ -1,79 +1,57 @@
-using System;
 using chatspy.Data;
-using chatspy.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace chatspy.TypeSchema;
 
 public class Query
 {
-    [GraphQLDescription("Returns all the users.")]
-    public async Task<List<User>> GetUsers(ChatspyContext dbContext)
+    [GraphQLDescription("Returns a user based on a username")]
+    public async Task<User> GetUserByUsername(ChatspyContext dbContext, string username)
     {
-        var dbUsers = await dbContext.Users.ToListAsync();
-        List<User> Users = dbUsers
-            .Select(dbUser =>
-            {
-                var u = new User
-                {
-                    Username = dbUser.Username,
-                    Email = dbUser.Email,
-                    ProfilePicture = dbUser.ProfilePicture,
-                    FullName = dbUser.FullName,
-                };
-
-                return u;
-            })
-            .ToList();
-
-        return Users;
+        var dbUser = await dbContext.Users.SingleAsync(u => u.Username == username);
+        var user = new User
+        {
+            Username = dbUser.Username,
+            FullName = dbUser.FullName,
+            Email = dbUser.Email,
+            ProfilePicture = dbUser.ProfilePicture,
+        };
+        return user;
     }
 
-    // [GraphQLDescription("Returns all the workspaces.")]
-    // public async Task<List<Workspace>> GetWorkspaces(ChatspyContext dbContext)
-    // {
-    //     List<WorkspaceModel> dbWorkspaces = await dbContext.Workspaces.ToListAsync();
+    [GraphQLDescription("Returns a user based on an email")]
+    public async Task<User> GetUserByEmail(ChatspyContext dbContext, string email)
+    {
+        var dbUser = await dbContext.Users.SingleAsync(u => u.Email == email);
+        var user = new User
+        {
+            Username = dbUser.Username,
+            FullName = dbUser.FullName,
+            Email = dbUser.Email,
+            ProfilePicture = dbUser.ProfilePicture,
+        };
+        return user;
+    }
 
-    //     List<Workspace> Workspaces = dbWorkspaces
-    //         .Select(dbWorkspace => new Workspace
-    //         {
-    //             Id = dbWorkspace.Id,
-    //             Name = dbWorkspace.Name,
-    //             CreatedBy = dbWorkspace.CreatedBy,
-    //         })
-    //         .ToList();
+    [GraphQLDescription("Returns up to ten messages based on the channelId and cursor.")]
+    [UsePaging(MaxPageSize = 10)]
+    public async Task<IEnumerable<Message>> GetChannelMessages(
+        ChatspyContext dbContext,
+        Guid channelId
+    )
+    {
+        var dbMessages = await dbContext
+            .Messages.Where(m => m.Channel.Id == channelId)
+            .ToListAsync();
 
-    //     return Workspaces;
-    // }
-
-    // [GraphQLDescription("Returns all the channels.")]
-    // public async Task<List<Channel>> GetChannels(ChatspyContext dbContext)
-    // {
-    //     List<ChannelModel> dbChannels = await dbContext.Channels.ToListAsync();
-
-    //     List<Channel> Channels = dbChannels
-    //         .Select(dbChannel => new Channel
-    //         {
-    //             Id = dbChannel.Id,
-    //             Name = dbChannel.Name,
-    //             Type = (ChannelType)dbChannel.Type,
-    //         })
-    //         .ToList();
-    //     return Channels;
-    // }
-
-    // public async Task<List<Message>> GetMessages(ChatspyContext dbContext)
-    // {
-    //     var dbMessages = await dbContext.Messages.Include(m => m.User).ToListAsync();
-
-    //     var messages = dbMessages
-    //         .Select(dbMessage => new Message
-    //         {
-    //             Id = dbMessage.Id,
-    //             Text = dbMessage.Text,
-    //             Date = dbMessage.Date,
-    //         })
-    //         .ToList();
-    //     return messages;
-    // }
+        var messages = dbMessages
+            .Select(m => new Message
+            {
+                Id = m.Id,
+                Text = m.Text,
+                Date = m.Date,
+            })
+            .ToList();
+        return messages;
+    }
 }

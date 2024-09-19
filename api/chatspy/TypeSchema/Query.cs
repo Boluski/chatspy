@@ -29,58 +29,51 @@ public class Query
         return Users;
     }
 
-    [GraphQLDescription("Returns all the workspaces.")]
-    public async Task<List<Workspace>> GetWorkspaces(ChatspyContext dbContext)
-    {
-        List<WorkspaceModel> dbWorkspaces = await dbContext.Workspaces.ToListAsync();
+    // [GraphQLDescription("Returns all the workspaces.")]
+    // public async Task<List<Workspace>> GetWorkspaces(ChatspyContext dbContext)
+    // {
+    //     List<WorkspaceModel> dbWorkspaces = await dbContext.Workspaces.ToListAsync();
 
-        List<Workspace> Workspaces = dbWorkspaces
-            .Select(dbWorkspace => new Workspace
-            {
-                Id = dbWorkspace.Id,
-                Name = dbWorkspace.Name,
-                CreatedBy = dbWorkspace.CreatedBy,
-            })
-            .ToList();
+    //     List<Workspace> Workspaces = dbWorkspaces
+    //         .Select(dbWorkspace => new Workspace
+    //         {
+    //             Id = dbWorkspace.Id,
+    //             Name = dbWorkspace.Name,
+    //             CreatedBy = dbWorkspace.CreatedBy,
+    //         })
+    //         .ToList();
 
-        return Workspaces;
-    }
+    //     return Workspaces;
+    // }
 
-    [GraphQLDescription("Returns all the channels.")]
-    public async Task<List<Channel>> GetChannels(ChatspyContext dbContext)
-    {
-        List<ChannelModel> dbChannels = await dbContext.Channels.ToListAsync();
+    // [GraphQLDescription("Returns all the channels.")]
+    // public async Task<List<Channel>> GetChannels(ChatspyContext dbContext)
+    // {
+    //     List<ChannelModel> dbChannels = await dbContext.Channels.ToListAsync();
 
-        List<Channel> Channels = dbChannels
-            .Select(dbChannel => new Channel
-            {
-                Id = dbChannel.Id,
-                Name = dbChannel.Name,
-                Type = (ChannelType)dbChannel.Type,
-            })
-            .ToList();
-        return Channels;
-    }
+    //     List<Channel> Channels = dbChannels
+    //         .Select(dbChannel => new Channel
+    //         {
+    //             Id = dbChannel.Id,
+    //             Name = dbChannel.Name,
+    //             Type = (ChannelType)dbChannel.Type,
+    //         })
+    //         .ToList();
+    //     return Channels;
+    // }
 
-    public async Task<List<Message>> GetMessages(ChatspyContext dbContext)
-    {
-        var dbMessages = await dbContext.Messages.Include(m => m.User).ToListAsync();
+    // public async Task<List<Message>> GetMessages(ChatspyContext dbContext)
+    // {
+    //     var dbMessages = await dbContext.Messages.Include(m => m.User).ToListAsync();
 
-        var messages = dbMessages
-            .Select(dbMessage => new Message
-            {
-                Id = dbMessage.Id,
-                Text = dbMessage.Text,
-                Date = dbMessage.Date,
-                // User = new User
-                // {
-                //     Username = dbMessage.User.Username,
-                //     Email = dbMessage.User.Email,
-                //     FullName = dbMessage.User.FullName,
-                //     ProfilePicture = dbMessage.User.ProfilePicture,
-                // },
-            })
-            .ToList();
-        return messages;
-    }
+    //     var messages = dbMessages
+    //         .Select(dbMessage => new Message
+    //         {
+    //             Id = dbMessage.Id,
+    //             Text = dbMessage.Text,
+    //             Date = dbMessage.Date,
+    //         })
+    //         .ToList();
+    //     return messages;
+    // }
 }

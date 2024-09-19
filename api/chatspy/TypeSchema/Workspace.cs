@@ -10,6 +10,9 @@ public class Workspace
     public string Name { get; set; }
     public string CreatedBy { get; set; }
 
+    [GraphQLIgnore]
+    public string? UsernameLink { get; set; }
+
     public async Task<List<User>> Users(ChatspyContext dbContext)
     {
         var dbWorkspaceUsers = await dbContext
@@ -32,7 +35,14 @@ public class Workspace
     public async Task<List<Channel>> Channels(ChatspyContext dbContext)
     {
         var dbWorkspaceChannels = await dbContext
-            .Channels.Where(c => c.Workspace.Id == Id)
+            .Channels.Where(c =>
+                c.Workspace.Id == Id
+                && (
+                    c.Type == (int)ChannelType.Public
+                    || c.Users.Any(u => u.Username == UsernameLink)
+                )
+            )
+            .Include(c => c.Users)
             .ToListAsync();
 
         var Channels = dbWorkspaceChannels

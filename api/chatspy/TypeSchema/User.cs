@@ -23,6 +23,7 @@ public class User
                 Id = w.Id,
                 Name = w.Name,
                 CreatedBy = w.CreatedBy,
+                UsernameLink = Username,
             })
             .ToList();
         return Workspaces;

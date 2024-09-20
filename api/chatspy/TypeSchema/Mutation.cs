@@ -338,7 +338,12 @@ public class Mutation
     }
 
     [GraphQLDescription("Edits the message's text based on it's Id.")]
-    public async Task<Message> EditMessage(ChatspyContext dbContext, Guid messageId, string text)
+    public async Task<Message> EditMessage(
+        [Service] ITopicEventSender sender,
+        ChatspyContext dbContext,
+        Guid messageId,
+        string text
+    )
     {
         var dbMessage = await dbContext.Messages.SingleAsync(m => m.Id == messageId);
         dbMessage.Text = text;
@@ -350,11 +355,17 @@ public class Mutation
             Date = dbMessage.Date,
             Text = dbMessage.Text,
         };
+
+        await sender.SendAsync($"{Message.Id}", Message);
         return Message;
     }
 
     [GraphQLDescription("Deletes a message based on it's Id.")]
-    public async Task<Message> DeleteMessage(ChatspyContext dbContext, Guid messageId)
+    public async Task<Message> DeleteMessage(
+        [Service] ITopicEventSender sender,
+        ChatspyContext dbContext,
+        Guid messageId
+    )
     {
         var dbMessage = await dbContext.Messages.SingleAsync(m => m.Id == messageId);
         dbContext.Remove(dbMessage);
@@ -366,6 +377,8 @@ public class Mutation
             Date = dbMessage.Date,
             Text = dbMessage.Text,
         };
+
+        await sender.SendAsync($"{Message.Id}", Message);
         return Message;
     }
 

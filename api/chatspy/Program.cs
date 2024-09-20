@@ -16,11 +16,13 @@ builder.Services.AddDbContext<ChatspyContext>(options =>
 
 builder
     .Services.AddGraphQLServer()
+    .AddInMemorySubscriptions()
     .AddDefaultTransactionScopeHandler()
     .AddMutationConventions(applyToAllMutations: true)
     .RegisterDbContext<ChatspyContext>()
     .AddQueryType<Query>()
-    .AddMutationType<Mutation>();
+    .AddMutationType<Mutation>()
+    .AddSubscriptionType<Subscription>();
 
 // Enable Apollo Sandbox
 builder.Services.AddCors(options =>
@@ -35,6 +37,8 @@ var app = builder.Build();
 
 // Enable Apollo Sandbox
 app.UseCors();
+
+app.UseWebSockets();
 
 app.MapGraphQL();
 

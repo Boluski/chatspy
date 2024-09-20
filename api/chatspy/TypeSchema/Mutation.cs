@@ -2,6 +2,7 @@ using System;
 using chatspy.Data;
 using chatspy.Models;
 using chatspy.Utils;
+using HotChocolate.Subscriptions;
 using Microsoft.EntityFrameworkCore;
 
 namespace chatspy.TypeSchema;
@@ -306,6 +307,7 @@ public class Mutation
 
     [GraphQLDescription("Creates a new message based on the username and channelId")]
     public async Task<Message> CreateMessage(
+        [Service] ITopicEventSender sender,
         ChatspyContext dbContext,
         Guid channelId,
         string username,
@@ -329,7 +331,9 @@ public class Mutation
             Id = dbMessage.Id,
             Date = dbMessage.Date,
             Text = dbMessage.Text,
+            ChannelId = channelId,
         };
+        await sender.SendAsync($"{Message.ChannelId}", Message);
         return Message;
     }
 

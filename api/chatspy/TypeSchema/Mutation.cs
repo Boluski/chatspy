@@ -331,7 +331,7 @@ public class Mutation
             Id = dbMessage.Id,
             Date = dbMessage.Date,
             Text = dbMessage.Text,
-            ChannelId = channelId,
+            ChannelId = dbChannel.Id,
         };
         await sender.SendAsync($"{Message.ChannelId}", Message);
         return Message;
@@ -384,6 +384,7 @@ public class Mutation
 
     [GraphQLDescription("Creates a new thread based on the username and messageId")]
     public async Task<Thread> CreateThread(
+        [Service] ITopicEventSender sender,
         ChatspyContext dbContext,
         string username,
         Guid messageID,
@@ -408,12 +409,19 @@ public class Mutation
             Id = dbThread.Id,
             Date = dbThread.Date,
             Text = dbThread.Text,
+            MessageId = dbMessage.Id,
         };
+        await sender.SendAsync($"{Thread.MessageId}", Thread);
         return Thread;
     }
 
     [GraphQLDescription("Edits the thread's text based on it's Id.")]
-    public async Task<Thread> EditThread(ChatspyContext dbContext, Guid threadId, string text)
+    public async Task<Thread> EditThread(
+        [Service] ITopicEventSender sender,
+        ChatspyContext dbContext,
+        Guid threadId,
+        string text
+    )
     {
         var dbThread = await dbContext.Threads.SingleAsync(t => t.Id == threadId);
         dbThread.Text = text;
@@ -425,12 +433,16 @@ public class Mutation
             Date = dbThread.Date,
             Text = dbThread.Text,
         };
-
+        await sender.SendAsync($"{Thread.Id}", Thread);
         return Thread;
     }
 
     [GraphQLDescription("Deletes a thread based on it's Id.")]
-    public async Task<Thread> DeleteThread(ChatspyContext dbContext, Guid threadId)
+    public async Task<Thread> DeleteThread(
+        [Service] ITopicEventSender sender,
+        ChatspyContext dbContext,
+        Guid threadId
+    )
     {
         var dbThread = await dbContext.Threads.SingleAsync(t => t.Id == threadId);
         dbContext.Remove(dbThread);
@@ -442,6 +454,7 @@ public class Mutation
             Date = dbThread.Date,
             Text = dbThread.Text,
         };
+        await sender.SendAsync($"{Thread.Id}", Thread);
         return Thread;
     }
 }

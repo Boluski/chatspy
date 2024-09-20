@@ -9,6 +9,9 @@ public class Thread
     public string Text { get; set; }
     public DateTime Date { get; set; }
 
+    [GraphQLIgnore]
+    public Guid? MessageId { get; set; }
+
     public async Task<User> User(ChatspyContext dbContext)
     {
         var dbThread = await dbContext

@@ -29,7 +29,10 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
-        builder.WithOrigins("https://studio.apollographql.com").AllowAnyHeader().AllowAnyMethod();
+        builder
+            .WithOrigins("https://studio.apollographql.com", "http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 

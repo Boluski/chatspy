@@ -18,6 +18,7 @@ import { useState } from "react";
 import * as EmailValidator from "email-validator";
 import passwordValidator from "password-validator";
 import { AiOutlineMail } from "react-icons/ai";
+import { signUp } from "aws-amplify/auth";
 import Link from "next/link";
 
 export default function SignUp() {
@@ -238,11 +239,20 @@ export default function SignUp() {
     </FormBase>
   );
 
-  function handleSignUp() {
+  async function handleSignUp() {
     console.log("Full Name", fullName);
     console.log("Email", email);
     console.log("Password", password);
     console.log("Confirm Password", confirmPassword);
+
+    // const { isSignUpComplete, userId, nextStep } = await signUp({
+    //   username: email,
+    //   password: password,
+
+    //   options: { userAttributes: {
+    //     preferred_username:username
+    //   } },
+    // });
     setNextStep(true);
   }
   function handleResend() {}

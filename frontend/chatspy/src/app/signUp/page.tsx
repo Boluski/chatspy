@@ -85,6 +85,7 @@ export default function SignUp() {
             <Stack align="center" gap={4}>
               <PinInput
                 error={pinError}
+                length={6}
                 size="lg"
                 inputMode="numeric"
                 onChange={(value: string) => {

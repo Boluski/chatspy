@@ -16,10 +16,20 @@ export default function FormBase({ title, message, children }: FormBaseProps) {
         justify="center"
         align="center"
       >
-        <Title c={"gray.0"} size={"4rem"}>
+        <Title
+          px={"lg"}
+          style={{ textAlign: "center" }}
+          c={"gray.0"}
+          size={"4rem"}
+        >
           {title}
         </Title>
-        <Text c={"gray.0"} size={"2rem"}>
+        <Text
+          px={"lg"}
+          style={{ textAlign: "center" }}
+          c={"gray.0"}
+          size={"2rem"}
+        >
           {message}
         </Text>
       </Stack>

@@ -7,11 +7,14 @@ import {
   PasswordInput,
   TextInput,
   Button,
+  Anchor,
+  Center,
 } from "@mantine/core";
 import FormBase from "../components/formBase";
 import { useState } from "react";
 import * as EmailValidator from "email-validator";
 import passwordValidator from "password-validator";
+import Link from "next/link";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -20,7 +23,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState("");
 
-  const [canLogin, setCanLogin] = useState(false);
+  const [enableLogin, setEnableLogin] = useState(false);
 
   const passwordSchema = new passwordValidator();
   passwordSchema
@@ -63,13 +66,13 @@ export default function Login() {
               if (EmailValidator.validate(event.currentTarget.value)) {
                 setEmailError("");
                 if (password != "") {
-                  setCanLogin(true);
+                  setEnableLogin(true);
                 } else {
-                  setCanLogin(false);
+                  setEnableLogin(false);
                 }
               } else {
                 setEmailError("This is not a valid email address.");
-                setCanLogin(false);
+                setEnableLogin(false);
               }
             }}
           />
@@ -81,21 +84,35 @@ export default function Login() {
               if (passwordSchema.validate(event.currentTarget.value)) {
                 setPasswordError("");
                 if (email != "") {
-                  setCanLogin(true);
+                  setEnableLogin(true);
                 } else {
-                  setCanLogin(false);
+                  setEnableLogin(false);
                 }
               } else {
                 setPasswordError(
                   "Password must contain uppercase, lowercase, number, symbol, and must be at least 8 characters."
                 );
-                setCanLogin(false);
+                setEnableLogin(false);
               }
             }}
           />
-          <Button disabled={!canLogin} color="violet.8" onClick={handleClick}>
+          <Button
+            disabled={!enableLogin}
+            color="violet.8"
+            onClick={handleClick}
+          >
             Login
           </Button>
+          <Center>
+            <Anchor
+              component={Link}
+              href={"signUp/"}
+              c={"violet.8"}
+              underline="always"
+            >
+              Don't have an account - Create an account
+            </Anchor>
+          </Center>
         </Stack>
       </Paper>
     </FormBase>

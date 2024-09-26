@@ -17,7 +17,7 @@ export default function FormBase({ title, message, children }: FormBaseProps) {
         align="center"
       >
         <Title
-          px={"lg"}
+          px={"xl"}
           style={{ textAlign: "center" }}
           c={"gray.0"}
           size={"4rem"}
@@ -25,7 +25,7 @@ export default function FormBase({ title, message, children }: FormBaseProps) {
           {title}
         </Title>
         <Text
-          px={"lg"}
+          px={"xl"}
           style={{ textAlign: "center" }}
           c={"gray.0"}
           size={"2rem"}

@@ -1,8 +1,10 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace chatspy.Models;
 
+[Index(nameof(Email), IsUnique = true)]
 public class UserModel
 {
     [Key]

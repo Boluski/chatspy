@@ -10,7 +10,7 @@ namespace chatspy.TypeSchema;
 public class Mutation
 {
     [GraphQLDescription("Creates a new user and generates the username.")]
-    public async Task<User> CreateUser(
+    public async Task<User?> CreateUser(
         ChatspyContext dbContext,
         string FullName,
         string Email,
@@ -26,16 +26,22 @@ public class Mutation
                 ProfilePicture = ProfilePicture,
             };
 
-        await dbContext.Users.AddAsync(NewDbUser);
-        await dbContext.SaveChangesAsync();
-
-        return new User
+        try
         {
-            Username = NewDbUser.Username,
-            FullName = NewDbUser.FullName,
-            Email = NewDbUser.Email,
-            ProfilePicture = NewDbUser.ProfilePicture,
-        };
+            await dbContext.Users.AddAsync(NewDbUser);
+            await dbContext.SaveChangesAsync();
+            return new User
+            {
+                Username = NewDbUser.Username,
+                FullName = NewDbUser.FullName,
+                Email = NewDbUser.Email,
+                ProfilePicture = NewDbUser.ProfilePicture,
+            };
+        }
+        catch (System.Exception)
+        {
+            return null;
+        }
     }
 
     [GraphQLDescription("Updates a user's meta data based on the username.")]

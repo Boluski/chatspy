@@ -11,6 +11,7 @@ import {
   ScrollArea,
   Modal,
   DEFAULT_THEME,
+  Popover,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { signOut, fetchUserAttributes } from "aws-amplify/auth";
@@ -24,6 +25,7 @@ import { useLazyQuery } from "@apollo/client";
 import { gql } from "../../__generated__/gql";
 import WorkspaceCard from "../components/workspaceCard";
 import CreateWorkspaceModal from "../components/createWorkspaceModal";
+import { useRouter } from "next/navigation";
 
 Amplify.configure(outputs);
 
@@ -52,7 +54,10 @@ export default function Workspace() {
     { open: createWorkspaceOpen, close: createWorkspaceClose },
   ] = useDisclosure(false);
 
+  const router = useRouter();
+
   const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [workspaces, setWorkspaces] = useState<workspaceState[]>([]);
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -78,7 +83,32 @@ export default function Workspace() {
           </Title>
         </Group>
 
-        <Avatar name={fullName} size={"lg"} />
+        <Popover>
+          <Popover.Target>
+            <Avatar name={fullName} size={"lg"} />
+          </Popover.Target>
+          <Popover.Dropdown>
+            <Stack>
+              <Title>{fullName}</Title>
+              <Group>
+                <Avatar name={fullName} size={"xl"} />
+                <Stack gap={5}>
+                  <Title size={"1.5rem"}>{currentUsername.current}</Title>
+                  <Title size={"1.5rem"}>{email}</Title>
+                </Stack>
+              </Group>
+              <Button
+                color="violet.8"
+                onClick={async () => {
+                  await signOut();
+                  router.push("/login");
+                }}
+              >
+                Sign Out
+              </Button>
+            </Stack>
+          </Popover.Dropdown>
+        </Popover>
       </Group>
       <Group justify={"space-between"} wrap={"nowrap"} px={15}>
         <Title size={"2.3rem"} c={"dark.9"}>
@@ -140,8 +170,6 @@ export default function Workspace() {
           appendWorkspaceToRef={appendWorkspaceToRef}
         />
       </Modal>
-
-      {/* <Button onClick={async () => await signOut()}>Sign Out</Button> */}
     </Stack>
   );
 
@@ -165,6 +193,7 @@ export default function Workspace() {
       if (data != undefined) {
         const currentUser = data.userByUsername;
         setFullName(currentUser.fullName);
+        setEmail(currentUser.email);
         userWorkspaces.current = currentUser.workspaces.map((w) => {
           return { id: w.id as string, name: w.name };
         });

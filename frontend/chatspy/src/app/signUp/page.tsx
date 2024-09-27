@@ -18,7 +18,7 @@ import * as EmailValidator from "email-validator";
 import passwordValidator from "password-validator";
 import { AiOutlineMail } from "react-icons/ai";
 import { Amplify } from "aws-amplify";
-import { signUp, confirmSignUp } from "aws-amplify/auth";
+import { signUp, confirmSignUp, signIn } from "aws-amplify/auth";
 import outputs from "../../../amplify_outputs.json";
 import { useMutation } from "@apollo/client";
 import { gql } from "../../__generated__/gql";
@@ -36,6 +36,25 @@ const CREATE_USER_QUERY = gql(`
         }
         }
     `);
+
+const passwordSchema = new passwordValidator();
+
+passwordSchema
+  .is()
+  .min(8)
+  .is()
+  .max(100)
+  .has()
+  .uppercase()
+  .has()
+  .lowercase()
+  .has()
+  .digits()
+  .has()
+  .symbols()
+  .has()
+  .not()
+  .spaces();
 
 Amplify.configure(outputs);
 export default function SignUp() {
@@ -65,24 +84,6 @@ export default function SignUp() {
   const [createUserFunction] = useMutation(CREATE_USER_QUERY);
 
   const router = useRouter();
-
-  const passwordSchema = new passwordValidator();
-  passwordSchema
-    .is()
-    .min(8)
-    .is()
-    .max(100)
-    .has()
-    .uppercase()
-    .has()
-    .lowercase()
-    .has()
-    .digits()
-    .has()
-    .symbols()
-    .has()
-    .not()
-    .spaces();
 
   return (
     <FormBase
@@ -296,6 +297,11 @@ export default function SignUp() {
       await confirmSignUp({
         username: email,
         confirmationCode: pinCode,
+      });
+
+      await signIn({
+        username: email,
+        password: password,
       });
 
       router.push("/workspace");

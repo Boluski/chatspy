@@ -14,7 +14,32 @@ import FormBase from "../components/formBase";
 import { useState } from "react";
 import * as EmailValidator from "email-validator";
 import passwordValidator from "password-validator";
+import { signIn } from "aws-amplify/auth";
+import outputs from "../../../amplify_outputs.json";
+import { Amplify } from "aws-amplify";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+Amplify.configure(outputs);
+
+const passwordSchema = new passwordValidator();
+
+passwordSchema
+  .is()
+  .min(8)
+  .is()
+  .max(100)
+  .has()
+  .uppercase()
+  .has()
+  .lowercase()
+  .has()
+  .digits()
+  .has()
+  .symbols()
+  .has()
+  .not()
+  .spaces();
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -24,24 +49,9 @@ export default function Login() {
   const [passwordError, setPasswordError] = useState("");
 
   const [enableLogin, setEnableLogin] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
 
-  const passwordSchema = new passwordValidator();
-  passwordSchema
-    .is()
-    .min(8)
-    .is()
-    .max(100)
-    .has()
-    .uppercase()
-    .has()
-    .lowercase()
-    .has()
-    .digits()
-    .has()
-    .symbols()
-    .has()
-    .not()
-    .spaces();
+  const router = useRouter();
 
   return (
     <FormBase
@@ -98,6 +108,7 @@ export default function Login() {
           />
           <Button
             disabled={!enableLogin}
+            loading={loginLoading}
             color="violet.8"
             onClick={handleClick}
           >
@@ -118,8 +129,19 @@ export default function Login() {
     </FormBase>
   );
 
-  function handleClick() {
-    console.log("Email", email);
-    console.log("Password", password);
+  async function handleClick() {
+    setLoginLoading(true);
+
+    try {
+      await signIn({
+        username: email,
+        password: password,
+      });
+      router.push("/workspace");
+    } catch (error) {
+      setEmailError("Email may be incorrect.");
+      setPasswordError("Password may be incorrect.");
+      setLoginLoading(false);
+    }
   }
 }

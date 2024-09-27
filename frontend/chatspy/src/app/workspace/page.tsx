@@ -26,6 +26,7 @@ import { gql } from "../../__generated__/gql";
 import WorkspaceCard from "../components/workspaceCard";
 import CreateWorkspaceModal from "../components/createWorkspaceModal";
 import { useRouter } from "next/navigation";
+import WorkspacesLoading from "../components/workspacesLoading";
 
 Amplify.configure(outputs);
 
@@ -48,7 +49,7 @@ type workspaceState = {
   name: string;
 };
 
-export default function Workspace() {
+export default function Workspaces() {
   const [
     createWorkspaceOpened,
     { open: createWorkspaceOpen, close: createWorkspaceClose },
@@ -71,7 +72,7 @@ export default function Workspace() {
     handleInitialLoad();
   }, []);
 
-  if (loading) return <>Loading</>;
+  if (loading) return <WorkspacesLoading />;
 
   return (
     <Stack w={"100%"} h={"100vh"} bg={"gray.0"} px={15} py={10}>

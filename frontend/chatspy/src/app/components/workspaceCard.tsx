@@ -1,4 +1,6 @@
 import { Stack, Title, Group, Button, DEFAULT_THEME } from "@mantine/core";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 type WorkspaceCardProps = {
   workspaceId: string;
@@ -9,6 +11,8 @@ export default function WorkspaceCard({
   workspaceId,
   name,
 }: WorkspaceCardProps) {
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
   return (
     <Stack
       style={{
@@ -20,7 +24,16 @@ export default function WorkspaceCard({
     >
       <Title c={"dark.6"}>{name}</Title>
       <Group justify={"flex-end"}>
-        <Button variant="light" color="gray" size="md">
+        <Button
+          loading={loading}
+          variant="light"
+          color="gray"
+          size="md"
+          onClick={() => {
+            setLoading(true);
+            router.push(`workspace/${workspaceId}`);
+          }}
+        >
           Open Workspace
         </Button>
       </Group>

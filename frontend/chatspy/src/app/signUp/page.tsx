@@ -87,7 +87,7 @@ export default function SignUp() {
 
   return (
     <FormBase
-      title="The Journey Begins"
+      title="Everything has a beginning!"
       message="Get ready to speed up your communication and get projects done."
     >
       <Paper shadow="xl" radius={"0.5rem"}>

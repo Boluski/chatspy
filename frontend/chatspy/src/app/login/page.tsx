@@ -55,7 +55,7 @@ export default function Login() {
 
   return (
     <FormBase
-      title="Welcome Back"
+      title="Welcome Back👋"
       message="Time to chat and collaborate with the team!"
     >
       <Paper shadow="xl" radius={"0.5rem"}>

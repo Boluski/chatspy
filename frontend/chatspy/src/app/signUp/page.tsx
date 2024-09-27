@@ -10,7 +10,6 @@ import {
   Anchor,
   Center,
   PinInput,
-  Group,
   DEFAULT_THEME,
 } from "@mantine/core";
 import FormBase from "../components/formBase";
@@ -18,9 +17,27 @@ import { useState } from "react";
 import * as EmailValidator from "email-validator";
 import passwordValidator from "password-validator";
 import { AiOutlineMail } from "react-icons/ai";
-import { signUp } from "aws-amplify/auth";
+import { Amplify } from "aws-amplify";
+import { signUp, confirmSignUp } from "aws-amplify/auth";
+import outputs from "../../../amplify_outputs.json";
+import { useMutation } from "@apollo/client";
+import { gql } from "../../__generated__/gql";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
+const CREATE_USER_QUERY = gql(`
+        mutation CreateUser($input: CreateUserInput!) {
+        createUser(input: $input) {
+            user {
+            username
+            fullName
+            email
+            }
+        }
+        }
+    `);
+
+Amplify.configure(outputs);
 export default function SignUp() {
   const [fullName, setFullName] = useState("");
   const [fullNameError, setFullNameError] = useState("");
@@ -35,12 +52,19 @@ export default function SignUp() {
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
 
   const [enableSignUp, setEnableSignUp] = useState(false);
+  const [signUpLoading, setSignUpLoading] = useState(false);
+
   const [enableVerify, setEnableVerify] = useState(false);
+  const [verifyLoading, setVerifyLoading] = useState(false);
 
   const [pinCode, setPinCode] = useState("");
   const [pinError, setPinError] = useState(false);
 
   const [nextStep, setNextStep] = useState(false);
+
+  const [createUserFunction] = useMutation(CREATE_USER_QUERY);
+
+  const router = useRouter();
 
   const passwordSchema = new passwordValidator();
   passwordSchema
@@ -93,7 +117,7 @@ export default function SignUp() {
                   setPinCode(value);
                   console.log(value);
 
-                  if (value.length == 4) {
+                  if (value.length == 6) {
                     setEnableVerify(true);
                   } else setEnableVerify(false);
                 }}
@@ -103,23 +127,15 @@ export default function SignUp() {
               </Title>
             </Stack>
 
-            <Group justify="space-between" w={"100%"}>
-              <Button
-                disabled={!enableSignUp}
-                color="violet.8"
-                onClick={handleResend}
-                variant={"light"}
-              >
-                Resend
-              </Button>
-              <Button
-                disabled={!enableVerify}
-                color="violet.8"
-                onClick={handleVerify}
-              >
-                Verify Code
-              </Button>
-            </Group>
+            <Button
+              w={"100%"}
+              disabled={!enableVerify}
+              color="violet.8"
+              onClick={handleVerify}
+              loading={verifyLoading}
+            >
+              Verify Code
+            </Button>
           </Stack>
         ) : (
           <Stack
@@ -220,6 +236,7 @@ export default function SignUp() {
               disabled={!enableSignUp}
               color="violet.8"
               onClick={handleSignUp}
+              loading={signUpLoading}
             >
               Create Account
             </Button>
@@ -240,24 +257,51 @@ export default function SignUp() {
   );
 
   async function handleSignUp() {
-    console.log("Full Name", fullName);
-    console.log("Email", email);
-    console.log("Password", password);
-    console.log("Confirm Password", confirmPassword);
+    setSignUpLoading(true);
 
-    // const { isSignUpComplete, userId, nextStep } = await signUp({
-    //   username: email,
-    //   password: password,
+    const newUser = await createUserFunction({
+      variables: {
+        input: {
+          fullName: fullName,
+          email: email,
+          profilePicture: "",
+        },
+      },
+    });
 
-    //   options: { userAttributes: {
-    //     preferred_username:username
-    //   } },
-    // });
-    setNextStep(true);
+    if (newUser.data?.createUser.user == null) {
+      setEmailError("This email has already been used.");
+      setSignUpLoading(false);
+    } else {
+      await signUp({
+        username: email,
+        password: password,
+
+        options: {
+          userAttributes: {
+            preferred_username: newUser.data.createUser.user.username,
+          },
+        },
+      });
+
+      setNextStep(true);
+    }
   }
-  function handleResend() {}
 
-  function handleVerify() {
+  async function handleVerify() {
+    setVerifyLoading(true);
     console.log("Pin Code", pinCode);
+
+    try {
+      await confirmSignUp({
+        username: email,
+        confirmationCode: pinCode,
+      });
+
+      router.push("/workspace");
+    } catch (error) {
+      setPinError(true);
+      setVerifyLoading(false);
+    }
   }
 }

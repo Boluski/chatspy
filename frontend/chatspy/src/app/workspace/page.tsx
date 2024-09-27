@@ -60,6 +60,7 @@ export default function Workspace() {
   const [loading, setLoading] = useState(true);
   const [getUser] = useLazyQuery(GET_USER);
   let userWorkspaces = useRef<workspaceState[]>([]);
+  let currentUsername = useRef("");
 
   useEffect(() => {
     handleInitialLoad();
@@ -132,7 +133,12 @@ export default function Workspace() {
           },
         }}
       >
-        <CreateWorkspaceModal />
+        <CreateWorkspaceModal
+          closeFunction={createWorkspaceClose}
+          username={currentUsername.current}
+          setWorkspaces={setWorkspaces}
+          appendWorkspaceToRef={appendWorkspaceToRef}
+        />
       </Modal>
 
       {/* <Button onClick={async () => await signOut()}>Sign Out</Button> */}
@@ -154,6 +160,7 @@ export default function Workspace() {
   async function handleInitialLoad() {
     const { preferred_username: username } = await fetchUserAttributes();
     if (username != undefined) {
+      currentUsername.current = username;
       const { data } = await getUser({ variables: { username: username } });
       if (data != undefined) {
         const currentUser = data.userByUsername;
@@ -165,5 +172,9 @@ export default function Workspace() {
         setLoading(false);
       }
     }
+  }
+
+  function appendWorkspaceToRef(workspace: workspaceState) {
+    userWorkspaces.current.push(workspace);
   }
 }

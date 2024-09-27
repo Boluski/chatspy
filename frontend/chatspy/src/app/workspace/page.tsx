@@ -9,8 +9,10 @@ import {
   TextInput,
   SimpleGrid,
   ScrollArea,
+  Modal,
   DEFAULT_THEME,
 } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { signOut, fetchUserAttributes } from "aws-amplify/auth";
 import outputs from "../../../amplify_outputs.json";
 import { Amplify } from "aws-amplify";
@@ -21,6 +23,7 @@ import { ChangeEvent, useState, useEffect, useRef } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { gql } from "../../__generated__/gql";
 import WorkspaceCard from "../components/workspaceCard";
+import CreateWorkspaceModal from "../components/createWorkspaceModal";
 
 Amplify.configure(outputs);
 
@@ -44,6 +47,11 @@ type workspaceState = {
 };
 
 export default function Workspace() {
+  const [
+    createWorkspaceOpened,
+    { open: createWorkspaceOpen, close: createWorkspaceClose },
+  ] = useDisclosure(false);
+
   const [fullName, setFullName] = useState("");
   const [workspaces, setWorkspaces] = useState<workspaceState[]>([]);
 
@@ -86,6 +94,7 @@ export default function Workspace() {
           size="md"
           color="violet.8"
           leftSection={<MdAdd size={"2rem"} />}
+          onClick={createWorkspaceOpen}
         >
           Create Workspace
         </Button>
@@ -105,6 +114,26 @@ export default function Workspace() {
           </SimpleGrid>
         </ScrollArea>
       )}
+      <Modal
+        size={"md"}
+        opened={createWorkspaceOpened}
+        onClose={createWorkspaceClose}
+        withCloseButton={false}
+        title="Create Workspace"
+        // centered
+        overlayProps={{
+          backgroundOpacity: 0.4,
+          blur: 4,
+        }}
+        styles={{
+          title: {
+            fontWeight: "bold",
+            fontSize: "1.5rem",
+          },
+        }}
+      >
+        <CreateWorkspaceModal />
+      </Modal>
 
       {/* <Button onClick={async () => await signOut()}>Sign Out</Button> */}
     </Stack>

@@ -17,9 +17,10 @@ import { Amplify } from "aws-amplify";
 import { MdAdd } from "react-icons/md";
 import { IoSearchSharp } from "react-icons/io5";
 import { IoTelescope } from "react-icons/io5";
-import { ChangeEvent, useState, useEffect } from "react";
+import { ChangeEvent, useState, useEffect, useRef } from "react";
 import { useLazyQuery } from "@apollo/client";
 import { gql } from "../../__generated__/gql";
+import WorkspaceCard from "../components/workspaceCard";
 
 Amplify.configure(outputs);
 
@@ -50,6 +51,7 @@ export default function Workspace() {
 
   const [loading, setLoading] = useState(true);
   const [getUser] = useLazyQuery(GET_USER);
+  let userWorkspaces = useRef<workspaceState[]>([]);
 
   useEffect(() => {
     handleInitialLoad();
@@ -89,14 +91,18 @@ export default function Workspace() {
         </Button>
       </Group>
 
-      {workspaces?.length == 0 ? (
+      {workspaces.length == 0 ? (
         <Stack style={{ flexGrow: "1" }} justify="center" align="center">
           <IoTelescope size={"12rem"} color={DEFAULT_THEME.colors.violet[8]} />
           <Title c={"violet.8"}>Create or Join a workspace!</Title>
         </Stack>
       ) : (
         <ScrollArea>
-          <SimpleGrid cols={3} px={15}></SimpleGrid>
+          <SimpleGrid cols={3} px={15}>
+            {workspaces.map((w) => (
+              <WorkspaceCard key={w.id} workspaceId={w.id} name={w.name} />
+            ))}
+          </SimpleGrid>
         </ScrollArea>
       )}
 
@@ -106,7 +112,14 @@ export default function Workspace() {
 
   function handleSearch(event: ChangeEvent<HTMLInputElement>) {
     setSearchQuery(event.currentTarget.value);
-    console.log(event.currentTarget.value);
+
+    const filteredWorkspace = userWorkspaces.current.filter((w) =>
+      w.name
+        .toLocaleLowerCase()
+        .includes(event.currentTarget.value.toLocaleLowerCase())
+    );
+
+    setWorkspaces(filteredWorkspace);
   }
 
   async function handleInitialLoad() {
@@ -116,12 +129,11 @@ export default function Workspace() {
       if (data != undefined) {
         const currentUser = data.userByUsername;
         setFullName(currentUser.fullName);
-        const userWorkspaces = currentUser.workspaces.map((w) => {
+        userWorkspaces.current = currentUser.workspaces.map((w) => {
           return { id: w.id as string, name: w.name };
         });
-        setWorkspaces(userWorkspaces);
+        setWorkspaces(userWorkspaces.current);
         setLoading(false);
-        console.log(userWorkspaces);
       }
     }
   }

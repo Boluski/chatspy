@@ -1,6 +1,14 @@
 import { Stack, Title, Group, Button, DEFAULT_THEME } from "@mantine/core";
 
-export default function WorkspaceCard() {
+type WorkspaceCardProps = {
+  workspaceId: string;
+  name: string;
+};
+
+export default function WorkspaceCard({
+  workspaceId,
+  name,
+}: WorkspaceCardProps) {
   return (
     <Stack
       style={{
@@ -10,7 +18,7 @@ export default function WorkspaceCard() {
       p={10}
       bg={"gray.1"}
     >
-      <Title c={"dark.6"}>Spellblaze</Title>
+      <Title c={"dark.6"}>{name}</Title>
       <Group justify={"flex-end"}>
         <Button variant="light" color="gray" size="md">
           Open Workspace

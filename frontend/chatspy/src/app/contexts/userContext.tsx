@@ -37,6 +37,7 @@ type workspaceType = {
   id: string;
   name: string;
   createdBy: string;
+  isAdmin?: boolean;
 };
 
 const defaultValues = {

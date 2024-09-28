@@ -66,6 +66,7 @@ export default function Workspace({ params }: Workspace) {
   const [isAuthorized, setIsAuthorized] = useState(false);
   const {
     isAuthenticated,
+    currentWorkspace,
     setIsAuthenticated,
     setEmail,
     setUsername,
@@ -101,21 +102,24 @@ export default function Workspace({ params }: Workspace) {
                     borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
                   },
                   tab: {
-                    maxWidth: "20rem",
+                    width: "20rem",
                   },
                   tabLabel: { fontSize: "1.5rem" },
                 }}
               >
                 <TabsList>
-                  <Button
-                    my={0}
-                    size="lg"
-                    variant="light"
-                    color="gray"
-                    leftSection={<MdAdd size={"2rem"} />}
-                  >
-                    Create New Channel
-                  </Button>
+                  {currentWorkspace?.isAdmin ? (
+                    <Button
+                      my={0}
+                      size="lg"
+                      variant="light"
+                      color="gray"
+                      leftSection={<MdAdd size={"2rem"} />}
+                    >
+                      Create New Channel
+                    </Button>
+                  ) : null}
+
                   <TabsTab value="general">General</TabsTab>
                   <TabsTab value="announcements">Announcements</TabsTab>
                   <TabsTab value="welcome">Welcome</TabsTab>
@@ -172,10 +176,17 @@ export default function Workspace({ params }: Workspace) {
 
             if (currentWorkspaceData != null) {
               // Access to the current workspace data
+              const isAdmin =
+                currentWorkspaceData.workspaceByID.createdBy ==
+                preferred_username
+                  ? true
+                  : false;
+
               setCurrentWorkspace({
                 id: currentWorkspaceData.workspaceByID.id,
                 name: currentWorkspaceData.workspaceByID.name,
                 createdBy: currentWorkspaceData.workspaceByID.createdBy,
+                isAdmin: isAdmin,
               });
             }
           }

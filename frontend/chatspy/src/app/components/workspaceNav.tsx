@@ -6,8 +6,11 @@ import {
   IoSettingsOutline,
 } from "react-icons/io5";
 import { MdAdd } from "react-icons/md";
+import { UserContext } from "../contexts/userContext";
+import { useContext } from "react";
 
 export default function WorkspaceNav() {
+  const { currentWorkspace } = useContext(UserContext);
   return (
     <Stack
       w={"fit-content"}
@@ -43,24 +46,26 @@ export default function WorkspaceNav() {
         </ActionIcon>
       </Stack>
 
-      <Stack>
-        <ActionIcon
-          color="violet.8"
-          variant="light"
-          size="xl"
-          style={{ width: "4rem", height: "4rem" }}
-        >
-          <MdAdd size={"2.5rem"} />
-        </ActionIcon>
-        <ActionIcon
-          color="violet.8"
-          variant="light"
-          size="xl"
-          style={{ width: "4rem", height: "4rem" }}
-        >
-          <IoSettingsOutline size={"2.5rem"} />
-        </ActionIcon>
-      </Stack>
+      {currentWorkspace?.isAdmin ? (
+        <Stack>
+          <ActionIcon
+            color="violet.8"
+            variant="light"
+            size="xl"
+            style={{ width: "4rem", height: "4rem" }}
+          >
+            <MdAdd size={"2.5rem"} />
+          </ActionIcon>
+          <ActionIcon
+            color="violet.8"
+            variant="light"
+            size="xl"
+            style={{ width: "4rem", height: "4rem" }}
+          >
+            <IoSettingsOutline size={"2.5rem"} />
+          </ActionIcon>
+        </Stack>
+      ) : null}
     </Stack>
   );
 }

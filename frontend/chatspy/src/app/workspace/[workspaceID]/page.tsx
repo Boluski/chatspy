@@ -65,14 +65,13 @@ export default function Workspace({ params }: Workspace) {
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const {
-    username,
     isAuthenticated,
-    userWorkspaces,
     setIsAuthenticated,
     setEmail,
     setUsername,
     setFullName,
     setUserWorkspaces,
+    setCurrentWorkspace,
   } = useContext(UserContext);
 
   useEffect(() => {
@@ -164,6 +163,21 @@ export default function Workspace({ params }: Workspace) {
           if (workspaceIndex != -1) {
             // User is authorized
             setIsAuthorized(true);
+            const { data: currentWorkspaceData } = await getCurrentWorkspace({
+              variables: {
+                username: preferred_username,
+                workspaceId: allWorkspaces[workspaceIndex].id,
+              },
+            });
+
+            if (currentWorkspaceData != null) {
+              // Access to the current workspace data
+              setCurrentWorkspace({
+                id: currentWorkspaceData.workspaceByID.id,
+                name: currentWorkspaceData.workspaceByID.name,
+                createdBy: currentWorkspaceData.workspaceByID.createdBy,
+              });
+            }
           }
         }
       }
@@ -174,53 +188,3 @@ export default function Workspace({ params }: Workspace) {
     setLoading(false);
   }
 }
-
-// (
-//   isAuthorized ? (
-// <>
-//   <WorkspaceHeader />
-//   <Group w={"100%"} style={{ flexGrow: "1" }} align={"start"} gap={0}>
-//     <WorkspaceNav />
-//     <Tabs
-//       style={{ flexGrow: "1" }}
-//       h={"100%"}
-//       color="violet.8"
-//       defaultValue="gallery"
-//       orientation="vertical"
-//       variant="pills"
-//       radius={0}
-//       styles={{
-//         list: {
-//           borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
-//         },
-//         tab: {
-//           maxWidth: "20rem",
-//         },
-//         tabLabel: { fontSize: "1.5rem" },
-//       }}
-//     >
-//       <TabsList>
-//         <Button
-//           my={0}
-//           size="lg"
-//           variant="light"
-//           color="gray"
-//           leftSection={<MdAdd size={"2rem"} />}
-//         >
-//           Create New Channel
-//         </Button>
-//         <TabsTab value="general">General</TabsTab>
-//         <TabsTab value="announcements">Announcements</TabsTab>
-//         <TabsTab value="welcome">Welcome</TabsTab>
-//       </TabsList>
-
-//       <TabsPanel value="general">General</TabsPanel>
-//       <TabsPanel value="announcements">Announcements</TabsPanel>
-//       <TabsPanel value="welcome">Welcome</TabsPanel>
-//     </Tabs>
-//   </Group>
-// </>
-//   ) : (
-//     <>Not Authorized</>
-//   )
-// )

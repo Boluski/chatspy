@@ -4,7 +4,9 @@ import { IoSearchSharp } from "react-icons/io5";
 import { UserContext } from "../contexts/userContext";
 
 export default function WorkspaceHeader() {
-  const { fullName } = useContext(UserContext);
+  const { fullName, currentWorkspace } = useContext(UserContext);
+  console.log("Good", currentWorkspace);
+
   return (
     <Group
       style={{ borderBottom: `solid 2px ${DEFAULT_THEME.colors.dark[0]}` }}
@@ -12,12 +14,12 @@ export default function WorkspaceHeader() {
     >
       <Group gap={5}>
         <Avatar
-          name="Spellblaze"
+          name={currentWorkspace?.name}
           size={"lg"}
           radius={"lg"}
           styles={{ placeholder: { fontSize: "2rem" } }}
         />
-        <Title c={"dark.6"}>Spellblaze</Title>
+        <Title c={"dark.6"}>{currentWorkspace?.name}</Title>
       </Group>
       <TextInput
         style={{ flexGrow: "1" }}

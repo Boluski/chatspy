@@ -33,6 +33,24 @@ public class Query
         return user;
     }
 
+    [GraphQLDescription("Returns a workspace based on an it's id and username")]
+    public async Task<Workspace> GetWorkspaceByID(
+        ChatspyContext dbContext,
+        Guid workspaceID,
+        string username
+    )
+    {
+        var dbWorkspace = await dbContext.Workspaces.SingleAsync(w => w.Id == workspaceID);
+        var workspace = new Workspace
+        {
+            Id = dbWorkspace.Id,
+            CreatedBy = dbWorkspace.CreatedBy,
+            Name = dbWorkspace.Name,
+            UsernameLink = username,
+        };
+        return workspace;
+    }
+
     [GraphQLDescription("Returns up to ten messages based on the channelId and cursor.")]
     [UsePaging(MaxPageSize = 10)]
     public async Task<IEnumerable<Message>> GetChannelMessages(

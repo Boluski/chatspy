@@ -8,6 +8,10 @@ import {
   TextInput,
   DEFAULT_THEME,
   ActionIcon,
+  Tabs,
+  TabsList,
+  TabsTab,
+  TabsPanel,
 } from "@mantine/core";
 import { IoSearchSharp } from "react-icons/io5";
 import { FaHashtag } from "react-icons/fa6";
@@ -26,7 +30,35 @@ export default function Workspace({ params }: Workspace) {
   return (
     <Stack w={"100wh"} h={"100vh"} bg={"gray.0"} px={15} py={10}>
       <WorkspaceHeader />
-      <WorkspaceNav />
+      <Group w={"100%"} style={{ flexGrow: "1" }} align={"start"} gap={0}>
+        <WorkspaceNav />
+        <Tabs
+          style={{ flexGrow: "1" }}
+          h={"100%"}
+          color="violet.8"
+          defaultValue="gallery"
+          orientation="vertical"
+          variant="pills"
+          radius={0}
+          styles={{
+            list: {
+              borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
+            },
+            tab: { width: "15rem" },
+            tabLabel: { fontSize: "1.5rem" },
+          }}
+        >
+          <TabsList>
+            <TabsTab value="general">General</TabsTab>
+            <TabsTab value="announcements">Announcements</TabsTab>
+            <TabsTab value="welcome">Welcome</TabsTab>
+          </TabsList>
+
+          <TabsPanel value="general">General</TabsPanel>
+          <TabsPanel value="announcements">Announcements</TabsPanel>
+          <TabsPanel value="welcome">Welcome</TabsPanel>
+        </Tabs>
+      </Group>
     </Stack>
   );
 }

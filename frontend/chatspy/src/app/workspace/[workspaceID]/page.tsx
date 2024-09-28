@@ -92,7 +92,7 @@ export default function Workspace({ params }: Workspace) {
               <Tabs
                 style={{ flexGrow: "1" }}
                 h={"100%"}
-                color="violet.8"
+                color="violet.2"
                 defaultValue="gallery"
                 orientation="vertical"
                 variant="pills"

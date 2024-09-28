@@ -5,7 +5,6 @@ import { UserContext } from "../contexts/userContext";
 
 export default function WorkspaceHeader() {
   const { fullName, currentWorkspace } = useContext(UserContext);
-  console.log("Good", currentWorkspace);
 
   return (
     <Group

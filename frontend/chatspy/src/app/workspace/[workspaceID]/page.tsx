@@ -44,11 +44,22 @@ export default function Workspace({ params }: Workspace) {
             list: {
               borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
             },
-            tab: { width: "15rem" },
+            tab: {
+              maxWidth: "20rem",
+            },
             tabLabel: { fontSize: "1.5rem" },
           }}
         >
           <TabsList>
+            <Button
+              my={0}
+              size="lg"
+              variant="light"
+              color="gray"
+              leftSection={<MdAdd size={"2rem"} />}
+            >
+              Create New Channel
+            </Button>
             <TabsTab value="general">General</TabsTab>
             <TabsTab value="announcements">Announcements</TabsTab>
             <TabsTab value="welcome">Welcome</TabsTab>

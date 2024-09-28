@@ -7,7 +7,7 @@ export default function WorkspaceHeader() {
       style={{ borderBottom: `solid 2px ${DEFAULT_THEME.colors.dark[0]}` }}
       py={5}
     >
-      <Group>
+      <Group gap={5}>
         <Avatar
           name="Spellblaze"
           size={"lg"}

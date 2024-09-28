@@ -1,7 +1,10 @@
 import { Group, Avatar, Title, TextInput, DEFAULT_THEME } from "@mantine/core";
+import { useContext } from "react";
 import { IoSearchSharp } from "react-icons/io5";
+import { UserContext } from "../contexts/userContext";
 
 export default function WorkspaceHeader() {
+  const { fullName } = useContext(UserContext);
   return (
     <Group
       style={{ borderBottom: `solid 2px ${DEFAULT_THEME.colors.dark[0]}` }}
@@ -22,7 +25,7 @@ export default function WorkspaceHeader() {
         placeholder="Search Anything"
         leftSection={<IoSearchSharp size={"1.7rem"} />}
       />
-      <Avatar name="Boluwatife Ajibola" size={"lg"} />
+      <Avatar name={fullName} size={"lg"} />
     </Group>
   );
 }

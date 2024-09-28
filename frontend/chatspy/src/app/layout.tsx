@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "@mantine/core/styles.css";
 import { ColorSchemeScript, MantineProvider } from "@mantine/core";
 import { ApolloWrapper } from "./ApolloWrapper";
+import { UserProvider } from "./contexts/userContext";
 
 export const metadata: Metadata = {
   title: "Chatspy",
@@ -20,7 +21,9 @@ export default function RootLayout({
       </head>
       <body>
         <MantineProvider>
-          <ApolloWrapper>{children}</ApolloWrapper>
+          <ApolloWrapper>
+            <UserProvider>{children}</UserProvider>
+          </ApolloWrapper>
         </MantineProvider>
       </body>
     </html>

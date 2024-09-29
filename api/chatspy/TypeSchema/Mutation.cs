@@ -156,22 +156,28 @@ public class Mutation
     public async Task<Workspace?> AddUserToWorkspace(
         ChatspyContext dbContext,
         Guid workspaceID,
-        string username
+        string email
     )
     {
-        var dbWorkspace = await dbContext.Workspaces.SingleAsync(w => w.Id == workspaceID);
-        var dbUser = await dbContext.Users.SingleAsync(u => u.Username == username);
-        dbWorkspace.Users.Add(dbUser);
-        await dbContext.SaveChangesAsync();
-
-        var workspace = new Workspace
+        try
         {
-            Id = dbWorkspace.Id,
-            Name = dbWorkspace.Name,
-            CreatedBy = dbWorkspace.CreatedBy,
-        };
+            var dbWorkspace = await dbContext.Workspaces.SingleAsync(w => w.Id == workspaceID);
+            var dbUser = await dbContext.Users.SingleAsync(u => u.Email == email);
+            dbWorkspace.Users.Add(dbUser);
+            await dbContext.SaveChangesAsync();
 
-        return workspace;
+            var workspace = new Workspace
+            {
+                Id = dbWorkspace.Id,
+                Name = dbWorkspace.Name,
+                CreatedBy = dbWorkspace.CreatedBy,
+            };
+            return workspace;
+        }
+        catch (System.Exception)
+        {
+            return null;
+        }
     }
 
     [GraphQLDescription(

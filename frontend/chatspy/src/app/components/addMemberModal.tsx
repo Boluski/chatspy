@@ -1,18 +1,32 @@
 import { Stack, TextInput, Button, TagsInput } from "@mantine/core";
-import { Dispatch, SetStateAction, useState } from "react";
+import { useContext, useState } from "react";
 import { useMutation } from "@apollo/client";
 import { gql } from "../../__generated__/gql";
 import * as EmailValidator from "email-validator";
+
+import { UserContext } from "../contexts/userContext";
 
 type AddMemberModalProps = {
   closeFunction: () => void;
 };
 
+const ADD_USER_TO_WORKSPACE = gql(`
+    mutation AddUserToWorkspace($input: AddUserToWorkspaceInput!) {
+  addUserToWorkspace(input: $input) {
+    workspace {
+      id
+    }
+  }
+}
+    `);
+
 export default function AddMemberModal({ closeFunction }: AddMemberModalProps) {
+  const { currentWorkspace } = useContext(UserContext);
   const [emailList, setEmailList] = useState<string[]>([]);
   const [emailError, setEmailError] = useState("");
   const [enableAddMember, setEnableAddMember] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [addUserToWorkspace] = useMutation(ADD_USER_TO_WORKSPACE);
   return (
     <Stack>
       <TagsInput
@@ -58,7 +72,13 @@ export default function AddMemberModal({ closeFunction }: AddMemberModalProps) {
 
   function handleAddMembers() {
     setLoading(true);
-    // console.log(emailList);
+    emailList.forEach(async (email) => {
+      await addUserToWorkspace({
+        variables: {
+          input: { email: email, workspaceID: currentWorkspace?.id },
+        },
+      });
+    });
     closeFunction();
   }
 }

@@ -174,7 +174,7 @@ public class Mutation
             };
             return workspace;
         }
-        catch (System.Exception)
+        catch (Exception)
         {
             return null;
         }

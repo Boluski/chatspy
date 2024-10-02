@@ -43,6 +43,7 @@ function CreateChannelModal({ closeFunction }: CreateChannelModalProps) {
   function handleChannelCreation() {
     setLoading(true);
     console.log(name);
+    closeFunction();
   }
 }
 

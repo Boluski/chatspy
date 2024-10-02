@@ -49,7 +49,7 @@ type workspaceState = {
   name: string;
 };
 
-export default function Workspaces() {
+export default function AllWorkspaces() {
   const [
     createWorkspaceOpened,
     { open: createWorkspaceOpen, close: createWorkspaceClose },

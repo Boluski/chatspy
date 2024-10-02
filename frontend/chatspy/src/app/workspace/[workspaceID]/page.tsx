@@ -57,12 +57,17 @@ workspaceByID(workspaceID: $workspaceId, username: $username) {
   id
   name
   createdBy
+  channels {
+        id
+        name
+        type
+      }
 }
 }
   `);
 
 Amplify.configure(outputs);
-export default function Workspace({ params }: Workspace) {
+export default function CurrentWorkspace({ params }: Workspace) {
   const [getUserData] = useLazyQuery(USER_DATA);
   const [getCurrentWorkspace] = useLazyQuery(CURRENT_WORKSPACE);
   const [loading, setLoading] = useState(true);

@@ -23,6 +23,7 @@ import { MdAdd } from "react-icons/md";
 import WorkspaceHeader from "@/app/components/workspaceHeader";
 import WorkspaceNav from "@/app/components/workspaceNav";
 import { UserContext } from "../../contexts/userContext";
+import { ChatContext } from "@/app/contexts/chatContext";
 import { useContext, useEffect, useState } from "react";
 import { gql } from "../../../__generated__/gql";
 import { useLazyQuery } from "@apollo/client";
@@ -31,6 +32,7 @@ import outputs from "../../../../amplify_outputs.json";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { useDisclosure } from "@mantine/hooks";
 import CreateChannelModal from "@/app/components/createChannelModal";
+import { ChannelType } from "@/__generated__/graphql";
 
 type Workspace = {
   params: { workspaceID: string };
@@ -86,6 +88,12 @@ export default function CurrentWorkspace({ params }: Workspace) {
     setUserWorkspaces,
     setCurrentWorkspace,
   } = useContext(UserContext);
+  const {
+    channels,
+    setChannels,
+    setWorkspaceId,
+    setUsername: cc_setUsername,
+  } = useContext(ChatContext);
 
   useEffect(() => {
     handleInitialLoad();
@@ -139,14 +147,26 @@ export default function CurrentWorkspace({ params }: Workspace) {
                       </Button>
                     ) : null}
 
-                    <TabsTab value="general">General</TabsTab>
-                    <TabsTab value="announcements">Announcements</TabsTab>
-                    <TabsTab value="welcome">Welcome</TabsTab>
+                    {channels.map((c) => {
+                      if (c.type == "PUBLIC") {
+                        return (
+                          <TabsTab key={c.id} value={c.id}>
+                            {c.name}
+                          </TabsTab>
+                        );
+                      }
+                    })}
                   </TabsList>
 
-                  <TabsPanel value="general">General</TabsPanel>
-                  <TabsPanel value="announcements">Announcements</TabsPanel>
-                  <TabsPanel value="welcome">Welcome</TabsPanel>
+                  {channels.map((c) => {
+                    if (c.type == "PUBLIC") {
+                      return (
+                        <TabsPanel key={c.id} value={c.id}>
+                          {c.name}
+                        </TabsPanel>
+                      );
+                    }
+                  })}
                 </Tabs>
               </Group>
             </>
@@ -174,7 +194,10 @@ export default function CurrentWorkspace({ params }: Workspace) {
           },
         }}
       >
-        <CreateChannelModal closeFunction={createChannelClose} />
+        <CreateChannelModal
+          channelType="PUBLIC"
+          closeFunction={createChannelClose}
+        />
       </Modal>
     </>
   );
@@ -227,6 +250,9 @@ export default function CurrentWorkspace({ params }: Workspace) {
                 createdBy: currentWorkspaceData.workspaceByID.createdBy,
                 isAdmin: isAdmin,
               });
+              setChannels(currentWorkspaceData.workspaceByID.channels);
+              cc_setUsername(currentWorkspaceData.workspaceByID.name);
+              setWorkspaceId(currentWorkspaceData.workspaceByID.id);
             }
           }
         }

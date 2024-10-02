@@ -1,10 +1,11 @@
-import { ActionIcon, DEFAULT_THEME, Modal, Stack } from "@mantine/core";
+import { ActionIcon, DEFAULT_THEME, Modal, Stack, Title } from "@mantine/core";
 import { FaHashtag } from "react-icons/fa";
 import {
   IoLockClosed,
   IoPersonSharp,
   IoSettingsOutline,
 } from "react-icons/io5";
+import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
 import { useDisclosure } from "@mantine/hooks";
 import { MdAdd } from "react-icons/md";
 import { UserContext } from "../contexts/userContext";
@@ -25,51 +26,102 @@ export default function WorkspaceNav() {
         pr={"sm"}
       >
         <Stack>
-          <ActionIcon
-            color="gray"
-            variant="light"
-            size="xl"
-            style={{ width: "4rem", height: "4rem" }}
-          >
-            <FaHashtag size={"2.5rem"} />
-          </ActionIcon>
-          <ActionIcon
-            color="gray"
-            variant="light"
-            size="xl"
-            style={{ width: "4rem", height: "4rem" }}
-          >
-            <IoLockClosed size={"2.5rem"} />
-          </ActionIcon>
-          <ActionIcon
-            color="gray"
-            variant="light"
-            size="xl"
-            style={{ width: "4rem", height: "4rem" }}
-          >
-            <IoPersonSharp size={"2.5rem"} />
-          </ActionIcon>
+          <Stack align="center" gap={"0.5rem"}>
+            <ActionIcon
+              color="gray"
+              variant="light"
+              size="xl"
+              style={{ width: "4rem", height: "4rem" }}
+            >
+              <FaHashtag size={"2.5rem"} />
+            </ActionIcon>
+            <Title
+              order={4}
+              c={"gray.6"}
+              w={"5rem"}
+              style={{ textAlign: "center" }}
+            >
+              Public
+            </Title>
+          </Stack>
+          <Stack align="center" gap={"0.5rem"}>
+            <ActionIcon
+              color="gray"
+              variant="light"
+              size="xl"
+              style={{ width: "4rem", height: "4rem" }}
+            >
+              <IoLockClosed size={"2.5rem"} />
+            </ActionIcon>
+            <Title
+              order={4}
+              c={"gray.6"}
+              w={"5rem"}
+              style={{ textAlign: "center" }}
+            >
+              Private
+            </Title>
+          </Stack>
+          <Stack align="center" gap={"0.5rem"}>
+            <ActionIcon
+              color="gray"
+              variant="light"
+              size="xl"
+              style={{ width: "4rem", height: "4rem" }}
+            >
+              <HiOutlineChatBubbleLeftRight size={"2.5rem"} />
+            </ActionIcon>
+            <Title
+              order={4}
+              c={"gray.6"}
+              w={"5rem"}
+              style={{ textAlign: "center" }}
+            >
+              DM
+            </Title>
+          </Stack>
         </Stack>
 
         {currentWorkspace?.isAdmin ? (
           <Stack>
-            <ActionIcon
-              color="violet.8"
-              variant="light"
-              size="xl"
-              style={{ width: "4rem", height: "4rem" }}
-              onClick={addMemberOpen}
-            >
-              <MdAdd size={"2.5rem"} />
-            </ActionIcon>
-            <ActionIcon
-              color="violet.8"
-              variant="light"
-              size="xl"
-              style={{ width: "4rem", height: "4rem" }}
-            >
-              <IoSettingsOutline size={"2.5rem"} />
-            </ActionIcon>
+            <Stack align="center" gap={"0.5rem"}>
+              <ActionIcon
+                color="violet.8"
+                variant="light"
+                size="xl"
+                style={{ width: "4rem", height: "4rem" }}
+                onClick={addMemberOpen}
+              >
+                <MdAdd size={"2.5rem"} />
+              </ActionIcon>
+              <Title
+                order={4}
+                c={"gray.6"}
+                w={"5rem"}
+                style={{ textAlign: "center" }}
+              >
+                Add Member
+              </Title>
+            </Stack>
+
+            <Stack align="center" gap={"0.5rem"}>
+              <ActionIcon
+                color="violet.8"
+                variant="light"
+                size="xl"
+                style={{ width: "4rem", height: "4rem" }}
+              >
+                <IoSettingsOutline size={"2.5rem"} />
+              </ActionIcon>
+              <Title
+                order={4}
+                c={"gray.6"}
+                w={"5rem"}
+                style={{ textAlign: "center" }}
+              >
+                Setting
+              </Title>
+            </Stack>
           </Stack>
         ) : null}
       </Stack>

@@ -11,6 +11,7 @@ import {
   Tabs,
   TabsList,
   TabsTab,
+  Modal,
   TabsPanel,
 } from "@mantine/core";
 import { IoSearchSharp } from "react-icons/io5";
@@ -28,6 +29,8 @@ import { useLazyQuery } from "@apollo/client";
 import { Amplify } from "aws-amplify";
 import outputs from "../../../../amplify_outputs.json";
 import { fetchUserAttributes } from "aws-amplify/auth";
+import { useDisclosure } from "@mantine/hooks";
+import CreateChannelModal from "@/app/components/createChannelModal";
 
 type Workspace = {
   params: { workspaceID: string };
@@ -64,6 +67,10 @@ export default function Workspace({ params }: Workspace) {
   const [getCurrentWorkspace] = useLazyQuery(CURRENT_WORKSPACE);
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [
+    createChannelOpened,
+    { open: createChannelOpen, close: createChannelClose },
+  ] = useDisclosure(false);
   const {
     isAuthenticated,
     currentWorkspace,
@@ -80,64 +87,91 @@ export default function Workspace({ params }: Workspace) {
   }, []);
 
   return (
-    <Stack w={"100wh"} h={"100vh"} bg={"gray.0"} px={15} py={10}>
-      {loading ? (
-        <>loading</>
-      ) : isAuthenticated ? (
-        isAuthorized ? (
-          <>
-            <WorkspaceHeader />
-            <Group w={"100%"} style={{ flexGrow: "1" }} align={"start"} gap={0}>
-              <WorkspaceNav />
-              <Tabs
+    <>
+      <Stack w={"100wh"} h={"100vh"} bg={"gray.0"} px={15} py={10}>
+        {loading ? (
+          <>loading</>
+        ) : isAuthenticated ? (
+          isAuthorized ? (
+            <>
+              <WorkspaceHeader />
+              <Group
+                w={"100%"}
                 style={{ flexGrow: "1" }}
-                h={"100%"}
-                color="violet.2"
-                defaultValue="gallery"
-                orientation="vertical"
-                variant="pills"
-                radius={0}
-                styles={{
-                  list: {
-                    borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
-                  },
-                  tab: {
-                    width: "20rem",
-                  },
-                  tabLabel: { fontSize: "1.5rem" },
-                }}
+                align={"start"}
+                gap={0}
               >
-                <TabsList>
-                  {currentWorkspace?.isAdmin ? (
-                    <Button
-                      my={0}
-                      size="lg"
-                      variant="light"
-                      color="gray"
-                      leftSection={<MdAdd size={"2rem"} />}
-                    >
-                      Create New Channel
-                    </Button>
-                  ) : null}
+                <WorkspaceNav />
+                <Tabs
+                  style={{ flexGrow: "1" }}
+                  h={"100%"}
+                  color="violet.2"
+                  defaultValue="gallery"
+                  orientation="vertical"
+                  variant="pills"
+                  radius={0}
+                  styles={{
+                    list: {
+                      borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
+                    },
+                    tab: {
+                      width: "20rem",
+                    },
+                    tabLabel: { fontSize: "1.5rem" },
+                  }}
+                >
+                  <TabsList>
+                    {currentWorkspace?.isAdmin ? (
+                      <Button
+                        my={0}
+                        size="lg"
+                        variant="light"
+                        color="gray"
+                        leftSection={<MdAdd size={"2rem"} />}
+                        onClick={createChannelOpen}
+                      >
+                        Create New Channel
+                      </Button>
+                    ) : null}
 
-                  <TabsTab value="general">General</TabsTab>
-                  <TabsTab value="announcements">Announcements</TabsTab>
-                  <TabsTab value="welcome">Welcome</TabsTab>
-                </TabsList>
+                    <TabsTab value="general">General</TabsTab>
+                    <TabsTab value="announcements">Announcements</TabsTab>
+                    <TabsTab value="welcome">Welcome</TabsTab>
+                  </TabsList>
 
-                <TabsPanel value="general">General</TabsPanel>
-                <TabsPanel value="announcements">Announcements</TabsPanel>
-                <TabsPanel value="welcome">Welcome</TabsPanel>
-              </Tabs>
-            </Group>
-          </>
+                  <TabsPanel value="general">General</TabsPanel>
+                  <TabsPanel value="announcements">Announcements</TabsPanel>
+                  <TabsPanel value="welcome">Welcome</TabsPanel>
+                </Tabs>
+              </Group>
+            </>
+          ) : (
+            <> Not Authorized</>
+          )
         ) : (
-          <> Not Authorized</>
-        )
-      ) : (
-        <>Not Authenticated</>
-      )}
-    </Stack>
+          <>Not Authenticated</>
+        )}
+      </Stack>
+      <Modal
+        size={"md"}
+        onClose={createChannelClose}
+        opened={createChannelOpened}
+        withCloseButton={false}
+        title="Create Public Channel"
+        overlayProps={{
+          backgroundOpacity: 0.4,
+          blur: 4,
+        }}
+        styles={{
+          title: {
+            fontWeight: "bold",
+            fontSize: "1.5rem",
+          },
+        }}
+      >
+        <CreateChannelModal closeFunction={createChannelClose} />
+      </Modal>
+    </>
   );
   async function handleInitialLoad() {
     // Authentication

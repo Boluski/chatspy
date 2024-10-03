@@ -11,7 +11,6 @@ function ChannelRoomHead({ channelName }: ChannelRoomHeadProps) {
       p={5}
       style={{
         borderBottom: `2px solid ${DEFAULT_THEME.colors.dark[0]}`,
-        borderRight: `2px solid ${DEFAULT_THEME.colors.dark[0]}`,
       }}
     >
       <Title order={1} c={"dark.5"}>

@@ -10,6 +10,7 @@ function MessageSender() {
       bg={"white"}
       p={10}
       mx={20}
+      my={5}
       style={{
         borderRadius: "0.5rem",
         border: `solid ${DEFAULT_THEME.colors.dark[0]} 2px`,

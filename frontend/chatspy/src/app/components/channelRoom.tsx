@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import { ChatContext } from "../contexts/chatContext";
-import { DEFAULT_THEME, Stack, Box } from "@mantine/core";
+import { DEFAULT_THEME, Stack, Box, ScrollArea } from "@mantine/core";
 import ChannelRoomHead from "./channelHead";
 import MessageSender from "./messageSender";
+import MessageBox from "./messageBox";
 
 type ChannelRoomProps = {
   channelId: string;
@@ -14,8 +15,9 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
   return (
     <Stack
       h={"100%"}
+      gap={0}
+      justify={"space-between"}
       style={{
-        position: "relative",
         borderRight: `2px solid ${DEFAULT_THEME.colors.dark[0]}`,
       }}
     >
@@ -23,9 +25,15 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
         channelId={channelId}
         channelName={currentChannel ? currentChannel.name : ""}
       />
-      <Box style={{ position: "absolute", bottom: "0", right: "0", left: "0" }}>
-        <MessageSender />
-      </Box>
+      <Stack mah={"70vh"} h={"100%"} justify={"flex-end"}>
+        <ScrollArea type="never">
+          <Stack gap={1} mx={20}>
+            <MessageBox isUser={true} messageId="" />
+          </Stack>
+        </ScrollArea>
+      </Stack>
+
+      <MessageSender />
     </Stack>
   );
 }

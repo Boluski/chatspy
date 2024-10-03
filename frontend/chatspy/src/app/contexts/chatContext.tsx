@@ -15,6 +15,8 @@ type valueType = {
   setWorkspaceId: Dispatch<SetStateAction<string>>;
 };
 
+type messageType = {};
+
 type channelType = {
   id: string;
   name: string;

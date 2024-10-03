@@ -113,6 +113,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
                 style={{ flexGrow: "1" }}
                 align={"start"}
                 gap={0}
+                wrap={"nowrap"}
               >
                 <WorkspaceNav />
                 <Tabs

@@ -32,7 +32,7 @@ import outputs from "../../../../amplify_outputs.json";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { useDisclosure } from "@mantine/hooks";
 import CreateChannelModal from "@/app/components/createChannelModal";
-import { ChannelType } from "@/__generated__/graphql";
+import ChannelRoom from "@/app/components/channelRoom";
 
 type Workspace = {
   params: { workspaceID: string };
@@ -162,7 +162,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
                     if (c.type == "PUBLIC") {
                       return (
                         <TabsPanel key={c.id} value={c.id}>
-                          {c.name}
+                          <ChannelRoom channelId={c.id} />
                         </TabsPanel>
                       );
                     }

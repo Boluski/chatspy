@@ -57,7 +57,7 @@ function CreateChannelModal({
         color="violet.8"
         loading={loading}
       >
-        Create Workspace
+        Create Channel
       </Button>
     </Stack>
   );

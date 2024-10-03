@@ -75,7 +75,7 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
   async function handleSendMessage() {
     setLoading(true);
     console.log(messageText);
-    const { data } = await createMessage({
+    await createMessage({
       variables: {
         input: {
           username: username,
@@ -84,27 +84,7 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
         },
       },
     });
-    if (data) {
-      console.log(data);
 
-      if (data.createMessage.message) {
-        const latestMessage: messageType = {
-          id: data.createMessage.message.id,
-          text: data.createMessage.message.text,
-          date: data.createMessage.message.date,
-          user: {
-            username: data.createMessage.message.user.username,
-            fullName: data.createMessage.message.user.fullName,
-          },
-        };
-        console.log("Latest", latestMessage);
-        setChannels((prevChannel) => {
-          const newMessage = [...prevChannel];
-          newMessage[channelIndex].message.push(latestMessage);
-          return newMessage;
-        });
-      }
-    }
     setMessageText("");
     setLoading(false);
   }

@@ -18,10 +18,10 @@ const SEND_MESSAGE_SUBSCRIPTION = gql(`
     id
     text
     date
-    # user {
-    #   username
-    #   fullName
-    # }
+    user {
+      username
+      fullName
+    }
   }
 }
     `);
@@ -81,24 +81,24 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
     data: SubscriptionResult<OnMessageSentSubscription, any>
   ) {
     console.log("Sub", data);
-    // const receivedMessage = data.data;
-    // if (receivedMessage) {
-    //   const latestMessage: messageType = {
-    //     id: receivedMessage.onMessageSent.id,
-    //     text: receivedMessage.onMessageSent.text,
-    //     date: receivedMessage.onMessageSent.date,
-    //     user: {
-    //       fullName: receivedMessage.onMessageSent.user.fullName,
-    //       username: receivedMessage.onMessageSent.user.username,
-    //     },
-    //   };
+    const receivedMessage = data.data;
+    if (receivedMessage) {
+      const latestMessage: messageType = {
+        id: receivedMessage.onMessageSent.id,
+        text: receivedMessage.onMessageSent.text,
+        date: receivedMessage.onMessageSent.date,
+        user: {
+          fullName: receivedMessage.onMessageSent.user.fullName,
+          username: receivedMessage.onMessageSent.user.username,
+        },
+      };
 
-    //   setChannels((prevChannel) => {
-    //     const newChannels = [...prevChannel];
-    //     newChannels[currentChannelIndex].message.push(latestMessage);
-    //     return newChannels;
-    //   });
-    //}
+      setChannels((prevChannel) => {
+        const newChannels = [...prevChannel];
+        newChannels[currentChannelIndex].message.push(latestMessage);
+        return newChannels;
+      });
+    }
   }
 }
 

@@ -50,6 +50,7 @@ public class Channel
         var dbMessage = dbContext
             .Messages.Include(m => m.User)
             .Where(m => m.Channel.Id == Id)
+            .OrderBy(m => m.Date)
             .ToList();
 
         var Message = dbMessage

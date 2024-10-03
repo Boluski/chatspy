@@ -1,10 +1,36 @@
 import { Group, Button, Textarea, DEFAULT_THEME } from "@mantine/core";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { IoIosSend } from "react-icons/io";
+import { gql } from "@/__generated__/gql";
+import { useMutation } from "@apollo/client";
+import { channelType, ChatContext, messageType } from "../contexts/chatContext";
 
-function MessageSender() {
+const CREATE_MESSAGE = gql(`
+mutation Mutation($input: CreateMessageInput!) {
+    createMessage(input: $input) {
+      message {
+        id
+        text
+        date
+        user {
+          username
+          fullName
+        }
+      }
+    }
+  }`);
+
+type MessageSenderProps = {
+  channelIndex: number;
+};
+function MessageSender({ channelIndex }: MessageSenderProps) {
   const [messageText, setMessageText] = useState("");
   const [enableSendButton, setEnableSendButton] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const { username, channels, setChannels } = useContext(ChatContext);
+  const currentChannel = channels[channelIndex];
+  const [createMessage] = useMutation(CREATE_MESSAGE);
   return (
     <Group
       bg={"white"}
@@ -24,7 +50,7 @@ function MessageSender() {
         placeholder="Send your team the latest update."
         value={messageText}
         onChange={(event) => {
-          setMessageText(event.currentTarget.value.trim());
+          setMessageText(event.currentTarget.value);
           if (event.currentTarget.value.trim() != "") {
             setEnableSendButton(true);
           } else {
@@ -33,6 +59,7 @@ function MessageSender() {
         }}
       />
       <Button
+        loading={loading}
         disabled={!enableSendButton}
         color="violet.8"
         rightSection={<IoIosSend size={"2.5rem"} />}
@@ -45,8 +72,39 @@ function MessageSender() {
     </Group>
   );
 
-  function handleSendMessage() {
+  async function handleSendMessage() {
+    setLoading(true);
     console.log(messageText);
+    const { data } = await createMessage({
+      variables: {
+        input: {
+          username: username,
+          text: messageText,
+          channelId: currentChannel.id,
+        },
+      },
+    });
+    if (data) {
+      if (data.createMessage.message) {
+        const latestMessage: messageType = {
+          id: data.createMessage.message.id,
+          text: data.createMessage.message.text,
+          date: data.createMessage.message.date,
+          user: {
+            username: data.createMessage.message.user.username,
+            fullName: data.createMessage.message.user.fullName,
+          },
+        };
+
+        setChannels((prevChannel) => {
+          const newMessage = [...prevChannel];
+          newMessage[channelIndex].message.push(latestMessage);
+          return newMessage;
+        });
+      }
+    }
+    setMessageText("");
+    setLoading(false);
   }
 }
 

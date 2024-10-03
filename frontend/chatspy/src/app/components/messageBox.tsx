@@ -45,7 +45,7 @@ function MessageBox({ messageId, channelIndex }: MessageBoxProps) {
         }
       />
       <Stack gap={5} w={"100%"}>
-        <Title order={3}>{currentMessage?.user.fullName}</Title>
+        <Title order={4}>{currentMessage?.user.fullName}</Title>
         <Text>{currentMessage?.text}</Text>
         <Title c={"gray.5"} style={{ textAlign: "end" }} order={6}>
           {currentDate.toDateString()} - {currentDate.toLocaleTimeString()}

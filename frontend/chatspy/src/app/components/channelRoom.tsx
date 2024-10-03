@@ -41,7 +41,7 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
         </ScrollArea>
       </Stack>
 
-      <MessageSender />
+      <MessageSender channelIndex={currentChannelIndex} />
     </Stack>
   );
 }

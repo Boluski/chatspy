@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { ChatContext, messageType } from "../contexts/chatContext";
 import { DEFAULT_THEME, Stack, Box, ScrollArea } from "@mantine/core";
 import ChannelRoomHead from "./channelHead";
@@ -34,7 +34,16 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
   const { channels, setChannels } = useContext(ChatContext);
   const currentChannel = channels.find((c) => c.id == channelId);
   const currentChannelIndex = channels.findIndex((c) => c.id == channelId);
-  console.log(currentChannel?.id);
+
+  //   useEffect(() => scrollToBottom(), []);
+  useEffect(() => scrollToBottom(), [channels]);
+
+  const viewport = useRef<HTMLDivElement>(null);
+  const scrollToBottom = () =>
+    viewport.current!.scrollTo({
+      top: viewport.current!.scrollHeight,
+      behavior: "smooth",
+    });
 
   useSubscription(SEND_MESSAGE_SUBSCRIPTION, {
     variables: { channelId: currentChannel?.id },
@@ -59,7 +68,7 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
         channelName={currentChannel ? currentChannel.name : ""}
       />
       <Stack mah={"70vh"} h={"100%"} justify={"flex-end"}>
-        <ScrollArea type="never">
+        <ScrollArea type="never" viewportRef={viewport}>
           <Stack gap={1} mx={20}>
             {currentChannel?.message.map((m) => {
               return (

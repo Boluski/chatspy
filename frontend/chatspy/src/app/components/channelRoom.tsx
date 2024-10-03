@@ -12,6 +12,7 @@ type ChannelRoomProps = {
 function ChannelRoom({ channelId }: ChannelRoomProps) {
   const { channels } = useContext(ChatContext);
   const currentChannel = channels.find((c) => c.id == channelId);
+  const currentChannelIndex = channels.findIndex((c) => c.id == channelId);
   return (
     <Stack
       h={"100%"}
@@ -28,7 +29,14 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
       <Stack mah={"70vh"} h={"100%"} justify={"flex-end"}>
         <ScrollArea type="never">
           <Stack gap={1} mx={20}>
-            <MessageBox isUser={true} messageId="" />
+            {currentChannel?.message.map((m) => {
+              return (
+                <MessageBox
+                  channelIndex={currentChannelIndex}
+                  messageId={m.id}
+                />
+              );
+            })}
           </Stack>
         </ScrollArea>
       </Stack>

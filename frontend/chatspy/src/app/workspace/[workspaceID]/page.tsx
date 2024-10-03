@@ -33,6 +33,7 @@ import { fetchUserAttributes } from "aws-amplify/auth";
 import { useDisclosure } from "@mantine/hooks";
 import CreateChannelModal from "@/app/components/createChannelModal";
 import ChannelRoom from "@/app/components/channelRoom";
+import { channelType } from "@/app/contexts/chatContext";
 
 type Workspace = {
   params: { workspaceID: string };
@@ -63,6 +64,15 @@ workspaceByID(workspaceID: $workspaceId, username: $username) {
         id
         name
         type
+        messages {
+          id
+          text
+          date
+          user {
+            fullName
+            username
+          }
+        }
       }
 }
 }
@@ -251,8 +261,32 @@ export default function CurrentWorkspace({ params }: Workspace) {
                 createdBy: currentWorkspaceData.workspaceByID.createdBy,
                 isAdmin: isAdmin,
               });
-              setChannels(currentWorkspaceData.workspaceByID.channels);
-              cc_setUsername(currentWorkspaceData.workspaceByID.name);
+
+              const channels: channelType[] =
+                currentWorkspaceData.workspaceByID.channels.map((c) => {
+                  const newChannels = {
+                    id: c.id,
+                    name: c.name,
+                    type: c.type,
+                    message: c.messages.map((m) => {
+                      return {
+                        text: m.text,
+                        date: m.date,
+                        id: m.id,
+                        user: {
+                          username: m.user.username,
+                          fullName: m.user.fullName,
+                        },
+                      };
+                    }),
+                  };
+                  return newChannels;
+                });
+              // currentWorkspaceData.workspaceByID.channels as channelType[]'
+              console.log(channels);
+
+              setChannels(channels);
+              cc_setUsername(preferred_username);
               setWorkspaceId(currentWorkspaceData.workspaceByID.id);
             }
           }

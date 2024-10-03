@@ -15,12 +15,21 @@ type valueType = {
   setWorkspaceId: Dispatch<SetStateAction<string>>;
 };
 
-type messageType = {};
+export type messageType = {
+  id: string;
+  text: string;
+  date: string;
+  user: {
+    fullName: string;
+    username: string;
+  };
+};
 
-type channelType = {
+export type channelType = {
   id: string;
   name: string;
   type: "PUBLIC" | "PRIVATE" | "DIRECT";
+  message: messageType[];
 };
 
 const defaultValues = {

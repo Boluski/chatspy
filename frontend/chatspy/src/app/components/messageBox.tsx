@@ -7,19 +7,31 @@ import {
   Box,
   DEFAULT_THEME,
 } from "@mantine/core";
+import { useContext } from "react";
+import { ChatContext } from "../contexts/chatContext";
 
 type MessageBoxProps = {
-  isUser: boolean;
+  channelIndex: number;
   messageId: string;
 };
 
-function MessageBox({ isUser, messageId }: MessageBoxProps) {
-  const currentDate = new Date();
+function MessageBox({ messageId, channelIndex }: MessageBoxProps) {
+  const { channels, username } = useContext(ChatContext);
+  const currentMessage = channels[channelIndex].message.find(
+    (m) => m.id == messageId
+  );
+  const isUser = currentMessage?.user.username == username;
+  console.log(username);
+  console.log(currentMessage?.user.username);
+
+  const dateString: string = currentMessage ? currentMessage.date : "";
+
+  const currentDate = new Date(dateString);
   return (
     <Group wrap={"nowrap"} align={"start"} bg={isUser ? "violet.0" : ""} p={5}>
       <Avatar
         size={"lg"}
-        name="Boluwatife Ajibola"
+        name={currentMessage?.user.fullName}
         styles={
           isUser
             ? {
@@ -32,16 +44,9 @@ function MessageBox({ isUser, messageId }: MessageBoxProps) {
               }
         }
       />
-      <Stack gap={5}>
-        <Title order={3}>Boluwatife Ajibola</Title>
-        <Text>
-          By default, all colors from the default theme are allowed for By
-          default, all colors from the default theme are allowed for default,
-          initials, you can restrict them by providing allowedInitialsColors
-          prop with an array of colors. Note that the default colors array does
-          not include custom colors defined in the theme, you need to provide
-          them manually if needed.
-        </Text>
+      <Stack gap={5} w={"100%"}>
+        <Title order={3}>{currentMessage?.user.fullName}</Title>
+        <Text>{currentMessage?.text}</Text>
         <Title c={"gray.5"} style={{ textAlign: "end" }} order={6}>
           {currentDate.toDateString()} - {currentDate.toLocaleTimeString()}
         </Title>

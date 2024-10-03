@@ -21,8 +21,6 @@ function MessageBox({ messageId, channelIndex }: MessageBoxProps) {
     (m) => m.id == messageId
   );
   const isUser = currentMessage?.user.username == username;
-  console.log(username);
-  console.log(currentMessage?.user.username);
 
   const dateString: string = currentMessage ? currentMessage.date : "";
 

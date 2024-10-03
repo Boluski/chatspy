@@ -173,7 +173,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
                     if (c.type == "PUBLIC") {
                       return (
                         <TabsPanel key={c.id} value={c.id}>
-                          <ChannelRoom channelId={c.id} />
+                          <ChannelRoom key={c.id} channelId={c.id} />
                         </TabsPanel>
                       );
                     }

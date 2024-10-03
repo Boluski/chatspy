@@ -47,7 +47,10 @@ public class Channel
 
     public List<Message> Messages(ChatspyContext dbContext)
     {
-        var dbMessage = dbContext.Messages.Where(m => m.Channel.Id == Id).ToList();
+        var dbMessage = dbContext
+            .Messages.Include(m => m.User)
+            .Where(m => m.Channel.Id == Id)
+            .ToList();
 
         var Message = dbMessage
             .Select(m => new Message
@@ -55,6 +58,7 @@ public class Channel
                 Id = m.Id,
                 Date = m.Date,
                 Text = m.Text,
+                Username = m.User.Username,
             })
             .ToList();
         return Message;

@@ -85,6 +85,8 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
       },
     });
     if (data) {
+      console.log(data);
+
       if (data.createMessage.message) {
         const latestMessage: messageType = {
           id: data.createMessage.message.id,
@@ -95,7 +97,7 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
             fullName: data.createMessage.message.user.fullName,
           },
         };
-
+        console.log("Latest", latestMessage);
         setChannels((prevChannel) => {
           const newMessage = [...prevChannel];
           newMessage[channelIndex].message.push(latestMessage);

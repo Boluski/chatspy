@@ -6,6 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
 var connectionString = "server=localhost;user=root;password=boluSKI080#;database=chatspy";
 
+// builder.Logging.ClearProviders();
+// builder.Logging.AddConsole(); // Enable logging to the terminal (console)
+// builder.Logging.SetMinimumLevel(LogLevel.Information);
+
 builder.Services.AddDbContext<ChatspyContext>(options =>
     options
         .UseMySql(connectionString, serverVersion)

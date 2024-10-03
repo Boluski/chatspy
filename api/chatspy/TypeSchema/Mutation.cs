@@ -344,6 +344,7 @@ public class Mutation
             Date = dbMessage.Date,
             Text = dbMessage.Text,
             ChannelId = dbChannel.Id,
+            Username = username,
         };
         await sender.SendAsync($"{Message.ChannelId}", Message);
         return Message;

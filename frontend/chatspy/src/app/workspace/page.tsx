@@ -27,6 +27,7 @@ import WorkspaceCard from "../components/workspaceCard";
 import CreateWorkspaceModal from "../components/createWorkspaceModal";
 import { useRouter } from "next/navigation";
 import WorkspacesLoading from "../components/workspacesLoading";
+import CurrentWorkspace from "./[workspaceID]/page";
 
 Amplify.configure(outputs);
 
@@ -60,12 +61,15 @@ export default function AllWorkspaces() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [workspaces, setWorkspaces] = useState<workspaceState[]>([]);
+  const [searchableWorkspaces, setSearchableWorkspaces] = useState<
+    workspaceState[]
+  >([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
 
   const [loading, setLoading] = useState(true);
   const [getUser] = useLazyQuery(GET_USER);
-  let userWorkspaces = useRef<workspaceState[]>([]);
   let currentUsername = useRef("");
 
   useEffect(() => {
@@ -132,11 +136,20 @@ export default function AllWorkspaces() {
         </Button>
       </Group>
 
-      {workspaces.length == 0 ? (
+      {workspaces.length == 0 ||
+      (searchableWorkspaces.length == 0 && isSearching) ? (
         <Stack style={{ flexGrow: "1" }} justify="center" align="center">
           <IoTelescope size={"12rem"} color={DEFAULT_THEME.colors.violet[8]} />
           <Title c={"violet.8"}>Create or Join a workspace!</Title>
         </Stack>
+      ) : isSearching ? (
+        <ScrollArea>
+          <SimpleGrid cols={3} px={15}>
+            {searchableWorkspaces.map((w) => (
+              <WorkspaceCard key={w.id} workspaceId={w.id} name={w.name} />
+            ))}
+          </SimpleGrid>
+        </ScrollArea>
       ) : (
         <ScrollArea>
           <SimpleGrid cols={3} px={15}>
@@ -168,7 +181,6 @@ export default function AllWorkspaces() {
           closeFunction={createWorkspaceClose}
           username={currentUsername.current}
           setWorkspaces={setWorkspaces}
-          appendWorkspaceToRef={appendWorkspaceToRef}
         />
       </Modal>
     </Stack>
@@ -177,13 +189,19 @@ export default function AllWorkspaces() {
   function handleSearch(event: ChangeEvent<HTMLInputElement>) {
     setSearchQuery(event.currentTarget.value);
 
-    const filteredWorkspace = userWorkspaces.current.filter((w) =>
-      w.name
-        .toLocaleLowerCase()
-        .includes(event.currentTarget.value.toLocaleLowerCase())
-    );
+    if (event.currentTarget.value.trim() != "") {
+      // is searching
+      setIsSearching(true);
+      const filteredWorkspace = workspaces.filter((w) =>
+        w.name
+          .toLocaleLowerCase()
+          .includes(event.currentTarget.value.toLocaleLowerCase())
+      );
 
-    setWorkspaces(filteredWorkspace);
+      setSearchableWorkspaces(filteredWorkspace);
+    } else {
+      setIsSearching(false);
+    }
   }
 
   async function handleInitialLoad() {
@@ -195,16 +213,13 @@ export default function AllWorkspaces() {
         const currentUser = data.userByUsername;
         setFullName(currentUser.fullName);
         setEmail(currentUser.email);
-        userWorkspaces.current = currentUser.workspaces.map((w) => {
-          return { id: w.id as string, name: w.name };
+        setWorkspaces(() => {
+          return currentUser.workspaces.map((w) => {
+            return { id: w.id as string, name: w.name };
+          });
         });
-        setWorkspaces(userWorkspaces.current);
         setLoading(false);
       }
     }
-  }
-
-  function appendWorkspaceToRef(workspace: workspaceState) {
-    userWorkspaces.current.push(workspace);
   }
 }

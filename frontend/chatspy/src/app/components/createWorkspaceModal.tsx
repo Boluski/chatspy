@@ -7,7 +7,6 @@ type CreateWorkspaceModalProps = {
   closeFunction: () => void;
   username: string;
   setWorkspaces: Dispatch<SetStateAction<workspaceState[]>>;
-  appendWorkspaceToRef: (workspace: workspaceState) => void;
 };
 
 const CREATE_WORKSPACE = gql(`
@@ -30,7 +29,6 @@ export default function CreateWorkspaceModal({
   closeFunction,
   username,
   setWorkspaces,
-  appendWorkspaceToRef,
 }: CreateWorkspaceModalProps) {
   const [name, setName] = useState("");
   const [nameError, setNameError] = useState("");
@@ -69,7 +67,6 @@ export default function CreateWorkspaceModal({
   );
 
   async function handleWorkspaceCreation() {
-    console.log(username);
     const { data } = await createWorkspace({
       variables: { input: { username: username, name: name } },
     });
@@ -77,7 +74,6 @@ export default function CreateWorkspaceModal({
       if (data.createWorkspace.workspace != null) {
         const createdWorkspace: workspaceState = data.createWorkspace.workspace;
 
-        appendWorkspaceToRef(createdWorkspace);
         setWorkspaces((prev) => {
           const newWorkspaces = [...prev];
           newWorkspaces.push(createdWorkspace);

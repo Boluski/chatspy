@@ -3,7 +3,7 @@ import { useState, useContext } from "react";
 import { IoIosSend } from "react-icons/io";
 import { gql } from "@/__generated__/gql";
 import { useMutation } from "@apollo/client";
-import { channelType, ChatContext, messageType } from "../contexts/chatContext";
+import { ChatContext } from "../contexts/chatContext";
 
 const CREATE_MESSAGE = gql(`
 mutation Mutation($input: CreateMessageInput!) {
@@ -87,6 +87,7 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
 
     setMessageText("");
     setLoading(false);
+    setEnableSendButton(false);
   }
 }
 

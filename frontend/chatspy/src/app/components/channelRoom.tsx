@@ -35,7 +35,6 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
   const currentChannel = channels.find((c) => c.id == channelId);
   const currentChannelIndex = channels.findIndex((c) => c.id == channelId);
 
-  //   useEffect(() => scrollToBottom(), []);
   useEffect(() => scrollToBottom(), [channels]);
 
   const viewport = useRef<HTMLDivElement>(null);
@@ -70,14 +69,15 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
       <Stack mah={"70vh"} h={"100%"} justify={"flex-end"}>
         <ScrollArea type="never" viewportRef={viewport}>
           <Stack gap={1} mx={20}>
-            {currentChannel?.message.map((m) => {
-              return (
-                <MessageBox
-                  channelIndex={currentChannelIndex}
-                  messageId={m.id}
-                />
-              );
-            })}
+            {currentChannel?.message &&
+              currentChannel.message.map((m) => {
+                return (
+                  <MessageBox
+                    channelIndex={currentChannelIndex}
+                    messageId={m.id}
+                  />
+                );
+              })}
           </Stack>
         </ScrollArea>
       </Stack>

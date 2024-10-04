@@ -41,7 +41,7 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
   const scrollToBottom = () =>
     viewport.current!.scrollTo({
       top: viewport.current!.scrollHeight,
-      behavior: "smooth",
+      behavior: "instant",
     });
 
   useSubscription(SEND_MESSAGE_SUBSCRIPTION, {

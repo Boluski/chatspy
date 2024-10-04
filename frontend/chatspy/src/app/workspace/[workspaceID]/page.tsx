@@ -127,10 +127,10 @@ export default function CurrentWorkspace({ params }: Workspace) {
               >
                 <WorkspaceNav />
                 <Tabs
+                  defaultValue={channels.length != 0 ? channels[0].id : ""}
                   style={{ flexGrow: "1" }}
                   h={"100%"}
                   color="violet.2"
-                  defaultValue="gallery"
                   orientation="vertical"
                   variant="pills"
                   radius={0}

@@ -14,14 +14,14 @@ public class Subscription
 
     [GraphQLDescription("Is triggered when a new message is edited.")]
     [Subscribe]
-    [Topic($"{{{nameof(messageId)}}}")]
-    public Message OnMessageUpdated(Guid messageId, [EventMessage] Message updatedMessage) =>
+    [Topic($"{{{nameof(messageTopic)}}}")]
+    public Message OnMessageUpdated(string messageTopic, [EventMessage] Message updatedMessage) =>
         updatedMessage;
 
     [GraphQLDescription("Is triggered when a new message is deleted.")]
     [Subscribe]
-    [Topic($"{{{nameof(messageId)}}}")]
-    public Message OnMessageDeleted(Guid messageId, [EventMessage] Message deletedMessage) =>
+    [Topic($"{{{nameof(messageTopic)}}}")]
+    public Message OnMessageDeleted(string messageTopic, [EventMessage] Message deletedMessage) =>
         deletedMessage;
 
     [GraphQLDescription("Is triggered when a new thread is created.")]

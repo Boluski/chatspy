@@ -21,6 +21,18 @@ mutation Mutation($input: CreateMessageInput!) {
     }
   }`);
 
+const EDIT_MESSAGE = gql(`
+  mutation EditMessage($input: EditMessageInput!) {
+  editMessage(input: $input) {
+    message {
+      id
+      text
+      date
+    }
+  }
+}
+  `);
+
 type MessageSenderProps = {
   channelIndex: number;
 };
@@ -33,6 +45,7 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
     useContext(ChatContext);
   const currentChannel = channels[channelIndex];
   const [createMessage] = useMutation(CREATE_MESSAGE);
+  const [editMessage] = useMutation(EDIT_MESSAGE);
   return (
     <Group
       bg={"white"}
@@ -99,9 +112,13 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
 
   async function handleSendMessage() {
     setLoading(true);
-    console.log(messageText);
-    console.log(messageToEdit);
     if (messageToEdit) {
+      await editMessage({
+        variables: {
+          input: { text: messageToEdit.text, messageId: messageToEdit.id },
+        },
+      });
+      setMessageToEdit(null);
     } else {
       await createMessage({
         variables: {

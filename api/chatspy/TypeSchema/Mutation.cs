@@ -369,7 +369,8 @@ public class Mutation
             Text = dbMessage.Text,
         };
 
-        await sender.SendAsync($"{Message.Id}", Message);
+        // await sender.SendAsync($"{Message.Id}", Message);
+        await sender.SendAsync($"[EDIT]{Message.Id}", Message);
         return Message;
     }
 
@@ -391,7 +392,8 @@ public class Mutation
             Text = dbMessage.Text,
         };
 
-        await sender.SendAsync($"{Message.Id}", Message);
+        // await sender.SendAsync($"{Message.Id}", Message);
+        await sender.SendAsync($"[DELETE]{Message.Id}", Message);
         return Message;
     }
 

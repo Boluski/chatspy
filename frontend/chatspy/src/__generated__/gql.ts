@@ -18,8 +18,10 @@ const documents = {
     "\n    mutation CreateChannel($input: CreateChannelInput!) {\n  createChannel(input: $input) {\n    channel {\n      id\n      name\n      type\n    }\n  }\n}\n    ": types.CreateChannelDocument,
     "\nmutation CreateWorkspace($input: CreateWorkspaceInput!) {\n  createWorkspace(input: $input) {\n    workspace {\n      id\n      name\n    }\n  }\n}\n    ": types.CreateWorkspaceDocument,
     "\n    mutation DeleteMessage($input: DeleteMessageInput!) {\n  deleteMessage(input: $input) {\n    message {\n      id\n      text\n      date\n    }\n  }\n}\n    ": types.DeleteMessageDocument,
-    "\n    subscription OnMessageDeleted($messageId: UUID!) {\n  onMessageDeleted(messageId: $messageId) {\n    id\n  }\n}\n    ": types.OnMessageDeletedDocument,
+    "\nsubscription OnMessageDeleted($messageTopic: String!) {\n  onMessageDeleted(messageTopic: $messageTopic) {\n    id\n    text\n    date\n  }\n}\n    ": types.OnMessageDeletedDocument,
+    "\n    subscription OnMessageUpdated($messageTopic: String!) {\n  onMessageUpdated(messageTopic: $messageTopic) {\n    id\n    text\n  }\n}\n    ": types.OnMessageUpdatedDocument,
     "\nmutation Mutation($input: CreateMessageInput!) {\n    createMessage(input: $input) {\n      message {\n        id\n        text\n        date\n        user {\n          username\n          fullName\n        }\n      }\n    }\n  }": types.MutationDocument,
+    "\n  mutation EditMessage($input: EditMessageInput!) {\n  editMessage(input: $input) {\n    message {\n      id\n      text\n      date\n    }\n  }\n}\n  ": types.EditMessageDocument,
     "\n        mutation CreateUser($input: CreateUserInput!) {\n        createUser(input: $input) {\n            user {\n            username\n            fullName\n            email\n            }\n        }\n        }\n    ": types.CreateUserDocument,
     "\n  query UserData($username: String!) {\nuserByUsername(username: $username) {\n  username\n  fullName\n  email\n  workspaces {\n    id\n    name\n    createdBy\n  }\n}\n}\n  ": types.UserDataDocument,
     "\nquery WorkspaceByID($workspaceId: UUID!, $username: String!) {\nworkspaceByID(workspaceID: $workspaceId, username: $username) {\n  id\n  name\n  createdBy\n  channels {\n        id\n        name\n        type\n        messages {\n          id\n          text\n          date\n          user {\n            fullName\n            username\n          }\n        }\n      }\n}\n}\n  ": types.WorkspaceByIdDocument,
@@ -63,11 +65,19 @@ export function gql(source: "\n    mutation DeleteMessage($input: DeleteMessageI
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n    subscription OnMessageDeleted($messageId: UUID!) {\n  onMessageDeleted(messageId: $messageId) {\n    id\n  }\n}\n    "): (typeof documents)["\n    subscription OnMessageDeleted($messageId: UUID!) {\n  onMessageDeleted(messageId: $messageId) {\n    id\n  }\n}\n    "];
+export function gql(source: "\nsubscription OnMessageDeleted($messageTopic: String!) {\n  onMessageDeleted(messageTopic: $messageTopic) {\n    id\n    text\n    date\n  }\n}\n    "): (typeof documents)["\nsubscription OnMessageDeleted($messageTopic: String!) {\n  onMessageDeleted(messageTopic: $messageTopic) {\n    id\n    text\n    date\n  }\n}\n    "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n    subscription OnMessageUpdated($messageTopic: String!) {\n  onMessageUpdated(messageTopic: $messageTopic) {\n    id\n    text\n  }\n}\n    "): (typeof documents)["\n    subscription OnMessageUpdated($messageTopic: String!) {\n  onMessageUpdated(messageTopic: $messageTopic) {\n    id\n    text\n  }\n}\n    "];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\nmutation Mutation($input: CreateMessageInput!) {\n    createMessage(input: $input) {\n      message {\n        id\n        text\n        date\n        user {\n          username\n          fullName\n        }\n      }\n    }\n  }"): (typeof documents)["\nmutation Mutation($input: CreateMessageInput!) {\n    createMessage(input: $input) {\n      message {\n        id\n        text\n        date\n        user {\n          username\n          fullName\n        }\n      }\n    }\n  }"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation EditMessage($input: EditMessageInput!) {\n  editMessage(input: $input) {\n    message {\n      id\n      text\n      date\n    }\n  }\n}\n  "): (typeof documents)["\n  mutation EditMessage($input: EditMessageInput!) {\n  editMessage(input: $input) {\n    message {\n      id\n      text\n      date\n    }\n  }\n}\n  "];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

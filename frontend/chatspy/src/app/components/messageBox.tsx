@@ -18,7 +18,10 @@ import {
   useSubscription,
 } from "@apollo/client";
 import { gql } from "@/__generated__/gql";
-import { OnMessageDeletedSubscription } from "@/__generated__/graphql";
+import {
+  OnMessageDeletedSubscription,
+  OnMessageUpdatedSubscription,
+} from "@/__generated__/graphql";
 
 const DELETE_MESSAGE = gql(`
     mutation DeleteMessage($input: DeleteMessageInput!) {
@@ -32,9 +35,19 @@ const DELETE_MESSAGE = gql(`
 }
     `);
 const ON_MESSAGE_DELETED_SUBSCRIPTION = gql(`
-    subscription OnMessageDeleted($messageId: UUID!) {
-  onMessageDeleted(messageId: $messageId) {
+subscription OnMessageDeleted($messageTopic: String!) {
+  onMessageDeleted(messageTopic: $messageTopic) {
     id
+    text
+    date
+  }
+}
+    `);
+const ON_MESSAGE_EDITED_SUBSCRIPTION = gql(`
+    subscription OnMessageUpdated($messageTopic: String!) {
+  onMessageUpdated(messageTopic: $messageTopic) {
+    id
+    text
   }
 }
     `);
@@ -49,7 +62,7 @@ function MessageBox({
   channelIndex,
   messageIndex,
 }: MessageBoxProps) {
-  const { channels, setChannels, username, setMessageToEdit } =
+  const { channels, setChannels, username, setMessageToEdit, messageToEdit } =
     useContext(ChatContext);
   const currentMessage = channels[channelIndex].message.find(
     (m) => m.id == messageId
@@ -63,9 +76,16 @@ function MessageBox({
   const [deleteMessage] = useMutation(DELETE_MESSAGE);
   useSubscription(ON_MESSAGE_DELETED_SUBSCRIPTION, {
     fetchPolicy: "network-only",
-    variables: { messageId: currentMessage?.id },
+    variables: { messageTopic: `[DELETE]${currentMessage?.id}` },
     onData() {
       handleOnMessageDeleted();
+    },
+  });
+  useSubscription(ON_MESSAGE_EDITED_SUBSCRIPTION, {
+    fetchPolicy: "network-only",
+    variables: { messageTopic: `[EDIT]${currentMessage?.id}` },
+    onData(data) {
+      handleOnMessageEdited(data.data);
     },
   });
 
@@ -132,6 +152,19 @@ function MessageBox({
       return updatedChannels;
     });
   }
+  function handleOnMessageEdited(
+    data: SubscriptionResult<OnMessageUpdatedSubscription, any>
+  ) {
+    if (data.data) {
+      const updatedText = data.data.onMessageUpdated.text;
+      setChannels((prevChannels) => {
+        const updatedChannels = [...prevChannels];
+        updatedChannels[channelIndex].message[messageIndex].text = updatedText;
+        return updatedChannels;
+      });
+    }
+  }
+
   function handleMessageEdit() {
     if (currentMessage != undefined) {
       setMessageToEdit(currentMessage);

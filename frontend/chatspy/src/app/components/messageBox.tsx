@@ -6,9 +6,13 @@ import {
   Text,
   Box,
   DEFAULT_THEME,
+  ActionIcon,
 } from "@mantine/core";
 import { useContext } from "react";
 import { ChatContext } from "../contexts/chatContext";
+import { MdDeleteOutline } from "react-icons/md";
+import { FiEdit } from "react-icons/fi";
+import { RiChatDeleteLine } from "react-icons/ri";
 
 type MessageBoxProps = {
   channelIndex: number;
@@ -43,7 +47,21 @@ function MessageBox({ messageId, channelIndex }: MessageBoxProps) {
         }
       />
       <Stack gap={5} w={"100%"}>
-        <Title order={4}>{currentMessage?.user.fullName}</Title>
+        <Group justify={"space-between"}>
+          <Title order={4}>{currentMessage?.user.fullName}</Title>
+
+          {username == currentMessage?.user.username ? (
+            <Group gap={2}>
+              <ActionIcon color="violet.8" variant="transparent" size={"lg"}>
+                <RiChatDeleteLine size={"1.3rem"} />
+              </ActionIcon>
+              <ActionIcon color="violet.8" variant="transparent" size={"lg"}>
+                <FiEdit size={"1.2rem"} />
+              </ActionIcon>
+            </Group>
+          ) : null}
+        </Group>
+
         <Text>{currentMessage?.text}</Text>
         <Title c={"gray.5"} style={{ textAlign: "end" }} order={6}>
           {currentDate.toDateString()} - {currentDate.toLocaleTimeString()}

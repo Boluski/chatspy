@@ -5,11 +5,7 @@ import ChannelRoomHead from "./channelHead";
 import MessageSender from "./messageSender";
 import MessageBox from "./messageBox";
 import { gql } from "@/__generated__/gql";
-import {
-  OnDataOptions,
-  SubscriptionResult,
-  useSubscription,
-} from "@apollo/client";
+import { SubscriptionResult, useSubscription } from "@apollo/client";
 import { OnMessageSentSubscription } from "@/__generated__/graphql";
 
 const SEND_MESSAGE_SUBSCRIPTION = gql(`
@@ -48,8 +44,6 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
     variables: { channelId: currentChannel?.id },
     fetchPolicy: "network-only",
     onData: (data) => {
-      console.log("Sub", data);
-
       handleReceivedMessage(data.data);
     },
   });
@@ -89,7 +83,6 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
   function handleReceivedMessage(
     data: SubscriptionResult<OnMessageSentSubscription, any>
   ) {
-    console.log("Sub", data);
     const receivedMessage = data.data;
     if (receivedMessage) {
       const latestMessage: messageType = {
@@ -104,6 +97,9 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
 
       setChannels((prevChannel) => {
         const newChannels = [...prevChannel];
+        if (newChannels[currentChannelIndex].message == undefined) {
+          newChannels[currentChannelIndex].message = [];
+        }
         newChannels[currentChannelIndex].message.push(latestMessage);
         return newChannels;
       });

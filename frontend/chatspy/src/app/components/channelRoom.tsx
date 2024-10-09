@@ -64,11 +64,13 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
         <ScrollArea type="never" viewportRef={viewport}>
           <Stack gap={1} mx={20}>
             {currentChannel?.message &&
-              currentChannel.message.map((m) => {
+              currentChannel.message.map((m, index) => {
                 return (
                   <MessageBox
+                    key={m.id}
                     channelIndex={currentChannelIndex}
                     messageId={m.id}
+                    messageIndex={index}
                   />
                 );
               })}

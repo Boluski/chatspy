@@ -10,17 +10,46 @@ import {
 } from "@mantine/core";
 import { useContext } from "react";
 import { ChatContext } from "../contexts/chatContext";
-import { MdDeleteOutline } from "react-icons/md";
 import { FiEdit } from "react-icons/fi";
 import { RiChatDeleteLine } from "react-icons/ri";
+import {
+  SubscriptionResult,
+  useMutation,
+  useSubscription,
+} from "@apollo/client";
+import { gql } from "@/__generated__/gql";
+import { OnMessageDeletedSubscription } from "@/__generated__/graphql";
+
+const DELETE_MESSAGE = gql(`
+    mutation DeleteMessage($input: DeleteMessageInput!) {
+  deleteMessage(input: $input) {
+    message {
+      id
+      text
+      date
+    }
+  }
+}
+    `);
+const ON_MESSAGE_DELETED_SUBSCRIPTION = gql(`
+    subscription OnMessageDeleted($messageId: UUID!) {
+  onMessageDeleted(messageId: $messageId) {
+    id
+  }
+}
+    `);
 
 type MessageBoxProps = {
   channelIndex: number;
   messageId: string;
+  messageIndex: number;
 };
-
-function MessageBox({ messageId, channelIndex }: MessageBoxProps) {
-  const { channels, username } = useContext(ChatContext);
+function MessageBox({
+  messageId,
+  channelIndex,
+  messageIndex,
+}: MessageBoxProps) {
+  const { channels, setChannels, username } = useContext(ChatContext);
   const currentMessage = channels[channelIndex].message.find(
     (m) => m.id == messageId
   );
@@ -29,6 +58,16 @@ function MessageBox({ messageId, channelIndex }: MessageBoxProps) {
   const dateString: string = currentMessage ? currentMessage.date : "";
 
   const currentDate = new Date(dateString);
+
+  const [deleteMessage] = useMutation(DELETE_MESSAGE);
+  useSubscription(ON_MESSAGE_DELETED_SUBSCRIPTION, {
+    fetchPolicy: "network-only",
+    variables: { messageId: currentMessage?.id },
+    onData() {
+      handleOnMessageDeleted();
+    },
+  });
+
   return (
     <Group wrap={"nowrap"} align={"start"} bg={isUser ? "violet.0" : ""} p={5}>
       <Avatar
@@ -46,13 +85,18 @@ function MessageBox({ messageId, channelIndex }: MessageBoxProps) {
               }
         }
       />
-      <Stack gap={5} w={"100%"}>
+      <Stack gap={2} w={"100%"}>
         <Group justify={"space-between"}>
           <Title order={4}>{currentMessage?.user.fullName}</Title>
 
-          {username == currentMessage?.user.username ? (
+          {isUser ? (
             <Group gap={2}>
-              <ActionIcon color="violet.8" variant="transparent" size={"lg"}>
+              <ActionIcon
+                color="violet.8"
+                variant="transparent"
+                size={"lg"}
+                onClick={handleMessageDelete}
+              >
                 <RiChatDeleteLine size={"1.3rem"} />
               </ActionIcon>
               <ActionIcon color="violet.8" variant="transparent" size={"lg"}>
@@ -69,6 +113,19 @@ function MessageBox({ messageId, channelIndex }: MessageBoxProps) {
       </Stack>
     </Group>
   );
+
+  async function handleMessageDelete() {
+    await deleteMessage({
+      variables: { input: { messageId: currentMessage?.id } },
+    });
+  }
+  function handleOnMessageDeleted() {
+    setChannels((prevChannels) => {
+      const updatedChannels = [...prevChannels];
+      updatedChannels[channelIndex].message.splice(messageIndex, 1);
+      return updatedChannels;
+    });
+  }
 }
 
 export default MessageBox;

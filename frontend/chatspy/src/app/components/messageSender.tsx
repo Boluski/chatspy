@@ -3,7 +3,8 @@ import { useState, useContext } from "react";
 import { IoIosSend } from "react-icons/io";
 import { gql } from "@/__generated__/gql";
 import { useMutation } from "@apollo/client";
-import { ChatContext } from "../contexts/chatContext";
+import { ChatContext, messageType } from "../contexts/chatContext";
+import { MdEdit } from "react-icons/md";
 
 const CREATE_MESSAGE = gql(`
 mutation Mutation($input: CreateMessageInput!) {
@@ -28,7 +29,8 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
   const [enableSendButton, setEnableSendButton] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { username, channels, setChannels } = useContext(ChatContext);
+  const { username, channels, setChannels, messageToEdit, setMessageToEdit } =
+    useContext(ChatContext);
   const currentChannel = channels[channelIndex];
   const [createMessage] = useMutation(CREATE_MESSAGE);
   return (
@@ -48,9 +50,26 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
         size={"md"}
         radius={"md"}
         placeholder="Send your team the latest update."
-        value={messageText}
+        value={messageToEdit ? messageToEdit.text : messageText}
         onChange={(event) => {
-          setMessageText(event.currentTarget.value);
+          if (messageToEdit) {
+            setMessageToEdit((prevMessage) => {
+              const updatedMessage: messageType = {
+                id: prevMessage ? prevMessage.id : "",
+                text: prevMessage ? prevMessage.text : "",
+                date: prevMessage ? prevMessage.date : "",
+                user: {
+                  username: prevMessage ? prevMessage.user.username : "",
+                  fullName: prevMessage ? prevMessage.user.fullName : "",
+                },
+              };
+              updatedMessage.text = event.currentTarget.value;
+              return updatedMessage;
+            });
+          } else {
+            setMessageText(event.currentTarget.value);
+          }
+
           if (event.currentTarget.value.trim() != "") {
             setEnableSendButton(true);
           } else {
@@ -62,12 +81,18 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
         loading={loading}
         disabled={!enableSendButton}
         color="violet.8"
-        rightSection={<IoIosSend size={"2.5rem"} />}
+        rightSection={
+          messageToEdit ? (
+            <MdEdit size={"2rem"} />
+          ) : (
+            <IoIosSend size={"2.5rem"} />
+          )
+        }
         size="lg"
         radius={"md"}
         onClick={handleSendMessage}
       >
-        Send
+        {messageToEdit ? "Edit" : "Send"}
       </Button>
     </Group>
   );
@@ -75,15 +100,19 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
   async function handleSendMessage() {
     setLoading(true);
     console.log(messageText);
-    await createMessage({
-      variables: {
-        input: {
-          username: username,
-          text: messageText,
-          channelId: currentChannel.id,
+    console.log(messageToEdit);
+    if (messageToEdit) {
+    } else {
+      await createMessage({
+        variables: {
+          input: {
+            username: username,
+            text: messageText,
+            channelId: currentChannel.id,
+          },
         },
-      },
-    });
+      });
+    }
 
     setMessageText("");
     setLoading(false);

@@ -49,7 +49,8 @@ function MessageBox({
   channelIndex,
   messageIndex,
 }: MessageBoxProps) {
-  const { channels, setChannels, username } = useContext(ChatContext);
+  const { channels, setChannels, username, setMessageToEdit } =
+    useContext(ChatContext);
   const currentMessage = channels[channelIndex].message.find(
     (m) => m.id == messageId
   );
@@ -99,7 +100,12 @@ function MessageBox({
               >
                 <RiChatDeleteLine size={"1.3rem"} />
               </ActionIcon>
-              <ActionIcon color="violet.8" variant="transparent" size={"lg"}>
+              <ActionIcon
+                color="violet.8"
+                variant="transparent"
+                size={"lg"}
+                onClick={handleMessageEdit}
+              >
                 <FiEdit size={"1.2rem"} />
               </ActionIcon>
             </Group>
@@ -125,6 +131,11 @@ function MessageBox({
       updatedChannels[channelIndex].message.splice(messageIndex, 1);
       return updatedChannels;
     });
+  }
+  function handleMessageEdit() {
+    if (currentMessage != undefined) {
+      setMessageToEdit(currentMessage);
+    }
   }
 }
 

@@ -10,7 +10,7 @@ import {
   Button,
 } from "@mantine/core";
 import { useContext } from "react";
-import { ChatContext } from "../contexts/chatContext";
+import { ChatContext, threadType } from "../contexts/chatContext";
 import { FiEdit } from "react-icons/fi";
 import { RiChatDeleteLine } from "react-icons/ri";
 import {
@@ -53,12 +53,14 @@ const ON_MESSAGE_EDITED_SUBSCRIPTION = gql(`
   }
       `);
 
-type MessageBoxProps = {
-  channelIndex: number;
-  messageId: string;
-  messageIndex: number;
+type ThreadBoxProps = {
+  // channelIndex: number;
+  // messageId: string;
+  // messageIndex: number;
+  thread: threadType;
 };
-function ThreadBox({ messageId, channelIndex, messageIndex }: MessageBoxProps) {
+
+function ThreadBox({ thread }: ThreadBoxProps) {
   const {
     channels,
     setChannels,
@@ -67,36 +69,36 @@ function ThreadBox({ messageId, channelIndex, messageIndex }: MessageBoxProps) {
     setShowThread,
     setMessageThread,
   } = useContext(ChatContext);
-  const currentMessage = channels[channelIndex].message.find(
-    (m) => m.id == messageId
-  );
-  const isUser = currentMessage?.user.username == username;
+  // const currentMessage = channels[channelIndex].message.find(
+  //   (m) => m.id == messageId
+  // );
+  const isUser = thread.user.username == username;
 
-  const dateString: string = currentMessage ? currentMessage.date : "";
+  const dateString: string = thread.date;
 
   const currentDate = new Date(dateString);
 
-  const [deleteMessage] = useMutation(DELETE_MESSAGE);
-  useSubscription(ON_MESSAGE_DELETED_SUBSCRIPTION, {
-    fetchPolicy: "network-only",
-    variables: { messageTopic: `[DELETE]${currentMessage?.id}` },
-    onData() {
-      handleOnMessageDeleted();
-    },
-  });
-  useSubscription(ON_MESSAGE_EDITED_SUBSCRIPTION, {
-    fetchPolicy: "network-only",
-    variables: { messageTopic: `[EDIT]${currentMessage?.id}` },
-    onData(data) {
-      handleOnMessageEdited(data.data);
-    },
-  });
+  // const [deleteMessage] = useMutation(DELETE_MESSAGE);
+  // useSubscription(ON_MESSAGE_DELETED_SUBSCRIPTION, {
+  //   fetchPolicy: "network-only",
+  //   variables: { messageTopic: `[DELETE]${currentMessage?.id}` },
+  //   onData() {
+  //     // handleOnMessageDeleted();
+  //   },
+  // });
+  // useSubscription(ON_MESSAGE_EDITED_SUBSCRIPTION, {
+  //   fetchPolicy: "network-only",
+  //   variables: { messageTopic: `[EDIT]${currentMessage?.id}` },
+  //   onData(data) {
+  //     // handleOnMessageEdited(data.data);
+  //   },
+  // });
 
   return (
     <Group wrap={"nowrap"} align={"start"} bg={isUser ? "violet.0" : ""} p={5}>
       <Avatar
         size={"lg"}
-        name={currentMessage?.user.fullName}
+        name={thread.user.fullName}
         styles={
           isUser
             ? {
@@ -111,7 +113,7 @@ function ThreadBox({ messageId, channelIndex, messageIndex }: MessageBoxProps) {
       />
       <Stack gap={2} w={"100%"}>
         <Group justify={"space-between"}>
-          <Title order={4}>{currentMessage?.user.fullName}</Title>
+          <Title order={4}>{thread.user.fullName}</Title>
 
           {isUser ? (
             <Group gap={2}>
@@ -119,7 +121,7 @@ function ThreadBox({ messageId, channelIndex, messageIndex }: MessageBoxProps) {
                 color="violet.8"
                 variant="transparent"
                 size={"lg"}
-                onClick={handleMessageDelete}
+                // onClick={handleMessageDelete}
               >
                 <RiChatDeleteLine size={"1.3rem"} />
               </ActionIcon>
@@ -127,28 +129,15 @@ function ThreadBox({ messageId, channelIndex, messageIndex }: MessageBoxProps) {
                 color="violet.8"
                 variant="transparent"
                 size={"lg"}
-                onClick={handleMessageEdit}
+                // onClick={handleMessageEdit}
               >
                 <FiEdit size={"1.2rem"} />
               </ActionIcon>
             </Group>
           ) : null}
         </Group>
-        <Text>{currentMessage?.text}</Text>
-        <Group>
-          <Button
-            color="violet.8"
-            variant="transparent"
-            onClick={() => {
-              if (currentMessage) {
-                setMessageThread(currentMessage);
-                setShowThread(true);
-              }
-            }}
-          >
-            5 Replies
-          </Button>
-        </Group>
+        <Text>{thread.text}</Text>
+
         <Title c={"gray.5"} style={{ textAlign: "end" }} order={6}>
           {currentDate.toDateString()} - {currentDate.toLocaleTimeString()}
         </Title>
@@ -157,34 +146,34 @@ function ThreadBox({ messageId, channelIndex, messageIndex }: MessageBoxProps) {
   );
 
   async function handleMessageDelete() {
-    await deleteMessage({
-      variables: { input: { messageId: currentMessage?.id } },
-    });
+    // await deleteMessage({
+    //   variables: { input: { messageId: currentMessage?.id } },
+    // });
   }
   function handleOnMessageDeleted() {
-    setChannels((prevChannels) => {
-      const updatedChannels = [...prevChannels];
-      updatedChannels[channelIndex].message.splice(messageIndex, 1);
-      return updatedChannels;
-    });
+    // setChannels((prevChannels) => {
+    //   const updatedChannels = [...prevChannels];
+    //   updatedChannels[channelIndex].message.splice(messageIndex, 1);
+    //   return updatedChannels;
+    // });
   }
   function handleOnMessageEdited(
     data: SubscriptionResult<OnMessageUpdatedSubscription, any>
   ) {
-    if (data.data) {
-      const updatedText = data.data.onMessageUpdated.text;
-      setChannels((prevChannels) => {
-        const updatedChannels = [...prevChannels];
-        updatedChannels[channelIndex].message[messageIndex].text = updatedText;
-        return updatedChannels;
-      });
-    }
+    // if (data.data) {
+    //   const updatedText = data.data.onMessageUpdated.text;
+    //   setChannels((prevChannels) => {
+    //     const updatedChannels = [...prevChannels];
+    //     updatedChannels[channelIndex].message[messageIndex].text = updatedText;
+    //     return updatedChannels;
+    //   });
+    // }
   }
 
   function handleMessageEdit() {
-    if (currentMessage != undefined) {
-      setMessageToEdit(currentMessage);
-    }
+    // if (currentMessage != undefined) {
+    //   setMessageToEdit(currentMessage);
+    // }
   }
 }
 

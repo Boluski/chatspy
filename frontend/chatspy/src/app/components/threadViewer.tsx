@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { useContext } from "react";
 import { ChatContext, messageType } from "../contexts/chatContext";
+import ThreadBox from "./threadBox";
 import MessageSender from "./messageSender";
 
 function ThreadViewer() {
@@ -25,7 +26,7 @@ function ThreadViewer() {
             borderBottom: `2px solid ${DEFAULT_THEME.colors.violet[8]}`,
           }}
         >
-          <ThreadMessage isUser={isUser} message={messageThread} />
+          <TargetMessage isUser={isUser} message={messageThread} />
         </Box>
       )}
       <Stack
@@ -37,15 +38,17 @@ function ThreadViewer() {
           position: "relative",
         }}
       >
-        <Group pl={"2rem"}>
-          <Divider color="violet.8" size={"sm"} orientation="vertical" />
-          <Box style={{ flexGrow: 1 }} pb={2}>
-            {/* <ThreadMessage
-              isUser={isUser}
-              message={messageThread ? messageThread : ({} as messageType)}
-            /> */}
-          </Box>
-        </Group>
+        {messageThread &&
+          messageThread.threads?.map((th) => {
+            return (
+              <Group pl={"2rem"}>
+                <Divider color="violet.8" size={"sm"} orientation="vertical" />
+                <Box style={{ flexGrow: 1 }} pb={2}>
+                  <ThreadBox thread={th} />
+                </Box>
+              </Group>
+            );
+          })}
         {/* <Box style={{}} h={"4rem"}></Box> */}
         <Box style={{ position: "absolute", bottom: 0, right: 0, left: 0 }}>
           <MessageSender channelIndex={1} />
@@ -60,7 +63,7 @@ type ThreadMessageProps = {
   isUser: boolean;
 };
 
-function ThreadMessage({ message, isUser }: ThreadMessageProps) {
+function TargetMessage({ message, isUser }: ThreadMessageProps) {
   const currentDate = new Date(message ? message.date : "");
   return (
     <Group wrap={"nowrap"} align={"start"} bg={isUser ? "violet.0" : ""} p={5}>

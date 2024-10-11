@@ -19,10 +19,9 @@ import {
   useSubscription,
 } from "@apollo/client";
 import { gql } from "@/__generated__/gql";
-import {
-  OnMessageDeletedSubscription,
-  OnMessageUpdatedSubscription,
-} from "@/__generated__/graphql";
+import { OnMessageUpdatedSubscription } from "@/__generated__/graphql";
+import { BsReplyAll } from "react-icons/bs";
+import { LuReplyAll } from "react-icons/lu";
 
 const DELETE_MESSAGE = gql(`
     mutation DeleteMessage($input: DeleteMessageInput!) {
@@ -123,9 +122,14 @@ function MessageBox({
                 color="violet.8"
                 variant="transparent"
                 size={"lg"}
-                onClick={handleMessageDelete}
+                onClick={() => {
+                  if (currentMessage) {
+                    setMessageThread(currentMessage);
+                    setShowThread(true);
+                  }
+                }}
               >
-                <RiChatDeleteLine size={"1.3rem"} />
+                <BsReplyAll size={"1.3rem"} />
               </ActionIcon>
               <ActionIcon
                 color="violet.8"
@@ -135,24 +139,60 @@ function MessageBox({
               >
                 <FiEdit size={"1.2rem"} />
               </ActionIcon>
+              <ActionIcon
+                color="violet.8"
+                variant="transparent"
+                size={"lg"}
+                onClick={handleMessageDelete}
+              >
+                <RiChatDeleteLine size={"1.3rem"} />
+              </ActionIcon>
             </Group>
-          ) : null}
+          ) : (
+            <Group gap={2}>
+              <ActionIcon
+                color="gray.8"
+                variant="transparent"
+                size={"lg"}
+                onClick={() => {
+                  if (currentMessage) {
+                    setMessageThread(currentMessage);
+                    setShowThread(true);
+                  }
+                }}
+              >
+                <BsReplyAll size={"1.3rem"} />
+              </ActionIcon>
+            </Group>
+          )}
         </Group>
         <Text>{currentMessage?.text}</Text>
-        <Group>
-          <Button
-            color="violet.8"
-            variant="transparent"
-            onClick={() => {
-              if (currentMessage) {
-                setMessageThread(currentMessage);
-                setShowThread(true);
-              }
-            }}
-          >
-            5 Replies
-          </Button>
-        </Group>
+        {currentMessage?.threads?.length != 0 ? (
+          <Group>
+            <Button
+              color="violet.8"
+              variant="transparent"
+              onClick={() => {
+                if (currentMessage) {
+                  setMessageThread(currentMessage);
+                  setShowThread(true);
+                }
+              }}
+            >
+              {currentMessage?.threads != undefined ? (
+                <>
+                  {currentMessage?.threads?.length > 1
+                    ? `${currentMessage?.threads?.length} Replies`
+                    : `${currentMessage?.threads?.length} Reply`}
+                </>
+              ) : null}
+
+              {/* {currentMessage?.threads?.length > 1 ? `${currentMessage?.threads?.length} Reply`  : `${currentMessage?.threads?.length} Replies` } */}
+              {/* 5 Replies */}
+            </Button>
+          </Group>
+        ) : null}
+
         <Title c={"gray.5"} style={{ textAlign: "end" }} order={6}>
           {currentDate.toDateString()} - {currentDate.toLocaleTimeString()}
         </Title>

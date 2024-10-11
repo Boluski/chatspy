@@ -21,6 +21,16 @@ type valueType = {
   setMessageThread: Dispatch<SetStateAction<messageType | null>>;
 };
 
+export type threadType = {
+  id: string;
+  text: string;
+  date: string;
+  user: {
+    fullName: string;
+    username: string;
+  };
+};
+
 export type messageType = {
   id: string;
   text: string;
@@ -29,6 +39,7 @@ export type messageType = {
     fullName: string;
     username: string;
   };
+  threads?: threadType[];
 };
 
 export type channelType = {

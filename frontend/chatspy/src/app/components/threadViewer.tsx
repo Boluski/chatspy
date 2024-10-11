@@ -11,6 +11,7 @@ import {
 } from "@mantine/core";
 import { useContext } from "react";
 import { ChatContext, messageType } from "../contexts/chatContext";
+import MessageSender from "./messageSender";
 
 function ThreadViewer() {
   const { messageThread, username } = useContext(ChatContext);
@@ -27,61 +28,28 @@ function ThreadViewer() {
           <ThreadMessage isUser={isUser} message={messageThread} />
         </Box>
       )}
-      <Stack gap={0}>
+      <Stack
+        h={"1000rem"}
+        mah={"66vh"}
+        gap={0}
+        style={{
+          //  border: "solid red 2px",
+          position: "relative",
+        }}
+      >
         <Group pl={"2rem"}>
           <Divider color="violet.8" size={"sm"} orientation="vertical" />
           <Box style={{ flexGrow: 1 }} pb={2}>
-            <ThreadMessage
+            {/* <ThreadMessage
               isUser={isUser}
               message={messageThread ? messageThread : ({} as messageType)}
-            />
+            /> */}
           </Box>
         </Group>
-        <Group pl={"2rem"}>
-          <Divider color="violet.8" size={"sm"} orientation="vertical" />
-          <Box style={{ flexGrow: 1 }} pb={2}>
-            <ThreadMessage
-              isUser={isUser}
-              message={messageThread ? messageThread : ({} as messageType)}
-            />
-          </Box>
-        </Group>
-        <Group pl={"2rem"}>
-          <Divider color="violet.8" size={"sm"} orientation="vertical" />
-          <Box style={{ flexGrow: 1 }} pb={2}>
-            <ThreadMessage
-              isUser={isUser}
-              message={messageThread ? messageThread : ({} as messageType)}
-            />
-          </Box>
-        </Group>
-        <Group pl={"2rem"}>
-          <Divider color="violet.8" size={"sm"} orientation="vertical" />
-          <Box style={{ flexGrow: 1 }} pb={2}>
-            <ThreadMessage
-              isUser={isUser}
-              message={messageThread ? messageThread : ({} as messageType)}
-            />
-          </Box>
-        </Group>
-        <Group pl={"2rem"}>
-          <Divider color="violet.8" size={"sm"} orientation="vertical" />
-          <Box style={{ flexGrow: 1 }} pb={2}>
-            <ThreadMessage
-              isUser={isUser}
-              message={messageThread ? messageThread : ({} as messageType)}
-            />
-          </Box>
-        </Group>
-        <Group pl={"2rem"}>
-          <Divider color="violet.8" size={"sm"} orientation="vertical" />
-          <Box style={{ flexGrow: 1 }} pb={2}>
-            <ThreadMessage
-              isUser={isUser}
-              message={messageThread ? messageThread : ({} as messageType)}
-            />
-          </Box>
-        </Group>
+        {/* <Box style={{}} h={"4rem"}></Box> */}
+        <Box style={{ position: "absolute", bottom: 0, right: 0, left: 0 }}>
+          <MessageSender channelIndex={1} />
+        </Box>
       </Stack>
     </Stack>
   );

@@ -57,25 +57,35 @@ userByUsername(username: $username) {
 
 const CURRENT_WORKSPACE = gql(`
 query WorkspaceByID($workspaceId: UUID!, $username: String!) {
-workspaceByID(workspaceID: $workspaceId, username: $username) {
-  id
-  name
-  createdBy
-  channels {
+  workspaceByID(workspaceID: $workspaceId, username: $username) {
+    id
+    name
+    createdBy
+    channels {
+      id
+      name
+      type
+      messages {
         id
-        name
-        type
-        messages {
+        text
+        date
+   
+        user {
+          username
+          fullName
+        }     
+        threads {
           id
           text
           date
           user {
-            fullName
             username
+            fullName
           }
         }
       }
-}
+    }
+  }
 }
   `);
 
@@ -285,13 +295,24 @@ export default function CurrentWorkspace({ params }: Workspace) {
                           username: m.user.username,
                           fullName: m.user.fullName,
                         },
+                        threads: m.threads.map((th) => {
+                          return {
+                            text: th.text,
+                            date: th.date,
+                            id: th.id,
+                            user: {
+                              username: th.user.username,
+                              fullName: th.user.fullName,
+                            },
+                          };
+                        }),
                       };
                     }),
                   };
                   return newChannels;
                 });
               // currentWorkspaceData.workspaceByID.channels as channelType[]'
-              console.log(channels);
+              console.log("Workspace Channels:", channels);
 
               setChannels(channels);
               cc_setUsername(preferred_username);

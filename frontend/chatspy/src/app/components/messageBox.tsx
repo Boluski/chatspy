@@ -63,8 +63,14 @@ function MessageBox({
   channelIndex,
   messageIndex,
 }: MessageBoxProps) {
-  const { channels, setChannels, username, setMessageToEdit, setShowThread } =
-    useContext(ChatContext);
+  const {
+    channels,
+    setChannels,
+    username,
+    setMessageToEdit,
+    setShowThread,
+    setMessageThread,
+  } = useContext(ChatContext);
   const currentMessage = channels[channelIndex].message.find(
     (m) => m.id == messageId
   );
@@ -137,7 +143,12 @@ function MessageBox({
           <Button
             color="violet.8"
             variant="transparent"
-            onClick={() => setShowThread(true)}
+            onClick={() => {
+              if (currentMessage) {
+                setMessageThread(currentMessage);
+                setShowThread(true);
+              }
+            }}
           >
             5 Replies
           </Button>

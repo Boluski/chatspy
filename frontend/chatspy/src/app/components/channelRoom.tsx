@@ -18,6 +18,7 @@ import { gql } from "@/__generated__/gql";
 import { IoChevronBackSharp } from "react-icons/io5";
 import { SubscriptionResult, useSubscription } from "@apollo/client";
 import { OnMessageSentSubscription } from "@/__generated__/graphql";
+import ThreadViewer from "./threadViewer";
 
 const SEND_MESSAGE_SUBSCRIPTION = gql(`
     subscription OnMessageSent($channelId: UUID!) {
@@ -38,7 +39,7 @@ type ChannelRoomProps = {
 };
 
 function ChannelRoom({ channelId }: ChannelRoomProps) {
-  const { channels, setChannels, showThread, setShowThread } =
+  const { channels, setChannels, showThread, setShowThread, setMessageThread } =
     useContext(ChatContext);
   const currentChannel = channels.find((c) => c.id == channelId);
   const currentChannelIndex = channels.findIndex((c) => c.id == channelId);
@@ -113,12 +114,17 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
             color="black"
             variant="transparent"
             size={"lg"}
-            onClick={() => setShowThread(false)}
+            onClick={() => {
+              setMessageThread(null);
+              setShowThread(false);
+            }}
           >
             <IoChevronBackSharp size={"1.5rem"} />
           </ActionIcon>
           <Title order={2}>Threads</Title>
         </Group>
+        {/* Threads  */}
+        <ThreadViewer />
       </Stack>
     </Stack>
   );

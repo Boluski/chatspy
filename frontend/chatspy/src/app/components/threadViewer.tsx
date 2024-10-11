@@ -8,11 +8,13 @@ import {
   Text,
   Box,
   Divider,
+  ScrollArea,
 } from "@mantine/core";
 import { useContext } from "react";
 import { ChatContext, messageType } from "../contexts/chatContext";
 import ThreadBox from "./threadBox";
 import MessageSender from "./messageSender";
+import ThreadSender from "./threadSender";
 
 function ThreadViewer() {
   const { messageThread, username } = useContext(ChatContext);
@@ -38,20 +40,27 @@ function ThreadViewer() {
           position: "relative",
         }}
       >
-        {messageThread &&
-          messageThread.threads?.map((th) => {
-            return (
-              <Group pl={"2rem"}>
-                <Divider color="violet.8" size={"sm"} orientation="vertical" />
-                <Box style={{ flexGrow: 1 }} pb={2}>
-                  <ThreadBox thread={th} />
-                </Box>
-              </Group>
-            );
-          })}
-        {/* <Box style={{}} h={"4rem"}></Box> */}
+        <ScrollArea type={"never"}>
+          {messageThread &&
+            messageThread.threads?.map((th) => {
+              return (
+                <Group pl={"2rem"}>
+                  <Divider
+                    color="violet.8"
+                    size={"sm"}
+                    orientation="vertical"
+                  />
+                  <Box style={{ flexGrow: 1 }} pb={2}>
+                    <ThreadBox thread={th} />
+                  </Box>
+                </Group>
+              );
+            })}
+        </ScrollArea>
+
+        <Box style={{}} h={"8rem"}></Box>
         <Box style={{ position: "absolute", bottom: 0, right: 0, left: 0 }}>
-          <MessageSender channelIndex={1} />
+          <ThreadSender messageId={messageThread ? messageThread.id : ""} />
         </Box>
       </Stack>
     </Stack>

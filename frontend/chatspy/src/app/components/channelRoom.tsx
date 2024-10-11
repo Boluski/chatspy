@@ -45,7 +45,7 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
   const currentChannel = channels.find((c) => c.id == channelId);
   const currentChannelIndex = channels.findIndex((c) => c.id == channelId);
 
-  useEffect(() => scrollToBottom(), [channels]);
+  useEffect(() => scrollToBottom(), [channels, showThread]);
 
   const viewport = useRef<HTMLDivElement>(null);
 
@@ -80,64 +80,70 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
         channelName={currentChannel ? currentChannel.name : ""}
       />
 
-      {/* {showThread ? ( */}
-      <Stack display={showThread ? "flex" : "none"} gap={0} h={"100%"} mx={20}>
-        <Group align="center" gap={0}>
-          <ActionIcon
-            color="black"
-            variant="transparent"
-            size={"lg"}
-            onClick={() => {
-              setShowThread(false);
-            }}
-          >
-            <IoChevronBackSharp size={"1.5rem"} />
-          </ActionIcon>
-          <Title order={2}>Threads</Title>
-        </Group>
-        {/* Threads  */}
-        <ThreadViewer
-          channelIndex={currentChannelIndex}
-          targetMessageId={targetMessageId}
-        />
-      </Stack>
-      {/* ) : ( */}
-      <Stack
-        display={showThread ? "none" : "flex"}
-        gap={0}
-        h={"100%"}
-        style={{ flexGrow: 1, position: "relative" }}
-      >
+      {showThread ? (
         <Stack
+          //   display={showThread ? "flex" : "none"}
+          gap={0}
           h={"100%"}
-          mah={"78vh"}
-          justify={"flex-end"}
-          style={{ flexGrow: 1 }}
+          mx={20}
         >
-          <ScrollArea type="never" viewportRef={viewport}>
-            <Stack gap={1} mx={20}>
-              {currentChannel?.message &&
-                currentChannel.message.map((m, index) => {
-                  return (
-                    <MessageBox
-                      key={m.id}
-                      channelIndex={currentChannelIndex}
-                      messageId={m.id}
-                      messageIndex={index}
-                      setTargetMessageId={setTargetMessageId}
-                      setShowThread={setShowThread}
-                    />
-                  );
-                })}
-              <Box style={{}} h={"4rem"}></Box>
-            </Stack>
-          </ScrollArea>
+          <Group align="center" gap={0}>
+            <ActionIcon
+              color="black"
+              variant="transparent"
+              size={"lg"}
+              onClick={() => {
+                setShowThread(false);
+              }}
+            >
+              <IoChevronBackSharp size={"1.5rem"} />
+            </ActionIcon>
+            <Title order={2}>Threads</Title>
+          </Group>
+          {/* Threads  */}
+          <ThreadViewer
+            channelIndex={currentChannelIndex}
+            targetMessageId={targetMessageId}
+          />
         </Stack>
-        <Box style={{ position: "absolute", bottom: 0, right: 0, left: 0 }}>
-          <MessageSender channelIndex={currentChannelIndex} />
-        </Box>
-      </Stack>
-      {/* )} */}
+      ) : (
+        <Stack
+          // display={showThread ? "none" : "flex"}
+          gap={0}
+          h={"100%"}
+          style={{ flexGrow: 1, position: "relative" }}
+        >
+          <Stack
+            h={"100%"}
+            mah={"78vh"}
+            justify={"flex-end"}
+            style={{ flexGrow: 1 }}
+          >
+            <ScrollArea type="never" viewportRef={viewport}>
+              <Stack gap={1} mx={20}>
+                {currentChannel?.message &&
+                  currentChannel.message.map((m, index) => {
+                    return (
+                      <MessageBox
+                        key={m.id}
+                        channelIndex={currentChannelIndex}
+                        messageId={m.id}
+                        messageIndex={index}
+                        setTargetMessageId={setTargetMessageId}
+                        setShowThread={setShowThread}
+                        showThread={showThread}
+                      />
+                    );
+                  })}
+                <Box style={{}} h={"4rem"}></Box>
+              </Stack>
+            </ScrollArea>
+          </Stack>
+          <Box style={{ position: "absolute", bottom: 0, right: 0, left: 0 }}>
+            <MessageSender channelIndex={currentChannelIndex} />
+          </Box>
+        </Stack>
+      )}
     </Stack>
   );
 

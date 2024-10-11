@@ -110,8 +110,6 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
     data: SubscriptionResult<OnThreadSentSubscription, any>
   ) {
     if (data) {
-      console.log("DATA", data);
-
       setChannels((prevChannels) => {
         const updatedChannel = [...prevChannels];
         console.log(

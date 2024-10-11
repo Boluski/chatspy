@@ -19,7 +19,10 @@ import {
   useSubscription,
 } from "@apollo/client";
 import { gql } from "@/__generated__/gql";
-import { OnMessageUpdatedSubscription } from "@/__generated__/graphql";
+import {
+  OnMessageUpdatedSubscription,
+  OnThreadSentMessageBoxSubscription,
+} from "@/__generated__/graphql";
 import { BsReplyAll } from "react-icons/bs";
 import { LuReplyAll } from "react-icons/lu";
 
@@ -52,12 +55,27 @@ const ON_MESSAGE_EDITED_SUBSCRIPTION = gql(`
 }
     `);
 
+const ON_THREAD_SENT = gql(`
+  subscription OnThreadSentMessageBox($messageId: UUID!) {
+  onThreadSent(messageId: $messageId) {
+    id
+    text
+    date
+    user {
+      username
+      fullName
+    }
+  }
+}
+  `);
+
 type MessageBoxProps = {
   channelIndex: number;
   messageId: string;
   messageIndex: number;
   setTargetMessageId: Dispatch<SetStateAction<string>>;
   setShowThread: Dispatch<SetStateAction<boolean>>;
+  showThread: boolean;
 };
 function MessageBox({
   messageId,
@@ -65,6 +83,7 @@ function MessageBox({
   messageIndex,
   setTargetMessageId,
   setShowThread,
+  showThread,
 }: MessageBoxProps) {
   const { channels, setChannels, username, setMessageToEdit } =
     useContext(ChatContext);
@@ -90,6 +109,14 @@ function MessageBox({
     variables: { messageTopic: `[EDIT]${currentMessage?.id}` },
     onData(data) {
       handleOnMessageEdited(data.data);
+    },
+  });
+
+  useSubscription(ON_THREAD_SENT, {
+    fetchPolicy: "network-only",
+    variables: { messageId: currentMessage?.id },
+    onData: (data) => {
+      handleOnTheadSent(data.data);
     },
   });
 
@@ -197,6 +224,38 @@ function MessageBox({
       </Stack>
     </Group>
   );
+
+  function handleOnTheadSent(
+    data: SubscriptionResult<OnThreadSentMessageBoxSubscription, any>
+  ) {
+    if (data) {
+      if (!showThread) {
+        setChannels((prevChannels) => {
+          const updatedChannel = [...prevChannels];
+          console.log(
+            "Message::",
+            updatedChannel[channelIndex].message[messageIndex]
+          );
+
+          updatedChannel[channelIndex].message[messageIndex].threads.push({
+            id: data.data?.onThreadSent ? data.data.onThreadSent.id : "",
+            text: data.data?.onThreadSent ? data.data.onThreadSent.text : "",
+            date: data.data?.onThreadSent ? data.data.onThreadSent.date : "",
+            user: {
+              username: data.data?.onThreadSent
+                ? data.data.onThreadSent.user.username
+                : "",
+              fullName: data.data?.onThreadSent
+                ? data.data.onThreadSent.user.fullName
+                : "",
+            },
+          });
+
+          return updatedChannel;
+        });
+      }
+    }
+  }
 
   async function handleMessageDelete() {
     await deleteMessage({

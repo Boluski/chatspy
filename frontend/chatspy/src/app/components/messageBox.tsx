@@ -229,31 +229,29 @@ function MessageBox({
     data: SubscriptionResult<OnThreadSentMessageBoxSubscription, any>
   ) {
     if (data) {
-      if (!showThread) {
-        setChannels((prevChannels) => {
-          const updatedChannel = [...prevChannels];
-          console.log(
-            "Message::",
-            updatedChannel[channelIndex].message[messageIndex]
-          );
+      setChannels((prevChannels) => {
+        const updatedChannel = [...prevChannels];
+        console.log(
+          "Message::",
+          updatedChannel[channelIndex].message[messageIndex]
+        );
 
-          updatedChannel[channelIndex].message[messageIndex].threads.push({
-            id: data.data?.onThreadSent ? data.data.onThreadSent.id : "",
-            text: data.data?.onThreadSent ? data.data.onThreadSent.text : "",
-            date: data.data?.onThreadSent ? data.data.onThreadSent.date : "",
-            user: {
-              username: data.data?.onThreadSent
-                ? data.data.onThreadSent.user.username
-                : "",
-              fullName: data.data?.onThreadSent
-                ? data.data.onThreadSent.user.fullName
-                : "",
-            },
-          });
-
-          return updatedChannel;
+        updatedChannel[channelIndex].message[messageIndex].threads.push({
+          id: data.data?.onThreadSent ? data.data.onThreadSent.id : "",
+          text: data.data?.onThreadSent ? data.data.onThreadSent.text : "",
+          date: data.data?.onThreadSent ? data.data.onThreadSent.date : "",
+          user: {
+            username: data.data?.onThreadSent
+              ? data.data.onThreadSent.user.username
+              : "",
+            fullName: data.data?.onThreadSent
+              ? data.data.onThreadSent.user.fullName
+              : "",
+          },
         });
-      }
+
+        return updatedChannel;
+      });
     }
   }
 

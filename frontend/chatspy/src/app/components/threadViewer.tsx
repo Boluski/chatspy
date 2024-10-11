@@ -10,15 +10,55 @@ import {
   Divider,
   ScrollArea,
 } from "@mantine/core";
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { ChatContext, messageType } from "../contexts/chatContext";
 import ThreadBox from "./threadBox";
-import MessageSender from "./messageSender";
 import ThreadSender from "./threadSender";
+import { gql } from "@/__generated__/gql";
+import { SubscriptionResult, useSubscription } from "@apollo/client";
+import { OnThreadSentSubscription } from "@/__generated__/graphql";
 
-function ThreadViewer() {
-  const { messageThread, username } = useContext(ChatContext);
+const ON_THREAD_SENT = gql(`
+  subscription OnThreadSent($messageId: UUID!) {
+  onThreadSent(messageId: $messageId) {
+    id
+    text
+    date
+    user {
+      username
+      fullName
+    }
+  }
+}
+  `);
+
+type ThreadViewerProps = {
+  channelIndex: number;
+  targetMessageId: string;
+};
+function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
+  const { username, setChannels, channels } = useContext(ChatContext);
+  const messageIndex = useRef(-1);
+  const messageThread = channels[channelIndex].message.find(
+    (m) => m.id == targetMessageId
+  );
+
+  messageIndex.current = channels[channelIndex].message.findIndex(
+    (m) => m.id == targetMessageId
+  );
+
+  console.log("MessageIndex", messageIndex);
+
   const isUser = messageThread?.user.username == username;
+  console.log("logging");
+
+  useSubscription(ON_THREAD_SENT, {
+    variables: { messageId: messageThread ? messageThread.id : "" },
+    fetchPolicy: "network-only",
+    onData: (data) => {
+      handleOnTheadSent(data.data);
+    },
+  });
 
   return (
     <Stack gap={2}>
@@ -42,9 +82,9 @@ function ThreadViewer() {
       >
         <ScrollArea type={"never"}>
           {messageThread &&
-            messageThread.threads?.map((th) => {
+            messageThread.threads.map((th) => {
               return (
-                <Group pl={"2rem"}>
+                <Group pl={"2rem"} key={th.id}>
                   <Divider
                     color="violet.8"
                     size={"sm"}
@@ -56,15 +96,50 @@ function ThreadViewer() {
                 </Group>
               );
             })}
+          <Box style={{}} h={"6rem"}></Box>
         </ScrollArea>
 
-        <Box style={{}} h={"8rem"}></Box>
         <Box style={{ position: "absolute", bottom: 0, right: 0, left: 0 }}>
           <ThreadSender messageId={messageThread ? messageThread.id : ""} />
         </Box>
       </Stack>
     </Stack>
   );
+
+  function handleOnTheadSent(
+    data: SubscriptionResult<OnThreadSentSubscription, any>
+  ) {
+    if (data) {
+      console.log("DATA", data);
+
+      setChannels((prevChannels) => {
+        const updatedChannel = [...prevChannels];
+        console.log(
+          "Message::",
+          updatedChannel[channelIndex].message[messageIndex.current]
+        );
+
+        updatedChannel[channelIndex].message[messageIndex.current].threads.push(
+          {
+            id: data.data?.onThreadSent ? data.data.onThreadSent.id : "",
+            text: data.data?.onThreadSent ? data.data.onThreadSent.text : "",
+            date: data.data?.onThreadSent ? data.data.onThreadSent.date : "",
+            user: {
+              username: data.data?.onThreadSent
+                ? data.data.onThreadSent.user.username
+                : "",
+              fullName: data.data?.onThreadSent
+                ? data.data.onThreadSent.user.fullName
+                : "",
+            },
+          }
+        );
+
+        return updatedChannel;
+      });
+      console.log("Success");
+    }
+  }
 }
 
 type ThreadMessageProps = {

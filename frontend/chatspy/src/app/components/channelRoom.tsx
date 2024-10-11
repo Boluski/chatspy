@@ -39,19 +39,24 @@ type ChannelRoomProps = {
 };
 
 function ChannelRoom({ channelId }: ChannelRoomProps) {
-  const { channels, setChannels, showThread, setShowThread, setMessageThread } =
-    useContext(ChatContext);
+  const { channels, setChannels } = useContext(ChatContext);
+  const [showThread, setShowThread] = useState(false);
+  const [targetMessageId, setTargetMessageId] = useState("");
   const currentChannel = channels.find((c) => c.id == channelId);
   const currentChannelIndex = channels.findIndex((c) => c.id == channelId);
 
   useEffect(() => scrollToBottom(), [channels]);
 
   const viewport = useRef<HTMLDivElement>(null);
-  const scrollToBottom = () =>
-    viewport.current!.scrollTo({
-      top: viewport.current!.scrollHeight,
-      behavior: "instant",
-    });
+
+  function scrollToBottom() {
+    if (viewport.current != null) {
+      viewport.current!.scrollTo({
+        top: viewport.current!.scrollHeight,
+        behavior: "instant",
+      });
+    }
+  }
 
   useSubscription(SEND_MESSAGE_SUBSCRIPTION, {
     variables: { channelId: currentChannel?.id },
@@ -74,6 +79,29 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
         channelId={channelId}
         channelName={currentChannel ? currentChannel.name : ""}
       />
+
+      {/* {showThread ? ( */}
+      <Stack display={showThread ? "flex" : "none"} gap={0} h={"100%"} mx={20}>
+        <Group align="center" gap={0}>
+          <ActionIcon
+            color="black"
+            variant="transparent"
+            size={"lg"}
+            onClick={() => {
+              setShowThread(false);
+            }}
+          >
+            <IoChevronBackSharp size={"1.5rem"} />
+          </ActionIcon>
+          <Title order={2}>Threads</Title>
+        </Group>
+        {/* Threads  */}
+        <ThreadViewer
+          channelIndex={currentChannelIndex}
+          targetMessageId={targetMessageId}
+        />
+      </Stack>
+      {/* ) : ( */}
       <Stack
         display={showThread ? "none" : "flex"}
         gap={0}
@@ -96,6 +124,8 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
                       channelIndex={currentChannelIndex}
                       messageId={m.id}
                       messageIndex={index}
+                      setTargetMessageId={setTargetMessageId}
+                      setShowThread={setShowThread}
                     />
                   );
                 })}
@@ -107,25 +137,7 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
           <MessageSender channelIndex={currentChannelIndex} />
         </Box>
       </Stack>
-
-      <Stack display={showThread ? "flex" : "none"} gap={0} h={"100%"} mx={20}>
-        <Group align="center" gap={0}>
-          <ActionIcon
-            color="black"
-            variant="transparent"
-            size={"lg"}
-            onClick={() => {
-              setMessageThread(null);
-              setShowThread(false);
-            }}
-          >
-            <IoChevronBackSharp size={"1.5rem"} />
-          </ActionIcon>
-          <Title order={2}>Threads</Title>
-        </Group>
-        {/* Threads  */}
-        <ThreadViewer />
-      </Stack>
+      {/* )} */}
     </Stack>
   );
 
@@ -142,6 +154,7 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
           fullName: receivedMessage.onMessageSent.user.fullName,
           username: receivedMessage.onMessageSent.user.username,
         },
+        threads: [],
       };
 
       setChannels((prevChannel) => {

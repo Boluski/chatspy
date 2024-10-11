@@ -39,7 +39,7 @@ export type messageType = {
     fullName: string;
     username: string;
   };
-  threads?: threadType[];
+  threads: threadType[];
 };
 
 export type channelType = {

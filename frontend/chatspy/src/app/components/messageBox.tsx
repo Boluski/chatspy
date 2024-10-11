@@ -9,7 +9,7 @@ import {
   ActionIcon,
   Button,
 } from "@mantine/core";
-import { useContext } from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
 import { ChatContext } from "../contexts/chatContext";
 import { FiEdit } from "react-icons/fi";
 import { RiChatDeleteLine } from "react-icons/ri";
@@ -56,20 +56,18 @@ type MessageBoxProps = {
   channelIndex: number;
   messageId: string;
   messageIndex: number;
+  setTargetMessageId: Dispatch<SetStateAction<string>>;
+  setShowThread: Dispatch<SetStateAction<boolean>>;
 };
 function MessageBox({
   messageId,
   channelIndex,
   messageIndex,
+  setTargetMessageId,
+  setShowThread,
 }: MessageBoxProps) {
-  const {
-    channels,
-    setChannels,
-    username,
-    setMessageToEdit,
-    setShowThread,
-    setMessageThread,
-  } = useContext(ChatContext);
+  const { channels, setChannels, username, setMessageToEdit } =
+    useContext(ChatContext);
   const currentMessage = channels[channelIndex].message.find(
     (m) => m.id == messageId
   );
@@ -124,7 +122,7 @@ function MessageBox({
                 size={"lg"}
                 onClick={() => {
                   if (currentMessage) {
-                    setMessageThread(currentMessage);
+                    setTargetMessageId(currentMessage.id);
                     setShowThread(true);
                   }
                 }}
@@ -156,7 +154,7 @@ function MessageBox({
                 size={"lg"}
                 onClick={() => {
                   if (currentMessage) {
-                    setMessageThread(currentMessage);
+                    setTargetMessageId(currentMessage.id);
                     setShowThread(true);
                   }
                 }}
@@ -174,7 +172,7 @@ function MessageBox({
               variant="transparent"
               onClick={() => {
                 if (currentMessage) {
-                  setMessageThread(currentMessage);
+                  setTargetMessageId(currentMessage.id);
                   setShowThread(true);
                 }
               }}

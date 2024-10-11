@@ -115,6 +115,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
     setWorkspaceId,
     setUsername: cc_setUsername,
   } = useContext(ChatContext);
+  console.log("Debug:", channels);
 
   useEffect(() => {
     handleInitialLoad();
@@ -176,26 +177,28 @@ export default function CurrentWorkspace({ params }: Workspace) {
                       </Button>
                     ) : null}
 
-                    {channels.map((c) => {
+                    {channels &&
+                      channels.map((c) => {
+                        if (c.type == "PUBLIC") {
+                          return (
+                            <TabsTab key={c.id} value={c.id}>
+                              {c.name}
+                            </TabsTab>
+                          );
+                        }
+                      })}
+                  </TabsList>
+
+                  {channels &&
+                    channels.map((c) => {
                       if (c.type == "PUBLIC") {
                         return (
-                          <TabsTab key={c.id} value={c.id}>
-                            {c.name}
-                          </TabsTab>
+                          <TabsPanel key={c.id} value={c.id}>
+                            <ChannelRoom key={c.id} channelId={c.id} />
+                          </TabsPanel>
                         );
                       }
                     })}
-                  </TabsList>
-
-                  {channels.map((c) => {
-                    if (c.type == "PUBLIC") {
-                      return (
-                        <TabsPanel key={c.id} value={c.id}>
-                          <ChannelRoom key={c.id} channelId={c.id} />
-                        </TabsPanel>
-                      );
-                    }
-                  })}
                 </Tabs>
               </Group>
             </>

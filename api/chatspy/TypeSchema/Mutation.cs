@@ -425,6 +425,7 @@ public class Mutation
             Date = dbThread.Date,
             Text = dbThread.Text,
             MessageId = dbMessage.Id,
+            Username = dbUser.Username,
         };
         await sender.SendAsync($"{Thread.MessageId}", Thread);
         return Thread;
@@ -438,7 +439,9 @@ public class Mutation
         string text
     )
     {
-        var dbThread = await dbContext.Threads.SingleAsync(t => t.Id == threadId);
+        var dbThread = await dbContext
+            .Threads.Include(t => t.User)
+            .SingleAsync(t => t.Id == threadId);
         dbThread.Text = text;
         await dbContext.SaveChangesAsync();
 
@@ -447,6 +450,7 @@ public class Mutation
             Id = dbThread.Id,
             Date = dbThread.Date,
             Text = dbThread.Text,
+            Username = dbThread.User.Username,
         };
         await sender.SendAsync($"{Thread.Id}", Thread);
         return Thread;
@@ -459,7 +463,9 @@ public class Mutation
         Guid threadId
     )
     {
-        var dbThread = await dbContext.Threads.SingleAsync(t => t.Id == threadId);
+        var dbThread = await dbContext
+            .Threads.Include(t => t.User)
+            .SingleAsync(t => t.Id == threadId);
         dbContext.Remove(dbThread);
         await dbContext.SaveChangesAsync();
 
@@ -468,6 +474,7 @@ public class Mutation
             Id = dbThread.Id,
             Date = dbThread.Date,
             Text = dbThread.Text,
+            Username = dbThread.User.Username,
         };
         await sender.SendAsync($"{Thread.Id}", Thread);
         return Thread;

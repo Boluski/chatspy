@@ -12,18 +12,19 @@ public class Thread
     [GraphQLIgnore]
     public Guid? MessageId { get; set; }
 
+    [GraphQLIgnore]
+    public string? Username { get; set; }
+
     public async Task<User> User(ChatspyContext dbContext)
     {
-        var dbThread = await dbContext
-            .Threads.Include(dbT => dbT.User)
-            .SingleAsync(t => t.Id == Id);
+        var dbUser = await dbContext.Users.SingleAsync(u => u.Username == Username);
 
         var user = new User
         {
-            Username = dbThread.User.Username,
-            Email = dbThread.User.Email,
-            FullName = dbThread.User.FullName,
-            ProfilePicture = dbThread.User.ProfilePicture,
+            Username = dbUser.Username,
+            Email = dbUser.Email,
+            FullName = dbUser.FullName,
+            ProfilePicture = dbUser.ProfilePicture,
         };
 
         return user;

@@ -34,7 +34,11 @@ public class Message
 
     public async Task<List<Thread>> Threads(ChatspyContext dbContext)
     {
-        var dbThreads = await dbContext.Threads.Where(dbT => dbT.Message.Id == Id).ToListAsync();
+        var dbThreads = await dbContext
+            .Threads.Include(dbT => dbT.User)
+            .Where(dbT => dbT.Message.Id == Id)
+            .OrderBy(dbT => dbT.Date)
+            .ToListAsync();
 
         var threads = dbThreads
             .Select(t => new Thread
@@ -42,6 +46,7 @@ public class Message
                 Id = t.Id,
                 Text = t.Text,
                 Date = t.Date,
+                Username = t.User.Username,
             })
             .ToList();
 

@@ -15,6 +15,8 @@ type valueType = {
   setWorkspaceId: Dispatch<SetStateAction<string>>;
   messageToEdit: messageType | null;
   setMessageToEdit: Dispatch<SetStateAction<messageType | null>>;
+  showThread: boolean;
+  setShowThread: Dispatch<SetStateAction<boolean>>;
 };
 
 export type messageType = {
@@ -43,6 +45,8 @@ const defaultValues = {
   setUsername: () => "",
   setMessageToEdit: () => null,
   messageToEdit: null,
+  showThread: false,
+  setShowThread: () => false,
 } as valueType;
 
 export const ChatContext = createContext<valueType>(defaultValues);
@@ -50,6 +54,7 @@ export function ChatProvider({ children }: ChatProviderProps) {
   const [username, setUsername] = useState("");
   const [workspaceId, setWorkspaceId] = useState("");
   const [channels, setChannels] = useState<channelType[]>([]);
+  const [showThread, setShowThread] = useState(false);
 
   //   const [isEditing, setIsEditing] = useState(false);
   // for Editing a specific message in a channel
@@ -59,10 +64,12 @@ export function ChatProvider({ children }: ChatProviderProps) {
     username,
     workspaceId,
     messageToEdit,
+    showThread,
     setUsername,
     setWorkspaceId,
     setChannels,
     setMessageToEdit,
+    setShowThread,
   };
   return <ChatContext.Provider value={values}>{children}</ChatContext.Provider>;
 }

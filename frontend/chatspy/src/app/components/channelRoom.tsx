@@ -1,10 +1,21 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { ChatContext, messageType } from "../contexts/chatContext";
-import { DEFAULT_THEME, Stack, Box, ScrollArea } from "@mantine/core";
+import {
+  DEFAULT_THEME,
+  Stack,
+  Box,
+  ScrollArea,
+  Portal,
+  Grid,
+  Group,
+  Title,
+  ActionIcon,
+} from "@mantine/core";
 import ChannelRoomHead from "./channelHead";
 import MessageSender from "./messageSender";
 import MessageBox from "./messageBox";
 import { gql } from "@/__generated__/gql";
+import { IoChevronBackSharp } from "react-icons/io5";
 import { SubscriptionResult, useSubscription } from "@apollo/client";
 import { OnMessageSentSubscription } from "@/__generated__/graphql";
 
@@ -27,7 +38,8 @@ type ChannelRoomProps = {
 };
 
 function ChannelRoom({ channelId }: ChannelRoomProps) {
-  const { channels, setChannels } = useContext(ChatContext);
+  const { channels, setChannels, showThread, setShowThread } =
+    useContext(ChatContext);
   const currentChannel = channels.find((c) => c.id == channelId);
   const currentChannelIndex = channels.findIndex((c) => c.id == channelId);
 
@@ -49,6 +61,7 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
   });
   return (
     <Stack
+      mah={"100%"}
       h={"100%"}
       gap={0}
       justify={"space-between"}
@@ -60,25 +73,53 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
         channelId={channelId}
         channelName={currentChannel ? currentChannel.name : ""}
       />
-      <Stack mah={"70vh"} h={"100%"} justify={"flex-end"}>
-        <ScrollArea type="never" viewportRef={viewport}>
-          <Stack gap={1} mx={20}>
-            {currentChannel?.message &&
-              currentChannel.message.map((m, index) => {
-                return (
-                  <MessageBox
-                    key={m.id}
-                    channelIndex={currentChannelIndex}
-                    messageId={m.id}
-                    messageIndex={index}
-                  />
-                );
-              })}
-          </Stack>
-        </ScrollArea>
+      <Stack
+        display={showThread ? "none" : "flex"}
+        gap={0}
+        h={"100%"}
+        style={{ flexGrow: 1, position: "relative" }}
+      >
+        <Stack
+          h={"100%"}
+          mah={"78vh"}
+          justify={"flex-end"}
+          style={{ flexGrow: 1 }}
+        >
+          <ScrollArea type="never" viewportRef={viewport}>
+            <Stack gap={1} mx={20}>
+              {currentChannel?.message &&
+                currentChannel.message.map((m, index) => {
+                  return (
+                    <MessageBox
+                      key={m.id}
+                      channelIndex={currentChannelIndex}
+                      messageId={m.id}
+                      messageIndex={index}
+                    />
+                  );
+                })}
+              <Box style={{}} h={"4rem"}></Box>
+            </Stack>
+          </ScrollArea>
+        </Stack>
+        <Box style={{ position: "absolute", bottom: 0, right: 0, left: 0 }}>
+          <MessageSender channelIndex={currentChannelIndex} />
+        </Box>
       </Stack>
 
-      <MessageSender channelIndex={currentChannelIndex} />
+      <Stack display={showThread ? "flex" : "none"} gap={0} h={"100%"} mx={20}>
+        <Group align="center" gap={0}>
+          <ActionIcon
+            color="black"
+            variant="transparent"
+            size={"lg"}
+            onClick={() => setShowThread(false)}
+          >
+            <IoChevronBackSharp size={"1.5rem"} />
+          </ActionIcon>
+          <Title order={2}>Threads</Title>
+        </Group>
+      </Stack>
     </Stack>
   );
 

@@ -7,6 +7,7 @@ import {
   Box,
   DEFAULT_THEME,
   ActionIcon,
+  Button,
 } from "@mantine/core";
 import { useContext } from "react";
 import { ChatContext } from "../contexts/chatContext";
@@ -62,7 +63,7 @@ function MessageBox({
   channelIndex,
   messageIndex,
 }: MessageBoxProps) {
-  const { channels, setChannels, username, setMessageToEdit, messageToEdit } =
+  const { channels, setChannels, username, setMessageToEdit, setShowThread } =
     useContext(ChatContext);
   const currentMessage = channels[channelIndex].message.find(
     (m) => m.id == messageId
@@ -131,8 +132,16 @@ function MessageBox({
             </Group>
           ) : null}
         </Group>
-
         <Text>{currentMessage?.text}</Text>
+        <Group>
+          <Button
+            color="violet.8"
+            variant="transparent"
+            onClick={() => setShowThread(true)}
+          >
+            5 Replies
+          </Button>
+        </Group>
         <Title c={"gray.5"} style={{ textAlign: "end" }} order={6}>
           {currentDate.toDateString()} - {currentDate.toLocaleTimeString()}
         </Title>

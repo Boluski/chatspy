@@ -13,6 +13,7 @@ import {
   TabsTab,
   Modal,
   TabsPanel,
+  Portal,
 } from "@mantine/core";
 import { IoSearchSharp } from "react-icons/io5";
 import { FaHashtag } from "react-icons/fa6";
@@ -111,7 +112,14 @@ export default function CurrentWorkspace({ params }: Workspace) {
 
   return (
     <>
-      <Stack w={"100wh"} h={"100vh"} bg={"gray.0"} px={15} py={10}>
+      <Stack
+        w={"100vw"}
+        h={"100vh"}
+        mah={"100vh"}
+        bg={"gray.0"}
+        px={15}
+        py={10}
+      >
         {loading ? (
           <>loading</>
         ) : isAuthenticated ? (

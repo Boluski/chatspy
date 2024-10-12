@@ -22,8 +22,8 @@ import {
   OnThreadUpdatedSubscription,
 } from "@/__generated__/graphql";
 
-const ON_THREAD_SENT = gql(`
-  subscription OnThreadSent($messageId: UUID!) {
+const ON_THREAD_SENT_SUBSCRIPTION = gql(`
+subscription OnThreadSent($messageId: String!) {
   onThreadSent(messageId: $messageId) {
     id
     text
@@ -71,9 +71,8 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
   const viewport = useRef<HTMLDivElement>(null);
 
   const isUser = messageThread?.user.username == username;
-  console.log("logging");
 
-  useSubscription(ON_THREAD_SENT, {
+  useSubscription(ON_THREAD_SENT_SUBSCRIPTION, {
     variables: { messageId: messageThread ? messageThread.id : "" },
     fetchPolicy: "network-only",
     onData(data) {
@@ -116,7 +115,7 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
       )}
       <Stack
         h={"1000rem"}
-        mah={"64vh"}
+        mah={"62vh"}
         gap={0}
         style={{
           position: "relative",

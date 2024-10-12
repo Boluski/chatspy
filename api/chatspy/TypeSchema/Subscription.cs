@@ -26,12 +26,17 @@ public class Subscription
     public Message OnMessageDeleted(string messageTopic, [EventMessage] Message deletedMessage) =>
         deletedMessage;
 
-    [GraphQLDescription("Is triggered when a new thread is created.")]
-    [Subscribe]
-    [Topic($"{{{nameof(messageId)}}}")]
-    public Thread OnThreadSent(Guid messageId, [EventMessage] Thread createdThread) =>
-        createdThread;
+    // OnThreadCreated
+    public async ValueTask<ISourceStream<Thread>> OnThreadSentReceiver(
+        string MessageId,
+        [Service] ITopicEventReceiver receiver
+    ) => await receiver.SubscribeAsync<Thread>($"[CREATE_THREAD]{MessageId}");
 
+    [GraphQLDescription("Is triggered when a new thread is created.")]
+    [Subscribe(With = nameof(OnThreadSentReceiver))]
+    public Thread OnThreadSent([EventMessage] Thread createdThread) => createdThread;
+
+    // OnThreadEdited
     public async ValueTask<ISourceStream<Thread>> OnThreadUpdatedReceiver(
         string MessageId,
         [Service] ITopicEventReceiver receiver
@@ -41,6 +46,7 @@ public class Subscription
     [Subscribe(With = nameof(OnThreadUpdatedReceiver))]
     public Thread OnThreadUpdated([EventMessage] Thread updatedThread) => updatedThread;
 
+    // OnThreadDeleted
     public async ValueTask<ISourceStream<Thread>> OnThreadDeletedReceiver(
         string MessageId,
         [Service] ITopicEventReceiver receiver

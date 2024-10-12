@@ -425,7 +425,7 @@ public class Mutation
             MessageId = dbMessage.Id,
             Username = dbUser.Username,
         };
-        await sender.SendAsync($"{Thread.MessageId}", Thread);
+        await sender.SendAsync($"[CREATE_THREAD]{Thread.MessageId}", Thread);
         return Thread;
     }
 

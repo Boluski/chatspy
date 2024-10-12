@@ -56,8 +56,8 @@ const ON_MESSAGE_EDITED_SUBSCRIPTION = gql(`
   }
 }
     `);
-const ON_THREAD_SENT = gql(`
-  subscription OnThreadSentMessageBox($messageId: UUID!) {
+const ON_THREAD_SENT_SUBSCRIPTION = gql(`
+subscription OnThreadSentMessageBox($messageId: String!) {
   onThreadSent(messageId: $messageId) {
     id
     text
@@ -131,9 +131,9 @@ function MessageBox({
     },
   });
 
-  useSubscription(ON_THREAD_SENT, {
+  useSubscription(ON_THREAD_SENT_SUBSCRIPTION, {
     fetchPolicy: "network-only",
-    variables: { messageId: currentMessage?.id },
+    variables: { messageId: currentMessage ? currentMessage.id : "" },
     onData: (data) => {
       handleOnTheadSent(data.data);
     },
@@ -299,10 +299,6 @@ function MessageBox({
     if (data) {
       setChannels((prevChannels) => {
         const updatedChannel = [...prevChannels];
-        console.log(
-          "Message::",
-          updatedChannel[channelIndex].message[messageIndex]
-        );
 
         updatedChannel[channelIndex].message[messageIndex].threads.push({
           id: data.data?.onThreadSent ? data.data.onThreadSent.id : "",

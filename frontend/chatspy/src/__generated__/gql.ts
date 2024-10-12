@@ -20,7 +20,7 @@ const documents = {
     "\n    mutation DeleteMessage($input: DeleteMessageInput!) {\n  deleteMessage(input: $input) {\n    message {\n      id\n      text\n      date\n    }\n  }\n}\n    ": types.DeleteMessageDocument,
     "\nsubscription OnMessageDeleted($messageTopic: String!) {\n  onMessageDeleted(messageTopic: $messageTopic) {\n    id\n    text\n    date\n  }\n}\n    ": types.OnMessageDeletedDocument,
     "\n    subscription OnMessageUpdated($messageTopic: String!) {\n  onMessageUpdated(messageTopic: $messageTopic) {\n    id\n    text\n  }\n}\n    ": types.OnMessageUpdatedDocument,
-    "\n  subscription OnThreadSentMessageBox($messageId: UUID!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  ": types.OnThreadSentMessageBoxDocument,
+    "\nsubscription OnThreadSentMessageBox($messageId: String!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  ": types.OnThreadSentMessageBoxDocument,
     "\n  subscription OnThreadDeletedMessageBox($messageId: String!) {\n    onThreadDeleted(messageId: $messageId) {\n      id\n      text\n      date\n    }\n  }\n        ": types.OnThreadDeletedMessageBoxDocument,
     "\n  subscription OnThreadUpdatedMessageBox($messageId: String!) {\n  onThreadUpdated(messageId: $messageId) {\n    id\n    text\n    date\n  }\n}\n  ": types.OnThreadUpdatedMessageBoxDocument,
     "\nmutation Mutation($input: CreateMessageInput!) {\n    createMessage(input: $input) {\n      message {\n        id\n        text\n        date\n        user {\n          username\n          fullName\n        }\n      }\n    }\n  }": types.MutationDocument,
@@ -29,7 +29,7 @@ const documents = {
     "\n      subscription OnMessageUpdated($messageTopic: String!) {\n    onMessageUpdated(messageTopic: $messageTopic) {\n      id\n      text\n    }\n  }\n      ": types.OnMessageUpdatedDocument,
     "\nmutation CreateThread($input: CreateThreadInput!) {\n  createThread(input: $input) {\n    thread {\n      id\n      text\n      date\n      user {\n          username\n          fullName\n        }\n    }\n  }\n}\n  ": types.CreateThreadDocument,
     "\nmutation EditThread($input: EditThreadInput!) {\n  editThread(input: $input) {\n    thread {\n      id\n      text\n      date\n    }\n  }\n}\n   ": types.EditThreadDocument,
-    "\n  subscription OnThreadSent($messageId: UUID!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  ": types.OnThreadSentDocument,
+    "\nsubscription OnThreadSent($messageId: String!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  ": types.OnThreadSentDocument,
     "\n  subscription OnThreadDeleted($messageId: String!) {\n    onThreadDeleted(messageId: $messageId) {\n      id\n    }\n  }\n        ": types.OnThreadDeletedDocument,
     "\n  subscription OnThreadUpdated($messageId: String!) {\n  onThreadUpdated(messageId: $messageId) {\n    id\n    text\n    date\n  }\n}\n  ": types.OnThreadUpdatedDocument,
     "\n        mutation CreateUser($input: CreateUserInput!) {\n        createUser(input: $input) {\n            user {\n            username\n            fullName\n            email\n            }\n        }\n        }\n    ": types.CreateUserDocument,
@@ -83,7 +83,7 @@ export function gql(source: "\n    subscription OnMessageUpdated($messageTopic: 
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  subscription OnThreadSentMessageBox($messageId: UUID!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  "): (typeof documents)["\n  subscription OnThreadSentMessageBox($messageId: UUID!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  "];
+export function gql(source: "\nsubscription OnThreadSentMessageBox($messageId: String!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  "): (typeof documents)["\nsubscription OnThreadSentMessageBox($messageId: String!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  "];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
@@ -119,7 +119,7 @@ export function gql(source: "\nmutation EditThread($input: EditThreadInput!) {\n
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\n  subscription OnThreadSent($messageId: UUID!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  "): (typeof documents)["\n  subscription OnThreadSent($messageId: UUID!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  "];
+export function gql(source: "\nsubscription OnThreadSent($messageId: String!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  "): (typeof documents)["\nsubscription OnThreadSent($messageId: String!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  "];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

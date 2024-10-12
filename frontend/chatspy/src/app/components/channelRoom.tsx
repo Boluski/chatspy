@@ -10,6 +10,7 @@ import {
   Group,
   Title,
   ActionIcon,
+  Button,
 } from "@mantine/core";
 import ChannelRoomHead from "./channelHead";
 import MessageSender from "./messageSender";
@@ -74,17 +75,17 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
       {showThread ? (
         <Stack gap={0} h={"100%"} mx={20}>
           <Group align="center" gap={0}>
-            <ActionIcon
+            <Button
               color="black"
               variant="transparent"
-              size={"lg"}
+              size={"sm"}
               onClick={() => {
                 setShowThread(false);
               }}
+              leftSection={<IoChevronBackSharp size={"1rem"} />}
             >
-              <IoChevronBackSharp size={"1.5rem"} />
-            </ActionIcon>
-            <Title order={2}>Thread</Title>
+              Back
+            </Button>
           </Group>
           {/* Thread  */}
           <ThreadViewer

@@ -23,6 +23,7 @@ import {
   OnMessageUpdatedSubscription,
   OnThreadDeletedMessageBoxSubscription,
   OnThreadSentMessageBoxSubscription,
+  OnThreadUpdatedSubscription,
 } from "@/__generated__/graphql";
 import { BsReplyAll } from "react-icons/bs";
 import { LuReplyAll } from "react-icons/lu";
@@ -77,6 +78,15 @@ const ON_THREAD_DELETED_SUBSCRIPTION = gql(`
     }
   }
         `);
+const ON_THREAD_EDITED_SUBSCRIPTION = gql(`
+  subscription OnThreadUpdatedMessageBox($messageId: String!) {
+  onThreadUpdated(messageId: $messageId) {
+    id
+    text
+    date
+  }
+}
+  `);
 
 type MessageBoxProps = {
   channelIndex: number;
@@ -92,7 +102,6 @@ function MessageBox({
   messageIndex,
   setTargetMessageId,
   setShowThread,
-  showThread,
 }: MessageBoxProps) {
   const { channels, setChannels, username, setMessageToEdit } =
     useContext(ChatContext);
@@ -106,6 +115,7 @@ function MessageBox({
   const currentDate = new Date(dateString);
 
   const [deleteMessage] = useMutation(DELETE_MESSAGE);
+
   useSubscription(ON_MESSAGE_DELETED_SUBSCRIPTION, {
     fetchPolicy: "network-only",
     variables: { messageTopic: `[DELETE]${currentMessage?.id}` },
@@ -136,13 +146,14 @@ function MessageBox({
       handleOnThreadDeleted(data.data);
     },
   });
-  // useSubscription(ON_THREAD_DELETED_SUBSCRIPTION, {
-  //   fetchPolicy: "network-only",
-  //   variables: { threadTopic: `[DELETE]${targetThreadId}` },
-  //   onData() {
-  //     // handleOnThreadDeleted();
-  //   },
-  // });
+
+  useSubscription(ON_THREAD_EDITED_SUBSCRIPTION, {
+    fetchPolicy: "network-only",
+    variables: { messageId: currentMessage ? currentMessage.id : "" },
+    onData(data) {
+      handleOnThreadEdited(data.data);
+    },
+  });
 
   return (
     <Group wrap={"nowrap"} align={"start"} bg={isUser ? "violet.0" : ""} p={5}>
@@ -246,6 +257,23 @@ function MessageBox({
     </Group>
   );
 
+  function handleOnThreadEdited(
+    data: SubscriptionResult<OnThreadUpdatedSubscription, any>
+  ) {
+    if (data.data) {
+      setChannels((prevChannels) => {
+        const updatedChannels = [...prevChannels];
+        const threadIndex = updatedChannels[channelIndex].message[
+          messageIndex
+        ].threads.findIndex((th) => th.id == data.data?.onThreadUpdated.id);
+        updatedChannels[channelIndex].message[messageIndex].threads[
+          threadIndex
+        ].text = data.data ? data.data.onThreadUpdated.text : "";
+        return updatedChannels;
+      });
+    }
+  }
+
   function handleOnThreadDeleted(
     data: SubscriptionResult<OnThreadDeletedMessageBoxSubscription, any>
   ) {
@@ -300,6 +328,7 @@ function MessageBox({
       variables: { input: { messageId: currentMessage?.id } },
     });
   }
+
   function handleOnMessageDeleted() {
     setChannels((prevChannels) => {
       const updatedChannels = [...prevChannels];
@@ -307,6 +336,7 @@ function MessageBox({
       return updatedChannels;
     });
   }
+
   function handleOnMessageEdited(
     data: SubscriptionResult<OnMessageUpdatedSubscription, any>
   ) {

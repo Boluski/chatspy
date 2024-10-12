@@ -99,17 +99,24 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
   return (
     <Stack gap={2}>
       {messageThread && (
-        <Box
-          style={{
-            borderBottom: `2px solid ${DEFAULT_THEME.colors.violet[8]}`,
-          }}
-        >
+        <Box>
           <TargetMessage isUser={isUser} message={messageThread} />
+          <Divider
+            styles={{
+              label: {
+                fontSize: "1rem",
+                color: DEFAULT_THEME.colors.violet[8],
+              },
+            }}
+            label={"Comments"}
+            labelPosition="center"
+            color="violet.8"
+          />
         </Box>
       )}
       <Stack
         h={"1000rem"}
-        mah={"66vh"}
+        mah={"64vh"}
         gap={0}
         style={{
           position: "relative",
@@ -152,6 +159,7 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
       });
     }
   }
+
   function handleOnTheadSent(
     data: SubscriptionResult<OnThreadSentSubscription, any>
   ) {

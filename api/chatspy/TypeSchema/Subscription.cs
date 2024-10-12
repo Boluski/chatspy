@@ -1,5 +1,7 @@
 using System;
 using System.Diagnostics;
+using HotChocolate.Execution;
+using HotChocolate.Subscriptions;
 using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace chatspy.TypeSchema;
@@ -30,15 +32,21 @@ public class Subscription
     public Thread OnThreadSent(Guid messageId, [EventMessage] Thread createdThread) =>
         createdThread;
 
+    public async ValueTask<ISourceStream<Thread>> OnThreadUpdatedReceiver(
+        string MessageId,
+        [Service] ITopicEventReceiver receiver
+    ) => await receiver.SubscribeAsync<Thread>($"[EDIT_THREAD]{MessageId}");
+
     [GraphQLDescription("Is triggered when a new thread is edited.")]
     [Subscribe]
-    [Topic($"{{{nameof(threadTopic)}}}")]
-    public Thread OnThreadUpdated(string threadTopic, [EventMessage] Thread updatedThread) =>
-        updatedThread;
+    public Thread OnThreadUpdated([EventMessage] Thread updatedThread) => updatedThread;
+
+    public async ValueTask<ISourceStream<Thread>> OnThreadDeletedReceiver(
+        string MessageId,
+        [Service] ITopicEventReceiver receiver
+    ) => await receiver.SubscribeAsync<Thread>($"[DELETE_THREAD]{MessageId}");
 
     [GraphQLDescription("Is triggered when a new thread is deleted.")]
-    [Subscribe]
-    [Topic($"{{{nameof(threadTopic)}}}")]
-    public Thread OnThreadDeleted(string threadTopic, [EventMessage] Thread deletedMessage) =>
-        deletedMessage;
+    [Subscribe(With = nameof(OnThreadDeletedReceiver))]
+    public Thread OnThreadDeleted([EventMessage] Thread deletedThread) => deletedThread;
 }

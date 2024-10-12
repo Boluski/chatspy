@@ -439,6 +439,7 @@ public class Mutation
     {
         var dbThread = await dbContext
             .Threads.Include(t => t.User)
+            .Include(t => t.Message)
             .SingleAsync(t => t.Id == threadId);
         dbThread.Text = text;
         await dbContext.SaveChangesAsync();
@@ -448,9 +449,10 @@ public class Mutation
             Id = dbThread.Id,
             Date = dbThread.Date,
             Text = dbThread.Text,
+            MessageId = dbThread.Message.Id,
             Username = dbThread.User.Username,
         };
-        await sender.SendAsync($"[EDIT]{Thread.Id}", Thread);
+        await sender.SendAsync($"[EDIT_THREAD]{Thread.MessageId}", Thread);
         return Thread;
     }
 
@@ -463,6 +465,7 @@ public class Mutation
     {
         var dbThread = await dbContext
             .Threads.Include(t => t.User)
+            .Include(t => t.Message)
             .SingleAsync(t => t.Id == threadId);
         dbContext.Remove(dbThread);
         await dbContext.SaveChangesAsync();
@@ -472,9 +475,10 @@ public class Mutation
             Id = dbThread.Id,
             Date = dbThread.Date,
             Text = dbThread.Text,
+            MessageId = dbThread.Message.Id,
             Username = dbThread.User.Username,
         };
-        await sender.SendAsync($"[DELETE]{Thread.Id}", Thread);
+        await sender.SendAsync($"[DELETE_THREAD]{Thread.MessageId}", Thread);
         return Thread;
     }
 }

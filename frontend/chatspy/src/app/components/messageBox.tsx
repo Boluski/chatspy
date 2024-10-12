@@ -69,6 +69,14 @@ const ON_THREAD_SENT = gql(`
 }
   `);
 
+// const ON_THREAD_DELETED_SUBSCRIPTION = gql(`
+//   subscription OnThreadDeletedMessageBox($threadTopic: String!) {
+//     onThreadDeleted(threadTopic: $threadTopic) {
+//       id
+//     }
+//   }
+//         `);
+
 type MessageBoxProps = {
   channelIndex: number;
   messageId: string;
@@ -119,6 +127,14 @@ function MessageBox({
       handleOnTheadSent(data.data);
     },
   });
+
+  // useSubscription(ON_THREAD_DELETED_SUBSCRIPTION, {
+  //   fetchPolicy: "network-only",
+  //   variables: { threadTopic: `[DELETE]${targetThreadId}` },
+  //   onData() {
+  //     // handleOnThreadDeleted();
+  //   },
+  // });
 
   return (
     <Group wrap={"nowrap"} align={"start"} bg={isUser ? "violet.0" : ""} p={5}>

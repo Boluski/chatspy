@@ -16,7 +16,10 @@ import ThreadBox from "./threadBox";
 import ThreadSender from "./threadSender";
 import { gql } from "@/__generated__/gql";
 import { SubscriptionResult, useSubscription } from "@apollo/client";
-import { OnThreadSentSubscription } from "@/__generated__/graphql";
+import {
+  OnThreadDeletedSubscription,
+  OnThreadSentSubscription,
+} from "@/__generated__/graphql";
 
 const ON_THREAD_SENT = gql(`
   subscription OnThreadSent($messageId: UUID!) {
@@ -33,8 +36,8 @@ const ON_THREAD_SENT = gql(`
   `);
 
 const ON_THREAD_DELETED_SUBSCRIPTION = gql(`
-  subscription OnThreadDeleted_TV($threadTopic: String!) {
-    onThreadDeleted(threadTopic: $threadTopic) {
+  subscription OnThreadDeleted($messageId: String!) {
+    onThreadDeleted(messageId: $messageId) {
       id
     }
   }
@@ -70,9 +73,9 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
   });
   useSubscription(ON_THREAD_DELETED_SUBSCRIPTION, {
     fetchPolicy: "network-only",
-    variables: { threadTopic: `[DELETE]${""}` },
-    onData() {
-      // handleOnThreadDeleted();
+    variables: { messageId: messageThread ? messageThread.id : "" },
+    onData(data) {
+      handleOnThreadDeleted(data.data);
     },
   });
 
@@ -158,6 +161,27 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
       });
       console.log("Success");
     }
+  }
+
+  function handleOnThreadDeleted(
+    data: SubscriptionResult<OnThreadDeletedSubscription, any>
+  ) {
+    if (data.data) {
+      setChannels((prevChannels) => {
+        const updatedChannels = [...prevChannels];
+        const threadIndex = updatedChannels[channelIndex].message[
+          messageIndex.current
+        ].threads.findIndex((th) => th.id == data.data?.onThreadDeleted.id);
+
+        updatedChannels[channelIndex].message[
+          messageIndex.current
+        ].threads.splice(threadIndex, 1);
+        console.log("Updated Channel", updatedChannels);
+        return updatedChannels;
+      });
+    }
+
+    // setTargetThreadId(thread.id);
   }
 }
 

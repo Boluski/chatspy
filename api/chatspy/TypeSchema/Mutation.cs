@@ -369,7 +369,6 @@ public class Mutation
             Text = dbMessage.Text,
         };
 
-        // await sender.SendAsync($"{Message.Id}", Message);
         await sender.SendAsync($"[EDIT]{Message.Id}", Message);
         return Message;
     }
@@ -392,7 +391,6 @@ public class Mutation
             Text = dbMessage.Text,
         };
 
-        // await sender.SendAsync($"{Message.Id}", Message);
         await sender.SendAsync($"[DELETE]{Message.Id}", Message);
         return Message;
     }
@@ -452,7 +450,7 @@ public class Mutation
             Text = dbThread.Text,
             Username = dbThread.User.Username,
         };
-        await sender.SendAsync($"{Thread.Id}", Thread);
+        await sender.SendAsync($"[EDIT]{Thread.Id}", Thread);
         return Thread;
     }
 
@@ -476,7 +474,7 @@ public class Mutation
             Text = dbThread.Text,
             Username = dbThread.User.Username,
         };
-        await sender.SendAsync($"{Thread.Id}", Thread);
+        await sender.SendAsync($"[DELETE]{Thread.Id}", Thread);
         return Thread;
     }
 }

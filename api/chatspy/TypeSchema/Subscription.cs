@@ -32,13 +32,13 @@ public class Subscription
 
     [GraphQLDescription("Is triggered when a new thread is edited.")]
     [Subscribe]
-    [Topic($"{{{nameof(threadId)}}}")]
-    public Thread OnThreadUpdated(Guid threadId, [EventMessage] Thread updatedThread) =>
+    [Topic($"{{{nameof(threadTopic)}}}")]
+    public Thread OnThreadUpdated(string threadTopic, [EventMessage] Thread updatedThread) =>
         updatedThread;
 
     [GraphQLDescription("Is triggered when a new thread is deleted.")]
     [Subscribe]
-    [Topic($"{{{nameof(threadId)}}}")]
-    public Thread OnThreadDeleted(Guid threadId, [EventMessage] Thread deletedMessage) =>
+    [Topic($"{{{nameof(threadTopic)}}}")]
+    public Thread OnThreadDeleted(string threadTopic, [EventMessage] Thread deletedMessage) =>
         deletedMessage;
 }

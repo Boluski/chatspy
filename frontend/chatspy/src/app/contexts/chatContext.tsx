@@ -15,8 +15,8 @@ type valueType = {
   setWorkspaceId: Dispatch<SetStateAction<string>>;
   messageToEdit: messageType | null;
   setMessageToEdit: Dispatch<SetStateAction<messageType | null>>;
-  targetThreadId: string | null;
-  setTargetThreadId: Dispatch<SetStateAction<string | null>>;
+  threadToEdit: threadType | null;
+  setThreadToEdit: Dispatch<SetStateAction<threadType | null>>;
 };
 
 export type threadType = {
@@ -56,8 +56,8 @@ const defaultValues = {
   setUsername: () => "",
   setMessageToEdit: () => null,
   messageToEdit: null,
-  targetThreadId: null,
-  setTargetThreadId: () => null,
+  threadToEdit: null,
+  setThreadToEdit: () => null,
 } as valueType;
 
 export const ChatContext = createContext<valueType>(defaultValues);
@@ -69,20 +69,20 @@ export function ChatProvider({ children }: ChatProviderProps) {
   // for Editing a specific message in a channel
   const [messageToEdit, setMessageToEdit] = useState<messageType | null>(null);
 
-  // Specifically for the channel tap page.
-  const [targetThreadId, setTargetThreadId] = useState<string | null>(null);
+  // for Editing a specific thread in a message
+  const [threadToEdit, setThreadToEdit] = useState<threadType | null>(null);
 
   const values = {
     channels,
     username,
     workspaceId,
     messageToEdit,
-    targetThreadId,
+    threadToEdit,
     setUsername,
     setWorkspaceId,
     setChannels,
     setMessageToEdit,
-    setTargetThreadId,
+    setThreadToEdit,
   };
   return <ChatContext.Provider value={values}>{children}</ChatContext.Provider>;
 }

@@ -19,6 +19,7 @@ import { SubscriptionResult, useSubscription } from "@apollo/client";
 import {
   OnThreadDeletedSubscription,
   OnThreadSentSubscription,
+  OnThreadUpdatedSubscription,
 } from "@/__generated__/graphql";
 
 const ON_THREAD_SENT = gql(`
@@ -41,6 +42,15 @@ const ON_THREAD_DELETED_SUBSCRIPTION = gql(`
     }
   }
         `);
+const ON_THREAD_EDITED_SUBSCRIPTION = gql(`
+  subscription OnThreadUpdated($messageId: String!) {
+  onThreadUpdated(messageId: $messageId) {
+    id
+    text
+    date
+  }
+}
+  `);
 
 type ThreadViewerProps = {
   channelIndex: number;
@@ -66,7 +76,7 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
   useSubscription(ON_THREAD_SENT, {
     variables: { messageId: messageThread ? messageThread.id : "" },
     fetchPolicy: "network-only",
-    onData: (data) => {
+    onData(data) {
       handleOnTheadSent(data.data);
     },
   });
@@ -75,6 +85,14 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
     variables: { messageId: messageThread ? messageThread.id : "" },
     onData(data) {
       handleOnThreadDeleted(data.data);
+    },
+  });
+
+  useSubscription(ON_THREAD_EDITED_SUBSCRIPTION, {
+    fetchPolicy: "network-only",
+    variables: { messageId: messageThread ? messageThread.id : "" },
+    onData(data) {
+      handleOnThreadEdited(data.data);
     },
   });
 
@@ -175,6 +193,24 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
         updatedChannels[channelIndex].message[
           messageIndex.current
         ].threads.splice(threadIndex, 1);
+        return updatedChannels;
+      });
+    }
+  }
+
+  function handleOnThreadEdited(
+    data: SubscriptionResult<OnThreadUpdatedSubscription, any>
+  ) {
+    if (data.data) {
+      setChannels((prevChannels) => {
+        const updatedChannels = [...prevChannels];
+        const threadIndex = updatedChannels[channelIndex].message[
+          messageIndex.current
+        ].threads.findIndex((th) => th.id == data.data?.onThreadUpdated.id);
+
+        updatedChannels[channelIndex].message[messageIndex.current].threads[
+          threadIndex
+        ].text = data.data ? data.data.onThreadUpdated.text : "";
         return updatedChannels;
       });
     }

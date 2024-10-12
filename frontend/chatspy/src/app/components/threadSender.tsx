@@ -3,7 +3,7 @@ import { useState, useContext } from "react";
 import { IoIosSend } from "react-icons/io";
 import { gql } from "@/__generated__/gql";
 import { useMutation } from "@apollo/client";
-import { ChatContext, messageType } from "../contexts/chatContext";
+import { ChatContext, messageType, threadType } from "../contexts/chatContext";
 import { MdEdit } from "react-icons/md";
 
 const CREATE_THREAD = gql(`
@@ -22,17 +22,17 @@ mutation CreateThread($input: CreateThreadInput!) {
 }
   `);
 
-const EDIT_MESSAGE = gql(`
-  mutation EditMessage($input: EditMessageInput!) {
-  editMessage(input: $input) {
-    message {
+const EDIT_THREAD = gql(`
+mutation EditThread($input: EditThreadInput!) {
+  editThread(input: $input) {
+    thread {
       id
       text
       date
     }
   }
 }
-  `);
+   `);
 
 type MessageSenderProps = {
   messageId: string;
@@ -42,11 +42,11 @@ function ThreadSender({ messageId }: MessageSenderProps) {
   const [enableSendButton, setEnableSendButton] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { username, channels, setChannels, messageToEdit, setMessageToEdit } =
+  const { username, channels, setChannels, threadToEdit, setThreadToEdit } =
     useContext(ChatContext);
   //   const currentChannel = channels[channelIndex];
   const [createThread] = useMutation(CREATE_THREAD);
-  //   const [editMessage] = useMutation(EDIT_MESSAGE);
+  const [editThread] = useMutation(EDIT_THREAD);
   return (
     <Group
       bg={"white"}
@@ -64,25 +64,25 @@ function ThreadSender({ messageId }: MessageSenderProps) {
         size={"md"}
         radius={"md"}
         placeholder="Send your team the latest update."
-        value={messageToEdit ? messageToEdit.text : threadText}
+        value={threadToEdit ? threadToEdit.text : threadText}
         onChange={(event) => {
-          //   if (messageToEdit) {
-          // setMessageToEdit((prevMessage) => {
-          //   const updatedMessage: messageType = {
-          //     id: prevMessage ? prevMessage.id : "",
-          //     text: prevMessage ? prevMessage.text : "",
-          //     date: prevMessage ? prevMessage.date : "",
-          //     user: {
-          //       username: prevMessage ? prevMessage.user.username : "",
-          //       fullName: prevMessage ? prevMessage.user.fullName : "",
-          //     },
-          //   };
-          //   updatedMessage.text = event.currentTarget.value;
-          //   return updatedMessage;
-          // });
-          //   } else {
-          setThreadText(event.currentTarget.value);
-          //   }
+          if (threadToEdit) {
+            setThreadToEdit((prevThread) => {
+              const updatedThread: threadType = {
+                id: prevThread ? prevThread.id : "",
+                text: prevThread ? prevThread.text : "",
+                date: prevThread ? prevThread.date : "",
+                user: {
+                  username: prevThread ? prevThread.user.username : "",
+                  fullName: prevThread ? prevThread.user.fullName : "",
+                },
+              };
+              updatedThread.text = event.currentTarget.value;
+              return updatedThread;
+            });
+          } else {
+            setThreadText(event.currentTarget.value);
+          }
 
           if (event.currentTarget.value.trim() != "") {
             setEnableSendButton(true);
@@ -96,7 +96,7 @@ function ThreadSender({ messageId }: MessageSenderProps) {
         disabled={!enableSendButton}
         color="violet.8"
         rightSection={
-          messageToEdit ? (
+          threadToEdit ? (
             <MdEdit size={"2rem"} />
           ) : (
             <IoIosSend size={"2.5rem"} />
@@ -106,7 +106,7 @@ function ThreadSender({ messageId }: MessageSenderProps) {
         radius={"md"}
         onClick={handleSendThread}
       >
-        {messageToEdit ? "Edit" : "Send"}
+        {threadToEdit ? "Edit" : "Send"}
       </Button>
     </Group>
   );
@@ -115,24 +115,25 @@ function ThreadSender({ messageId }: MessageSenderProps) {
     console.log(threadText);
 
     setLoading(true);
-    // if (messageToEdit) {
-    //   await editMessage({
-    //     variables: {
-    //       input: { text: messageToEdit.text, messageId: messageToEdit.id },
-    //     },
-    //   });
-    //   setMessageToEdit(null);
-    // } else {
-    await createThread({
-      variables: {
-        input: {
-          username: username,
-          text: threadText,
-          messageID: messageId,
+    if (threadToEdit) {
+      await editThread({
+        variables: {
+          input: { text: threadToEdit.text, threadId: threadToEdit.id },
         },
-      },
-    });
-    // }
+      });
+      console.log(threadToEdit.text);
+      setThreadToEdit(null);
+    } else {
+      await createThread({
+        variables: {
+          input: {
+            username: username,
+            text: threadText,
+            messageID: messageId,
+          },
+        },
+      });
+    }
     setThreadText("");
     setLoading(false);
     setEnableSendButton(false);

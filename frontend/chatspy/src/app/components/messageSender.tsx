@@ -75,6 +75,7 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
                   username: prevMessage ? prevMessage.user.username : "",
                   fullName: prevMessage ? prevMessage.user.fullName : "",
                 },
+                threads: prevMessage ? prevMessage.threads : [],
               };
               updatedMessage.text = event.currentTarget.value;
               return updatedMessage;

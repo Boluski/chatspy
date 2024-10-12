@@ -38,7 +38,7 @@ public class Subscription
     ) => await receiver.SubscribeAsync<Thread>($"[EDIT_THREAD]{MessageId}");
 
     [GraphQLDescription("Is triggered when a new thread is edited.")]
-    [Subscribe]
+    [Subscribe(With = nameof(OnThreadUpdatedReceiver))]
     public Thread OnThreadUpdated([EventMessage] Thread updatedThread) => updatedThread;
 
     public async ValueTask<ISourceStream<Thread>> OnThreadDeletedReceiver(

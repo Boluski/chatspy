@@ -47,13 +47,8 @@ type ThreadBoxProps = {
 };
 
 function ThreadBox({ thread, messageIndex, channelIndex }: ThreadBoxProps) {
-  const {
-    channels,
-    setChannels,
-    username,
-    setMessageToEdit,
-    setTargetThreadId,
-  } = useContext(ChatContext);
+  const { channels, setChannels, username, setThreadToEdit } =
+    useContext(ChatContext);
   // const currentMessage = channels[channelIndex].message.find(
   //   (m) => m.id == messageId
   // );
@@ -92,7 +87,7 @@ function ThreadBox({ thread, messageIndex, channelIndex }: ThreadBoxProps) {
                 color="violet.8"
                 variant="transparent"
                 size={"lg"}
-                // onClick={handleMessageEdit}
+                onClick={handleThreadEdit}
               >
                 <FiEdit size={"1.2rem"} />
               </ActionIcon>
@@ -135,10 +130,8 @@ function ThreadBox({ thread, messageIndex, channelIndex }: ThreadBoxProps) {
     // }
   }
 
-  function handleMessageEdit() {
-    // if (currentMessage != undefined) {
-    //   setMessageToEdit(currentMessage);
-    // }
+  function handleThreadEdit() {
+    setThreadToEdit(thread);
   }
 }
 

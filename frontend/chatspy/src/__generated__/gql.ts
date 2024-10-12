@@ -27,8 +27,10 @@ const documents = {
     "\nmutation DeleteThread($input: DeleteThreadInput!) {\n  deleteThread(input: $input) {\n    thread {\n      id\n    }\n  }\n}\n      ": types.DeleteThreadDocument,
     "\n      subscription OnMessageUpdated($messageTopic: String!) {\n    onMessageUpdated(messageTopic: $messageTopic) {\n      id\n      text\n    }\n  }\n      ": types.OnMessageUpdatedDocument,
     "\nmutation CreateThread($input: CreateThreadInput!) {\n  createThread(input: $input) {\n    thread {\n      id\n      text\n      date\n      user {\n          username\n          fullName\n        }\n    }\n  }\n}\n  ": types.CreateThreadDocument,
+    "\nmutation EditThread($input: EditThreadInput!) {\n  editThread(input: $input) {\n    thread {\n      id\n      text\n      date\n    }\n  }\n}\n   ": types.EditThreadDocument,
     "\n  subscription OnThreadSent($messageId: UUID!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  ": types.OnThreadSentDocument,
     "\n  subscription OnThreadDeleted($messageId: String!) {\n    onThreadDeleted(messageId: $messageId) {\n      id\n    }\n  }\n        ": types.OnThreadDeletedDocument,
+    "\n  subscription OnThreadUpdated($messageId: String!) {\n  onThreadUpdated(messageId: $messageId) {\n    id\n    text\n    date\n  }\n}\n  ": types.OnThreadUpdatedDocument,
     "\n        mutation CreateUser($input: CreateUserInput!) {\n        createUser(input: $input) {\n            user {\n            username\n            fullName\n            email\n            }\n        }\n        }\n    ": types.CreateUserDocument,
     "\n  query UserData($username: String!) {\nuserByUsername(username: $username) {\n  username\n  fullName\n  email\n  workspaces {\n    id\n    name\n    createdBy\n  }\n}\n}\n  ": types.UserDataDocument,
     "\nquery WorkspaceByID($workspaceId: UUID!, $username: String!) {\n  workspaceByID(workspaceID: $workspaceId, username: $username) {\n    id\n    name\n    createdBy\n    channels {\n      id\n      name\n      type\n      messages {\n        id\n        text\n        date\n   \n        user {\n          username\n          fullName\n        }     \n        threads {\n          id\n          text\n          date\n          user {\n            username\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n  ": types.WorkspaceByIdDocument,
@@ -108,11 +110,19 @@ export function gql(source: "\nmutation CreateThread($input: CreateThreadInput!)
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "\nmutation EditThread($input: EditThreadInput!) {\n  editThread(input: $input) {\n    thread {\n      id\n      text\n      date\n    }\n  }\n}\n   "): (typeof documents)["\nmutation EditThread($input: EditThreadInput!) {\n  editThread(input: $input) {\n    thread {\n      id\n      text\n      date\n    }\n  }\n}\n   "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "\n  subscription OnThreadSent($messageId: UUID!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  "): (typeof documents)["\n  subscription OnThreadSent($messageId: UUID!) {\n  onThreadSent(messageId: $messageId) {\n    id\n    text\n    date\n    user {\n      username\n      fullName\n    }\n  }\n}\n  "];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n  subscription OnThreadDeleted($messageId: String!) {\n    onThreadDeleted(messageId: $messageId) {\n      id\n    }\n  }\n        "): (typeof documents)["\n  subscription OnThreadDeleted($messageId: String!) {\n    onThreadDeleted(messageId: $messageId) {\n      id\n    }\n  }\n        "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  subscription OnThreadUpdated($messageId: String!) {\n  onThreadUpdated(messageId: $messageId) {\n    id\n    text\n    date\n  }\n}\n  "): (typeof documents)["\n  subscription OnThreadUpdated($messageId: String!) {\n  onThreadUpdated(messageId: $messageId) {\n    id\n    text\n    date\n  }\n}\n  "];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

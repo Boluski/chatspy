@@ -8,23 +8,35 @@ namespace chatspy.TypeSchema;
 
 public class Subscription
 {
+    // OnMessageSent
+    public async ValueTask<ISourceStream<Message>> OnMessageSentReceiver(
+        string ChannelId,
+        [Service] ITopicEventReceiver receiver
+    ) => await receiver.SubscribeAsync<Message>($"[LISTEN_FOR_MESSAGE]{ChannelId}");
+
     [GraphQLDescription("Is triggered when a new message is created.")]
-    [Subscribe]
-    [Topic($"{{{nameof(channelId)}}}")]
-    public Message OnMessageSent(Guid channelId, [EventMessage] Message createdMessage) =>
-        createdMessage;
+    [Subscribe(With = nameof(OnMessageSentReceiver))]
+    public Message OnMessageSent([EventMessage] Message createdMessage) => createdMessage;
+
+    // OnMessageEdited
+    public async ValueTask<ISourceStream<Message>> OnMessageEditedReceiver(
+        string MessageId,
+        [Service] ITopicEventReceiver receiver
+    ) => await receiver.SubscribeAsync<Message>($"[EDIT_MESSAGE]{MessageId}");
 
     [GraphQLDescription("Is triggered when a new message is edited.")]
-    [Subscribe]
-    [Topic($"{{{nameof(messageTopic)}}}")]
-    public Message OnMessageUpdated(string messageTopic, [EventMessage] Message updatedMessage) =>
-        updatedMessage;
+    [Subscribe(With = nameof(OnMessageEditedReceiver))]
+    public Message OnMessageUpdated([EventMessage] Message updatedMessage) => updatedMessage;
+
+    // OnMessageDeleted
+    public async ValueTask<ISourceStream<Message>> OnMessageDeletedReceiver(
+        string MessageId,
+        [Service] ITopicEventReceiver receiver
+    ) => await receiver.SubscribeAsync<Message>($"[DELETE_MESSAGE]{MessageId}");
 
     [GraphQLDescription("Is triggered when a new message is deleted.")]
-    [Subscribe]
-    [Topic($"{{{nameof(messageTopic)}}}")]
-    public Message OnMessageDeleted(string messageTopic, [EventMessage] Message deletedMessage) =>
-        deletedMessage;
+    [Subscribe(With = nameof(OnMessageDeletedReceiver))]
+    public Message OnMessageDeleted([EventMessage] Message deletedMessage) => deletedMessage;
 
     // OnThreadCreated
     public async ValueTask<ISourceStream<Thread>> OnThreadSentReceiver(

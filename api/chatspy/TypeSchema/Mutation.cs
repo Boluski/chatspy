@@ -346,7 +346,7 @@ public class Mutation
             ChannelId = dbChannel.Id,
             Username = username,
         };
-        await sender.SendAsync($"{Message.ChannelId}", Message);
+        await sender.SendAsync($"[LISTEN_FOR_MESSAGE]{Message.ChannelId}", Message);
         return Message;
     }
 
@@ -369,7 +369,7 @@ public class Mutation
             Text = dbMessage.Text,
         };
 
-        await sender.SendAsync($"[EDIT]{Message.Id}", Message);
+        await sender.SendAsync($"[EDIT_MESSAGE]{Message.Id}", Message);
         return Message;
     }
 
@@ -391,7 +391,7 @@ public class Mutation
             Text = dbMessage.Text,
         };
 
-        await sender.SendAsync($"[DELETE]{Message.Id}", Message);
+        await sender.SendAsync($"[DELETE_MESSAGE]{Message.Id}", Message);
         return Message;
     }
 

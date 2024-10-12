@@ -5,11 +5,7 @@ import {
   Stack,
   Box,
   ScrollArea,
-  Portal,
-  Grid,
   Group,
-  Title,
-  ActionIcon,
   Button,
 } from "@mantine/core";
 import ChannelRoomHead from "./channelHead";
@@ -21,8 +17,8 @@ import { SubscriptionResult, useSubscription } from "@apollo/client";
 import { OnMessageSentSubscription } from "@/__generated__/graphql";
 import ThreadViewer from "./threadViewer";
 
-const SEND_MESSAGE_SUBSCRIPTION = gql(`
-    subscription OnMessageSent($channelId: UUID!) {
+const ON_SEND_MESSAGE_SUBSCRIPTION = gql(`
+subscription OnMessageSent($channelId: String!) {
   onMessageSent(channelId: $channelId) {
     id
     text
@@ -50,8 +46,8 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
 
   const viewport = useRef<HTMLDivElement>(null);
 
-  useSubscription(SEND_MESSAGE_SUBSCRIPTION, {
-    variables: { channelId: currentChannel?.id },
+  useSubscription(ON_SEND_MESSAGE_SUBSCRIPTION, {
+    variables: { channelId: currentChannel ? currentChannel.id : "" },
     fetchPolicy: "network-only",
     onData: (data) => {
       handleReceivedMessage(data.data);
@@ -87,7 +83,6 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
               Back
             </Button>
           </Group>
-          {/* Thread  */}
           <ThreadViewer
             channelIndex={currentChannelIndex}
             targetMessageId={targetMessageId}

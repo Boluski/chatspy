@@ -1,25 +1,15 @@
 "use client";
 import {
   Stack,
-  Avatar,
-  Title,
   Button,
   Group,
-  TextInput,
   DEFAULT_THEME,
-  ActionIcon,
   Tabs,
   TabsList,
   TabsTab,
   Modal,
   TabsPanel,
-  Portal,
 } from "@mantine/core";
-import { IoSearchSharp } from "react-icons/io5";
-import { FaHashtag } from "react-icons/fa6";
-import { IoLockClosed } from "react-icons/io5";
-import { IoPersonSharp } from "react-icons/io5";
-import { IoSettingsOutline } from "react-icons/io5";
 import { MdAdd } from "react-icons/md";
 import WorkspaceHeader from "@/app/components/workspaceHeader";
 import WorkspaceNav from "@/app/components/workspaceNav";

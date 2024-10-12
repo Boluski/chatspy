@@ -4,7 +4,6 @@ import {
   Avatar,
   Title,
   Text,
-  Box,
   DEFAULT_THEME,
   ActionIcon,
   Button,
@@ -26,7 +25,6 @@ import {
   OnThreadUpdatedSubscription,
 } from "@/__generated__/graphql";
 import { BsReplyAll } from "react-icons/bs";
-import { LuReplyAll } from "react-icons/lu";
 
 const DELETE_MESSAGE = gql(`
     mutation DeleteMessage($input: DeleteMessageInput!) {
@@ -40,8 +38,8 @@ const DELETE_MESSAGE = gql(`
 }
     `);
 const ON_MESSAGE_DELETED_SUBSCRIPTION = gql(`
-subscription OnMessageDeleted($messageTopic: String!) {
-  onMessageDeleted(messageTopic: $messageTopic) {
+subscription OnMessageDeleted($messageId: String!) {
+  onMessageDeleted(messageId: $messageId) {
     id
     text
     date
@@ -49,8 +47,8 @@ subscription OnMessageDeleted($messageTopic: String!) {
 }
     `);
 const ON_MESSAGE_EDITED_SUBSCRIPTION = gql(`
-    subscription OnMessageUpdated($messageTopic: String!) {
-  onMessageUpdated(messageTopic: $messageTopic) {
+subscription OnMessageUpdated($messageId: String!) {
+  onMessageUpdated(messageId: $messageId) {
     id
     text
   }
@@ -118,14 +116,14 @@ function MessageBox({
 
   useSubscription(ON_MESSAGE_DELETED_SUBSCRIPTION, {
     fetchPolicy: "network-only",
-    variables: { messageTopic: `[DELETE]${currentMessage?.id}` },
+    variables: { messageId: currentMessage ? currentMessage.id : "" },
     onData() {
       handleOnMessageDeleted();
     },
   });
   useSubscription(ON_MESSAGE_EDITED_SUBSCRIPTION, {
     fetchPolicy: "network-only",
-    variables: { messageTopic: `[EDIT]${currentMessage?.id}` },
+    variables: { messageId: currentMessage ? currentMessage.id : "" },
     onData(data) {
       handleOnMessageEdited(data.data);
     },

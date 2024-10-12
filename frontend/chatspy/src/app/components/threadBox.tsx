@@ -4,22 +4,15 @@ import {
   Avatar,
   Title,
   Text,
-  Box,
   DEFAULT_THEME,
   ActionIcon,
-  Button,
 } from "@mantine/core";
 import { useContext } from "react";
 import { ChatContext, threadType } from "../contexts/chatContext";
 import { FiEdit } from "react-icons/fi";
 import { RiChatDeleteLine } from "react-icons/ri";
-import {
-  SubscriptionResult,
-  useMutation,
-  useSubscription,
-} from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { gql } from "@/__generated__/gql";
-import { OnMessageUpdatedSubscription } from "@/__generated__/graphql";
 
 const DELETE_THREAD = gql(`
 mutation DeleteThread($input: DeleteThreadInput!) {
@@ -31,27 +24,13 @@ mutation DeleteThread($input: DeleteThreadInput!) {
 }
       `);
 
-const ON_MESSAGE_EDITED_SUBSCRIPTION = gql(`
-      subscription OnMessageUpdated($messageTopic: String!) {
-    onMessageUpdated(messageTopic: $messageTopic) {
-      id
-      text
-    }
-  }
-      `);
-
 type ThreadBoxProps = {
-  channelIndex: number;
-  messageIndex: number;
   thread: threadType;
 };
 
-function ThreadBox({ thread, messageIndex, channelIndex }: ThreadBoxProps) {
-  const { channels, setChannels, username, setThreadToEdit } =
-    useContext(ChatContext);
-  // const currentMessage = channels[channelIndex].message.find(
-  //   (m) => m.id == messageId
-  // );
+function ThreadBox({ thread }: ThreadBoxProps) {
+  const { username, setThreadToEdit } = useContext(ChatContext);
+
   const isUser = thread.user.username == username;
 
   const dateString: string = thread.date;
@@ -115,19 +94,6 @@ function ThreadBox({ thread, messageIndex, channelIndex }: ThreadBoxProps) {
     await deleteThread({
       variables: { input: { threadId: thread.id } },
     });
-  }
-
-  function handleOnMessageEdited(
-    data: SubscriptionResult<OnMessageUpdatedSubscription, any>
-  ) {
-    // if (data.data) {
-    //   const updatedText = data.data.onMessageUpdated.text;
-    //   setChannels((prevChannels) => {
-    //     const updatedChannels = [...prevChannels];
-    //     updatedChannels[channelIndex].message[messageIndex].text = updatedText;
-    //     return updatedChannels;
-    //   });
-    // }
   }
 
   function handleThreadEdit() {

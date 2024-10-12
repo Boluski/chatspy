@@ -1,6 +1,5 @@
 import {
   Avatar,
-  Button,
   DEFAULT_THEME,
   Group,
   Stack,
@@ -36,14 +35,14 @@ subscription OnThreadSent($messageId: String!) {
 }
   `);
 const ON_THREAD_DELETED_SUBSCRIPTION = gql(`
-  subscription OnThreadDeleted($messageId: String!) {
-    onThreadDeleted(messageId: $messageId) {
-      id
-    }
+subscription OnThreadDeleted($messageId: String!) {
+  onThreadDeleted(messageId: $messageId) {
+    id
   }
+}
         `);
 const ON_THREAD_EDITED_SUBSCRIPTION = gql(`
-  subscription OnThreadUpdated($messageId: String!) {
+subscription OnThreadUpdated($messageId: String!) {
   onThreadUpdated(messageId: $messageId) {
     id
     text
@@ -132,11 +131,7 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
                     orientation="vertical"
                   />
                   <Box style={{ flexGrow: 1 }} pb={2}>
-                    <ThreadBox
-                      thread={th}
-                      messageIndex={messageIndex.current}
-                      channelIndex={channelIndex}
-                    />
+                    <ThreadBox thread={th} />
                   </Box>
                 </Group>
               );

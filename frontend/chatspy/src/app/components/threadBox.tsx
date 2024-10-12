@@ -121,17 +121,17 @@ function ThreadBox({ thread }: ThreadBoxProps) {
                 color="violet.8"
                 variant="transparent"
                 size={"lg"}
-                // onClick={handleMessageDelete}
+                // onClick={handleMessageEdit}
               >
-                <RiChatDeleteLine size={"1.3rem"} />
+                <FiEdit size={"1.2rem"} />
               </ActionIcon>
               <ActionIcon
                 color="violet.8"
                 variant="transparent"
                 size={"lg"}
-                // onClick={handleMessageEdit}
+                // onClick={handleMessageDelete}
               >
-                <FiEdit size={"1.2rem"} />
+                <RiChatDeleteLine size={"1.3rem"} />
               </ActionIcon>
             </Group>
           ) : null}

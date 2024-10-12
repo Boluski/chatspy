@@ -49,15 +49,6 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
 
   const viewport = useRef<HTMLDivElement>(null);
 
-  function scrollToBottom() {
-    if (viewport.current != null) {
-      viewport.current!.scrollTo({
-        top: viewport.current!.scrollHeight,
-        behavior: "instant",
-      });
-    }
-  }
-
   useSubscription(SEND_MESSAGE_SUBSCRIPTION, {
     variables: { channelId: currentChannel?.id },
     fetchPolicy: "network-only",
@@ -81,12 +72,7 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
       />
 
       {showThread ? (
-        <Stack
-          //   display={showThread ? "flex" : "none"}
-          gap={0}
-          h={"100%"}
-          mx={20}
-        >
+        <Stack gap={0} h={"100%"} mx={20}>
           <Group align="center" gap={0}>
             <ActionIcon
               color="black"
@@ -98,21 +84,16 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
             >
               <IoChevronBackSharp size={"1.5rem"} />
             </ActionIcon>
-            <Title order={2}>Threads</Title>
+            <Title order={2}>Thread</Title>
           </Group>
-          {/* Threads  */}
+          {/* Thread  */}
           <ThreadViewer
             channelIndex={currentChannelIndex}
             targetMessageId={targetMessageId}
           />
         </Stack>
       ) : (
-        <Stack
-          // display={showThread ? "none" : "flex"}
-          gap={0}
-          h={"100%"}
-          style={{ flexGrow: 1, position: "relative" }}
-        >
+        <Stack gap={0} h={"100%"} style={{ flexGrow: 1, position: "relative" }}>
           <Stack
             h={"100%"}
             mah={"78vh"}
@@ -147,6 +128,14 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
     </Stack>
   );
 
+  function scrollToBottom() {
+    if (viewport.current != null) {
+      viewport.current!.scrollTo({
+        top: viewport.current!.scrollHeight,
+        behavior: "instant",
+      });
+    }
+  }
   function handleReceivedMessage(
     data: SubscriptionResult<OnMessageSentSubscription, any>
   ) {

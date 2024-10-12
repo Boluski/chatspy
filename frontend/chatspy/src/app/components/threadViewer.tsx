@@ -10,7 +10,7 @@ import {
   Divider,
   ScrollArea,
 } from "@mantine/core";
-import { useContext, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { ChatContext, messageType } from "../contexts/chatContext";
 import ThreadBox from "./threadBox";
 import ThreadSender from "./threadSender";
@@ -47,7 +47,9 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
     (m) => m.id == targetMessageId
   );
 
-  console.log("MessageIndex", messageIndex);
+  useEffect(() => scrollToBottom(), [channels]);
+
+  const viewport = useRef<HTMLDivElement>(null);
 
   const isUser = messageThread?.user.username == username;
   console.log("logging");
@@ -76,15 +78,14 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
         mah={"66vh"}
         gap={0}
         style={{
-          //  border: "solid red 2px",
           position: "relative",
         }}
       >
-        <ScrollArea type={"never"}>
+        <ScrollArea type={"never"} viewportRef={viewport}>
           {messageThread &&
             messageThread.threads.map((th) => {
               return (
-                <Group pl={"2rem"} key={th.id}>
+                <Group pl={"2rem"} key={th.id} wrap={"nowrap"}>
                   <Divider
                     color="violet.8"
                     size={"sm"}
@@ -105,18 +106,20 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
       </Stack>
     </Stack>
   );
-
+  function scrollToBottom() {
+    if (viewport.current != null) {
+      viewport.current!.scrollTo({
+        top: viewport.current!.scrollHeight,
+        behavior: "instant",
+      });
+    }
+  }
   function handleOnTheadSent(
     data: SubscriptionResult<OnThreadSentSubscription, any>
   ) {
     if (data) {
       setChannels((prevChannels) => {
         const updatedChannel = [...prevChannels];
-        console.log(
-          "Message::",
-          updatedChannel[channelIndex].message[messageIndex.current]
-        );
-
         updatedChannel[channelIndex].message[messageIndex.current].threads.push(
           {
             id: data.data?.onThreadSent ? data.data.onThreadSent.id : "",
@@ -170,7 +173,7 @@ function TargetMessage({ message, isUser }: ThreadMessageProps) {
         <Group justify={"space-between"}>
           <Title order={4}>{message.user.fullName}</Title>
         </Group>
-        <Text>{message.text}</Text>
+        <Text lineClamp={1}>{message.text}</Text>
         <Title c={"gray.5"} style={{ textAlign: "end" }} order={6}>
           {currentDate.toDateString()} - {currentDate.toLocaleTimeString()}
         </Title>

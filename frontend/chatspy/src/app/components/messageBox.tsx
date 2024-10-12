@@ -21,6 +21,7 @@ import {
 import { gql } from "@/__generated__/gql";
 import {
   OnMessageUpdatedSubscription,
+  OnThreadDeletedMessageBoxSubscription,
   OnThreadSentMessageBoxSubscription,
 } from "@/__generated__/graphql";
 import { BsReplyAll } from "react-icons/bs";
@@ -54,7 +55,6 @@ const ON_MESSAGE_EDITED_SUBSCRIPTION = gql(`
   }
 }
     `);
-
 const ON_THREAD_SENT = gql(`
   subscription OnThreadSentMessageBox($messageId: UUID!) {
   onThreadSent(messageId: $messageId) {
@@ -68,14 +68,15 @@ const ON_THREAD_SENT = gql(`
   }
 }
   `);
-
-// const ON_THREAD_DELETED_SUBSCRIPTION = gql(`
-//   subscription OnThreadDeletedMessageBox($threadTopic: String!) {
-//     onThreadDeleted(threadTopic: $threadTopic) {
-//       id
-//     }
-//   }
-//         `);
+const ON_THREAD_DELETED_SUBSCRIPTION = gql(`
+  subscription OnThreadDeletedMessageBox($messageId: String!) {
+    onThreadDeleted(messageId: $messageId) {
+      id
+      text
+      date
+    }
+  }
+        `);
 
 type MessageBoxProps = {
   channelIndex: number;
@@ -128,6 +129,13 @@ function MessageBox({
     },
   });
 
+  useSubscription(ON_THREAD_DELETED_SUBSCRIPTION, {
+    fetchPolicy: "network-only",
+    variables: { messageId: currentMessage ? currentMessage.id : "" },
+    onData(data) {
+      handleOnThreadDeleted(data.data);
+    },
+  });
   // useSubscription(ON_THREAD_DELETED_SUBSCRIPTION, {
   //   fetchPolicy: "network-only",
   //   variables: { threadTopic: `[DELETE]${targetThreadId}` },
@@ -227,9 +235,6 @@ function MessageBox({
                     : `${currentMessage?.threads?.length} Reply`}
                 </>
               ) : null}
-
-              {/* {currentMessage?.threads?.length > 1 ? `${currentMessage?.threads?.length} Reply`  : `${currentMessage?.threads?.length} Replies` } */}
-              {/* 5 Replies */}
             </Button>
           </Group>
         ) : null}
@@ -240,6 +245,25 @@ function MessageBox({
       </Stack>
     </Group>
   );
+
+  function handleOnThreadDeleted(
+    data: SubscriptionResult<OnThreadDeletedMessageBoxSubscription, any>
+  ) {
+    if (data.data) {
+      setChannels((prevChannels) => {
+        const updatedChannels = [...prevChannels];
+        const threadIndex = updatedChannels[channelIndex].message[
+          messageIndex
+        ].threads.findIndex((th) => th.id == data.data?.onThreadDeleted.id);
+
+        updatedChannels[channelIndex].message[messageIndex].threads.splice(
+          threadIndex,
+          1
+        );
+        return updatedChannels;
+      });
+    }
+  }
 
   function handleOnTheadSent(
     data: SubscriptionResult<OnThreadSentMessageBoxSubscription, any>

@@ -30,13 +30,7 @@ mutation DeleteThread($input: DeleteThreadInput!) {
   }
 }
       `);
-// const ON_THREAD_DELETED_SUBSCRIPTION = gql(`
-// subscription OnThreadDeleted($messageId: String!) {
-//   onThreadDeleted(messageId: $messageId) {
-//     id
-//   }
-// }
-//       `);
+
 const ON_MESSAGE_EDITED_SUBSCRIPTION = gql(`
       subscription OnMessageUpdated($messageTopic: String!) {
     onMessageUpdated(messageTopic: $messageTopic) {
@@ -70,14 +64,6 @@ function ThreadBox({ thread, messageIndex, channelIndex }: ThreadBoxProps) {
   const currentDate = new Date(dateString);
 
   const [deleteThread] = useMutation(DELETE_THREAD);
-
-  // useSubscription(ON_MESSAGE_EDITED_SUBSCRIPTION, {
-  //   fetchPolicy: "network-only",
-  //   variables: { messageTopic: `[EDIT]${currentMessage?.id}` },
-  //   onData(data) {
-  //     // handleOnMessageEdited(data.data);
-  //   },
-  // });
 
   return (
     <Group wrap={"nowrap"} align={"start"} bg={isUser ? "violet.0" : ""} p={5}>
@@ -135,24 +121,7 @@ function ThreadBox({ thread, messageIndex, channelIndex }: ThreadBoxProps) {
       variables: { input: { threadId: thread.id } },
     });
   }
-  // function handleOnThreadDeleted() {
-  //   setChannels((prevChannels) => {
-  //     const updatedChannels = [...prevChannels];
-  //     const threadIndex = updatedChannels[channelIndex].message[
-  //       messageIndex
-  //     ].threads.findIndex((th) => th.id == thread.id);
-  //     console.log("Tread Index", threadIndex);
 
-  //     updatedChannels[channelIndex].message[messageIndex].threads.splice(
-  //       threadIndex,
-  //       1
-  //     );
-  //     console.log("Updated Channel", updatedChannels);
-
-  //     return updatedChannels;
-  //   });
-  //   // setTargetThreadId(thread.id);
-  // }
   function handleOnMessageEdited(
     data: SubscriptionResult<OnMessageUpdatedSubscription, any>
   ) {

@@ -34,7 +34,6 @@ const ON_THREAD_SENT = gql(`
   }
 }
   `);
-
 const ON_THREAD_DELETED_SUBSCRIPTION = gql(`
   subscription OnThreadDeleted($messageId: String!) {
     onThreadDeleted(messageId: $messageId) {
@@ -176,12 +175,9 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
         updatedChannels[channelIndex].message[
           messageIndex.current
         ].threads.splice(threadIndex, 1);
-        console.log("Updated Channel", updatedChannels);
         return updatedChannels;
       });
     }
-
-    // setTargetThreadId(thread.id);
   }
 }
 

@@ -32,6 +32,14 @@ const ON_THREAD_SENT = gql(`
 }
   `);
 
+const ON_THREAD_DELETED_SUBSCRIPTION = gql(`
+  subscription OnThreadDeleted_TV($threadTopic: String!) {
+    onThreadDeleted(threadTopic: $threadTopic) {
+      id
+    }
+  }
+        `);
+
 type ThreadViewerProps = {
   channelIndex: number;
   targetMessageId: string;
@@ -42,7 +50,6 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
   const messageThread = channels[channelIndex].message.find(
     (m) => m.id == targetMessageId
   );
-
   messageIndex.current = channels[channelIndex].message.findIndex(
     (m) => m.id == targetMessageId
   );
@@ -59,6 +66,13 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
     fetchPolicy: "network-only",
     onData: (data) => {
       handleOnTheadSent(data.data);
+    },
+  });
+  useSubscription(ON_THREAD_DELETED_SUBSCRIPTION, {
+    fetchPolicy: "network-only",
+    variables: { threadTopic: `[DELETE]${""}` },
+    onData() {
+      // handleOnThreadDeleted();
     },
   });
 
@@ -92,7 +106,11 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
                     orientation="vertical"
                   />
                   <Box style={{ flexGrow: 1 }} pb={2}>
-                    <ThreadBox thread={th} />
+                    <ThreadBox
+                      thread={th}
+                      messageIndex={messageIndex.current}
+                      channelIndex={channelIndex}
+                    />
                   </Box>
                 </Group>
               );
@@ -147,7 +165,6 @@ type ThreadMessageProps = {
   message: messageType;
   isUser: boolean;
 };
-
 function TargetMessage({ message, isUser }: ThreadMessageProps) {
   const currentDate = new Date(message ? message.date : "");
   return (

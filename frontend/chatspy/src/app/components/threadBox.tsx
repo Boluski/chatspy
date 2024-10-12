@@ -19,30 +19,23 @@ import {
   useSubscription,
 } from "@apollo/client";
 import { gql } from "@/__generated__/gql";
-import {
-  OnMessageDeletedSubscription,
-  OnMessageUpdatedSubscription,
-} from "@/__generated__/graphql";
+import { OnMessageUpdatedSubscription } from "@/__generated__/graphql";
 
-const DELETE_MESSAGE = gql(`
-      mutation DeleteMessage($input: DeleteMessageInput!) {
-    deleteMessage(input: $input) {
-      message {
-        id
-        text
-        date
-      }
-    }
-  }
-      `);
-const ON_MESSAGE_DELETED_SUBSCRIPTION = gql(`
-  subscription OnMessageDeleted($messageTopic: String!) {
-    onMessageDeleted(messageTopic: $messageTopic) {
+const DELETE_THREAD = gql(`
+mutation DeleteThread($input: DeleteThreadInput!) {
+  deleteThread(input: $input) {
+    thread {
       id
-      text
-      date
     }
   }
+}
+      `);
+const ON_THREAD_DELETED_SUBSCRIPTION = gql(`
+subscription OnThreadDeleted($threadTopic: String!) {
+  onThreadDeleted(threadTopic: $threadTopic) {
+    id
+  }
+}
       `);
 const ON_MESSAGE_EDITED_SUBSCRIPTION = gql(`
       subscription OnMessageUpdated($messageTopic: String!) {
@@ -54,21 +47,14 @@ const ON_MESSAGE_EDITED_SUBSCRIPTION = gql(`
       `);
 
 type ThreadBoxProps = {
-  // channelIndex: number;
-  // messageId: string;
-  // messageIndex: number;
+  channelIndex: number;
+  messageIndex: number;
   thread: threadType;
 };
 
-function ThreadBox({ thread }: ThreadBoxProps) {
-  const {
-    channels,
-    setChannels,
-    username,
-    setMessageToEdit,
-    setShowThread,
-    setMessageThread,
-  } = useContext(ChatContext);
+function ThreadBox({ thread, messageIndex, channelIndex }: ThreadBoxProps) {
+  const { channels, setChannels, username, setMessageToEdit } =
+    useContext(ChatContext);
   // const currentMessage = channels[channelIndex].message.find(
   //   (m) => m.id == messageId
   // );
@@ -78,14 +64,15 @@ function ThreadBox({ thread }: ThreadBoxProps) {
 
   const currentDate = new Date(dateString);
 
-  // const [deleteMessage] = useMutation(DELETE_MESSAGE);
-  // useSubscription(ON_MESSAGE_DELETED_SUBSCRIPTION, {
-  //   fetchPolicy: "network-only",
-  //   variables: { messageTopic: `[DELETE]${currentMessage?.id}` },
-  //   onData() {
-  //     // handleOnMessageDeleted();
-  //   },
-  // });
+  const [deleteThread] = useMutation(DELETE_THREAD);
+  useSubscription(ON_THREAD_DELETED_SUBSCRIPTION, {
+    fetchPolicy: "network-only",
+    variables: { threadTopic: `[DELETE]${thread.id}` },
+    onData() {
+      handleOnThreadDeleted();
+    },
+  });
+
   // useSubscription(ON_MESSAGE_EDITED_SUBSCRIPTION, {
   //   fetchPolicy: "network-only",
   //   variables: { messageTopic: `[EDIT]${currentMessage?.id}` },
@@ -129,7 +116,7 @@ function ThreadBox({ thread }: ThreadBoxProps) {
                 color="violet.8"
                 variant="transparent"
                 size={"lg"}
-                // onClick={handleMessageDelete}
+                onClick={handleThreadDelete}
               >
                 <RiChatDeleteLine size={"1.3rem"} />
               </ActionIcon>
@@ -145,17 +132,23 @@ function ThreadBox({ thread }: ThreadBoxProps) {
     </Group>
   );
 
-  async function handleMessageDelete() {
-    // await deleteMessage({
-    //   variables: { input: { messageId: currentMessage?.id } },
-    // });
+  async function handleThreadDelete() {
+    await deleteThread({
+      variables: { input: { threadId: thread.id } },
+    });
   }
-  function handleOnMessageDeleted() {
-    // setChannels((prevChannels) => {
-    //   const updatedChannels = [...prevChannels];
-    //   updatedChannels[channelIndex].message.splice(messageIndex, 1);
-    //   return updatedChannels;
-    // });
+  function handleOnThreadDeleted() {
+    setChannels((prevChannels) => {
+      const updatedChannels = [...prevChannels];
+      const threadIndex = updatedChannels[channelIndex].message[
+        messageIndex
+      ].threads.findIndex((th) => th.id == thread.id);
+      updatedChannels[channelIndex].message[messageIndex].threads.splice(
+        threadIndex,
+        1
+      );
+      return updatedChannels;
+    });
   }
   function handleOnMessageEdited(
     data: SubscriptionResult<OnMessageUpdatedSubscription, any>

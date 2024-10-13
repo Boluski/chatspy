@@ -86,6 +86,7 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
           <ThreadViewer
             channelIndex={currentChannelIndex}
             targetMessageId={targetMessageId}
+            setShowThread={setShowThread}
           />
         </Stack>
       ) : (

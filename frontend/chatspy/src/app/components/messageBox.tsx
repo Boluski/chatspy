@@ -41,8 +41,6 @@ const ON_MESSAGE_DELETED_SUBSCRIPTION = gql(`
 subscription OnMessageDeleted($messageId: String!) {
   onMessageDeleted(messageId: $messageId) {
     id
-    text
-    date
   }
 }
     `);

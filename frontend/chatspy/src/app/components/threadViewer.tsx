@@ -9,13 +9,14 @@ import {
   Divider,
   ScrollArea,
 } from "@mantine/core";
-import { useContext, useEffect, useRef } from "react";
+import { Dispatch, SetStateAction, useContext, useEffect, useRef } from "react";
 import { ChatContext, messageType } from "../contexts/chatContext";
 import ThreadBox from "./threadBox";
 import ThreadSender from "./threadSender";
 import { gql } from "@/__generated__/gql";
 import { SubscriptionResult, useSubscription } from "@apollo/client";
 import {
+  OnMessageUpdatedTvSubscription,
   OnThreadDeletedSubscription,
   OnThreadSentSubscription,
   OnThreadUpdatedSubscription,
@@ -51,11 +52,32 @@ subscription OnThreadUpdated($messageId: String!) {
 }
   `);
 
+const ON_MESSAGE_EDITED_SUBSCRIPTION = gql(`
+  subscription OnMessageUpdatedTV($messageId: String!) {
+    onMessageUpdated(messageId: $messageId) {
+      id
+      text
+    }
+  }
+      `);
+const ON_MESSAGE_DELETED_SUBSCRIPTION = gql(`
+        subscription OnMessageDeletedTV($messageId: String!) {
+          onMessageDeleted(messageId: $messageId) {
+            id
+          }
+        }
+            `);
+
 type ThreadViewerProps = {
   channelIndex: number;
   targetMessageId: string;
+  setShowThread: Dispatch<SetStateAction<boolean>>;
 };
-function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
+function ThreadViewer({
+  channelIndex,
+  targetMessageId,
+  setShowThread,
+}: ThreadViewerProps) {
   const { username, setChannels, channels } = useContext(ChatContext);
   const messageIndex = useRef(-1);
   const messageThread = channels[channelIndex].message.find(
@@ -91,6 +113,22 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
     variables: { messageId: messageThread ? messageThread.id : "" },
     onData(data) {
       handleOnThreadEdited(data.data);
+    },
+  });
+
+  useSubscription(ON_MESSAGE_EDITED_SUBSCRIPTION, {
+    fetchPolicy: "network-only",
+    variables: { messageId: messageThread ? messageThread.id : "" },
+    onData(data) {
+      handleOnMessageEdited(data.data);
+    },
+  });
+
+  useSubscription(ON_MESSAGE_DELETED_SUBSCRIPTION, {
+    fetchPolicy: "network-only",
+    variables: { messageId: messageThread ? messageThread.id : "" },
+    onData() {
+      handleOnMessageDeleted();
     },
   });
 
@@ -216,6 +254,29 @@ function ThreadViewer({ channelIndex, targetMessageId }: ThreadViewerProps) {
         return updatedChannels;
       });
     }
+  }
+
+  function handleOnMessageEdited(
+    data: SubscriptionResult<OnMessageUpdatedTvSubscription, any>
+  ) {
+    if (data.data) {
+      const updatedText = data.data.onMessageUpdated.text;
+      setChannels((prevChannels) => {
+        const updatedChannels = [...prevChannels];
+        updatedChannels[channelIndex].message[messageIndex.current].text =
+          updatedText;
+        return updatedChannels;
+      });
+    }
+  }
+
+  function handleOnMessageDeleted() {
+    setChannels((prevChannels) => {
+      const updatedChannels = [...prevChannels];
+      updatedChannels[channelIndex].message.splice(messageIndex.current, 1);
+      return updatedChannels;
+    });
+    setShowThread(false);
   }
 }
 

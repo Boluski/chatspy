@@ -29,7 +29,7 @@ export type userType = {
   username: string;
 };
 
-type workspaceType = {
+export type workspaceType = {
   id: string;
   name: string;
   createdBy: string;

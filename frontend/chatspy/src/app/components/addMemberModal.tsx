@@ -1,14 +1,24 @@
 import { Stack, TextInput, Button, TagsInput } from "@mantine/core";
 import { useContext, useState } from "react";
-import { useMutation } from "@apollo/client";
+import { useMutation, useLazyQuery } from "@apollo/client";
 import { gql } from "../../__generated__/gql";
 import * as EmailValidator from "email-validator";
 
 import { UserContext } from "../contexts/userContext";
+import { workspaceType } from "../contexts/userContext";
 
 type AddMemberModalProps = {
   closeFunction: () => void;
 };
+
+const GET_USER = gql(`
+  query UserByEmailAU($email: String!) {
+  userByEmail(email: $email) {
+    username
+    fullName
+  }
+}
+  `);
 
 const ADD_USER_TO_WORKSPACE = gql(`
     mutation AddUserToWorkspace($input: AddUserToWorkspaceInput!) {
@@ -21,12 +31,13 @@ const ADD_USER_TO_WORKSPACE = gql(`
     `);
 
 export default function AddMemberModal({ closeFunction }: AddMemberModalProps) {
-  const { currentWorkspace } = useContext(UserContext);
+  const { currentWorkspace, setCurrentWorkspace } = useContext(UserContext);
   const [emailList, setEmailList] = useState<string[]>([]);
   const [emailError, setEmailError] = useState("");
   const [enableAddMember, setEnableAddMember] = useState(false);
   const [loading, setLoading] = useState(false);
   const [addUserToWorkspace] = useMutation(ADD_USER_TO_WORKSPACE);
+  const [getUser] = useLazyQuery(GET_USER);
   return (
     <Stack>
       <TagsInput
@@ -73,11 +84,40 @@ export default function AddMemberModal({ closeFunction }: AddMemberModalProps) {
   function handleAddMembers() {
     setLoading(true);
     emailList.forEach(async (email) => {
-      await addUserToWorkspace({
-        variables: {
-          input: { email: email, workspaceID: currentWorkspace?.id },
-        },
-      });
+      try {
+        const { data } = await getUser({ variables: { email: email } });
+        await addUserToWorkspace({
+          variables: {
+            input: { email: email, workspaceID: currentWorkspace?.id },
+          },
+        });
+
+        if (data) {
+          setCurrentWorkspace((prevWorkspace) => {
+            if (prevWorkspace) {
+              const updatedWorkspace: workspaceType = {
+                id: prevWorkspace.id,
+                isAdmin: prevWorkspace.isAdmin,
+                name: prevWorkspace.name,
+                createdBy: prevWorkspace.createdBy,
+                users: [
+                  ...prevWorkspace.users,
+                  {
+                    username: data.userByEmail.username,
+                    fullName: data.userByEmail.fullName,
+                  },
+                ],
+              };
+
+              return updatedWorkspace;
+            } else {
+              return null;
+            }
+          });
+        }
+      } catch (error) {
+        console.log("Email is not associated with an account:", email);
+      }
     });
     closeFunction();
   }

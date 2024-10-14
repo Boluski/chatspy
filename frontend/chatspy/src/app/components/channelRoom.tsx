@@ -146,6 +146,7 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
         addUserOpened={addUserOpened}
         closeAddUserFunction={closeAddUserFunction}
         currentChannel={currentChannel}
+        currentChannelIndex={currentChannelIndex}
       />
     </>
   );
@@ -190,11 +191,13 @@ type AddUserModalProps = {
   addUserOpened: boolean;
   closeAddUserFunction: () => void;
   currentChannel: channelType | undefined;
+  currentChannelIndex: number;
 };
 function AddUserModal({
   addUserOpened,
   closeAddUserFunction,
   currentChannel,
+  currentChannelIndex,
 }: AddUserModalProps) {
   return (
     <Modal
@@ -215,7 +218,10 @@ function AddUserModal({
         },
       }}
     >
-      <AddMemberToChannel currentChannel={currentChannel} />
+      <AddMemberToChannel
+        currentChannel={currentChannel}
+        currentChannelIndex={currentChannelIndex}
+      />
     </Modal>
   );
 }

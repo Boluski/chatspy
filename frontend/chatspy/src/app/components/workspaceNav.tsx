@@ -9,10 +9,15 @@ import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
 import { useDisclosure } from "@mantine/hooks";
 import { MdAdd } from "react-icons/md";
 import { UserContext } from "../contexts/userContext";
-import { useContext } from "react";
+import { Dispatch, SetStateAction, useContext } from "react";
 import AddMemberModal from "./addMemberModal";
+import { ChannelType } from "@/__generated__/graphql";
 
-export default function WorkspaceNav() {
+type WorkspaceNavProps = {
+  setChannelNav: Dispatch<SetStateAction<ChannelType>>;
+};
+
+export default function WorkspaceNav({ setChannelNav }: WorkspaceNavProps) {
   const { currentWorkspace } = useContext(UserContext);
   const [addMemberOpened, { open: addMemberOpen, close: addMemberClose }] =
     useDisclosure();
@@ -32,6 +37,9 @@ export default function WorkspaceNav() {
               variant="light"
               size="xl"
               style={{ width: "4rem", height: "4rem" }}
+              onClick={() => {
+                setChannelNav(ChannelType.Public);
+              }}
             >
               <FaHashtag size={"2.5rem"} />
             </ActionIcon>
@@ -50,6 +58,9 @@ export default function WorkspaceNav() {
               variant="light"
               size="xl"
               style={{ width: "4rem", height: "4rem" }}
+              onClick={() => {
+                setChannelNav(ChannelType.Private);
+              }}
             >
               <IoLockClosed size={"2.5rem"} />
             </ActionIcon>
@@ -68,6 +79,9 @@ export default function WorkspaceNav() {
               variant="light"
               size="xl"
               style={{ width: "4rem", height: "4rem" }}
+              onClick={() => {
+                setChannelNav(ChannelType.Direct);
+              }}
             >
               <HiOutlineChatBubbleLeftRight size={"2.5rem"} />
             </ActionIcon>
@@ -131,7 +145,6 @@ export default function WorkspaceNav() {
         onClose={addMemberClose}
         withCloseButton={false}
         title="Add Team Members"
-        // centered
         overlayProps={{
           backgroundOpacity: 0.4,
           blur: 4,

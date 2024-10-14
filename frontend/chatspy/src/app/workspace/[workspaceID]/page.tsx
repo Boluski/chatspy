@@ -9,6 +9,7 @@ import {
   TabsTab,
   Modal,
   TabsPanel,
+  Box,
 } from "@mantine/core";
 import { MdAdd } from "react-icons/md";
 import WorkspaceHeader from "@/app/components/workspaceHeader";
@@ -25,6 +26,7 @@ import { useDisclosure } from "@mantine/hooks";
 import CreateChannelModal from "@/app/components/createChannelModal";
 import ChannelRoom from "@/app/components/channelRoom";
 import { channelType } from "@/app/contexts/chatContext";
+import { ChannelType } from "@/__generated__/graphql";
 
 type Workspace = {
   params: { workspaceID: string };
@@ -85,6 +87,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
   const [getCurrentWorkspace] = useLazyQuery(CURRENT_WORKSPACE);
   const [loading, setLoading] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [channelNav, setChannelNav] = useState<ChannelType>(ChannelType.Public);
   const [
     createChannelOpened,
     { open: createChannelOpen, close: createChannelClose },
@@ -133,60 +136,134 @@ export default function CurrentWorkspace({ params }: Workspace) {
                 gap={0}
                 wrap={"nowrap"}
               >
-                <WorkspaceNav />
-                <Tabs
-                  defaultValue={channels.length != 0 ? channels[0].id : ""}
-                  style={{ flexGrow: "1" }}
-                  h={"100%"}
-                  color="violet.2"
-                  orientation="vertical"
-                  variant="pills"
-                  radius={0}
-                  styles={{
-                    list: {
-                      borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
-                    },
-                    tab: {
-                      width: "20rem",
-                    },
-                    tabLabel: { fontSize: "1.5rem" },
-                  }}
-                >
-                  <TabsList>
-                    {currentWorkspace?.isAdmin ? (
-                      <Button
-                        my={0}
-                        size="lg"
-                        variant="light"
-                        color="gray"
-                        leftSection={<MdAdd size={"2rem"} />}
-                        onClick={createChannelOpen}
-                      >
-                        Create New Channel
-                      </Button>
-                    ) : null}
+                <WorkspaceNav setChannelNav={setChannelNav} />
+                <>
+                  <Box
+                    h={"100%"}
+                    style={{
+                      flexGrow: "1",
 
-                    {channels.map((c) => {
-                      if (c.type == "PUBLIC") {
-                        return (
-                          <TabsTab key={c.id} value={c.id}>
-                            {c.name}
-                          </TabsTab>
-                        );
-                      }
-                    })}
-                  </TabsList>
+                      display:
+                        channelNav == ChannelType.Public ? "block" : "none",
+                    }}
+                  >
+                    <Tabs
+                      defaultValue={channels.length != 0 ? channels[0].id : ""}
+                      h={"100%"}
+                      color="violet.2"
+                      orientation="vertical"
+                      variant="pills"
+                      radius={0}
+                      styles={{
+                        list: {
+                          borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
+                        },
+                        tab: {
+                          width: "20rem",
+                        },
+                        tabLabel: { fontSize: "1.5rem" },
+                      }}
+                    >
+                      <TabsList>
+                        {currentWorkspace?.isAdmin ? (
+                          <Button
+                            my={0}
+                            size="lg"
+                            variant="light"
+                            color="gray"
+                            leftSection={<MdAdd size={"2rem"} />}
+                            onClick={createChannelOpen}
+                          >
+                            Create New Channel
+                          </Button>
+                        ) : null}
 
-                  {channels.map((c) => {
-                    if (c.type == "PUBLIC") {
-                      return (
-                        <TabsPanel key={c.id} value={c.id}>
-                          <ChannelRoom key={c.id} channelId={c.id} />
-                        </TabsPanel>
-                      );
-                    }
-                  })}
-                </Tabs>
+                        {channels.map((c) => {
+                          if (c.type == ChannelType.Public) {
+                            return (
+                              <TabsTab key={c.id} value={c.id}>
+                                {c.name}
+                              </TabsTab>
+                            );
+                          }
+                        })}
+                      </TabsList>
+
+                      {channels.map((c) => {
+                        if (c.type == ChannelType.Public) {
+                          return (
+                            <TabsPanel key={c.id} value={c.id}>
+                              <ChannelRoom key={c.id} channelId={c.id} />
+                            </TabsPanel>
+                          );
+                        }
+                      })}
+                    </Tabs>
+                  </Box>
+
+                  <Box
+                    h={"100%"}
+                    style={{
+                      flexGrow: "1",
+
+                      display:
+                        channelNav == ChannelType.Private ? "block" : "none",
+                    }}
+                  >
+                    <Tabs
+                      defaultValue={channels.length != 0 ? channels[0].id : ""}
+                      h={"100%"}
+                      color="violet.2"
+                      orientation="vertical"
+                      variant="pills"
+                      radius={0}
+                      styles={{
+                        list: {
+                          borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
+                        },
+                        tab: {
+                          width: "20rem",
+                        },
+                        tabLabel: { fontSize: "1.5rem" },
+                      }}
+                    >
+                      <TabsList>
+                        {currentWorkspace?.isAdmin ? (
+                          <Button
+                            my={0}
+                            size="lg"
+                            variant="light"
+                            color="gray"
+                            leftSection={<MdAdd size={"2rem"} />}
+                            onClick={createChannelOpen}
+                          >
+                            Create New Channel
+                          </Button>
+                        ) : null}
+
+                        {channels.map((c) => {
+                          if (c.type == ChannelType.Private) {
+                            return (
+                              <TabsTab key={c.id} value={c.id}>
+                                {c.name}
+                              </TabsTab>
+                            );
+                          }
+                        })}
+                      </TabsList>
+
+                      {channels.map((c) => {
+                        if (c.type == ChannelType.Private) {
+                          return (
+                            <TabsPanel key={c.id} value={c.id}>
+                              <ChannelRoom key={c.id} channelId={c.id} />
+                            </TabsPanel>
+                          );
+                        }
+                      })}
+                    </Tabs>
+                  </Box>
+                </>
               </Group>
             </>
           ) : (

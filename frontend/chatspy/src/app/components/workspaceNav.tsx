@@ -9,7 +9,7 @@ import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
 import { useDisclosure } from "@mantine/hooks";
 import { MdAdd } from "react-icons/md";
 import { UserContext } from "../contexts/userContext";
-import { Dispatch, SetStateAction, useContext } from "react";
+import { Dispatch, SetStateAction, useContext, useState } from "react";
 import AddMemberModal from "./addMemberModal";
 import { ChannelType } from "@/__generated__/graphql";
 
@@ -21,6 +21,11 @@ export default function WorkspaceNav({ setChannelNav }: WorkspaceNavProps) {
   const { currentWorkspace } = useContext(UserContext);
   const [addMemberOpened, { open: addMemberOpen, close: addMemberClose }] =
     useDisclosure();
+
+  const [enablePublic, setEnablePublic] = useState(false);
+  const [enablePrivate, setEnablePrivate] = useState(true);
+  const [enableDirect, setEnableDirect] = useState(true);
+
   return (
     <>
       <Stack
@@ -33,12 +38,16 @@ export default function WorkspaceNav({ setChannelNav }: WorkspaceNavProps) {
         <Stack>
           <Stack align="center" gap={"0.5rem"}>
             <ActionIcon
+              disabled={!enablePublic}
               color="gray"
               variant="light"
               size="xl"
               style={{ width: "4rem", height: "4rem" }}
               onClick={() => {
                 setChannelNav(ChannelType.Public);
+                setEnablePublic(false);
+                setEnablePrivate(true);
+                setEnableDirect(true);
               }}
             >
               <FaHashtag size={"2.5rem"} />
@@ -54,12 +63,16 @@ export default function WorkspaceNav({ setChannelNav }: WorkspaceNavProps) {
           </Stack>
           <Stack align="center" gap={"0.5rem"}>
             <ActionIcon
+              disabled={!enablePrivate}
               color="gray"
               variant="light"
               size="xl"
               style={{ width: "4rem", height: "4rem" }}
               onClick={() => {
                 setChannelNav(ChannelType.Private);
+                setEnablePublic(true);
+                setEnablePrivate(false);
+                setEnableDirect(true);
               }}
             >
               <IoLockClosed size={"2.5rem"} />
@@ -75,12 +88,16 @@ export default function WorkspaceNav({ setChannelNav }: WorkspaceNavProps) {
           </Stack>
           <Stack align="center" gap={"0.5rem"}>
             <ActionIcon
+              disabled={!enableDirect}
               color="gray"
               variant="light"
               size="xl"
               style={{ width: "4rem", height: "4rem" }}
               onClick={() => {
                 setChannelNav(ChannelType.Direct);
+                setEnablePublic(true);
+                setEnablePrivate(true);
+                setEnableDirect(false);
               }}
             >
               <HiOutlineChatBubbleLeftRight size={"2.5rem"} />

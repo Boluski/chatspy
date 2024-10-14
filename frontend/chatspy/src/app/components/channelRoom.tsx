@@ -14,8 +14,12 @@ import MessageBox from "./messageBox";
 import { gql } from "@/__generated__/gql";
 import { IoChevronBackSharp } from "react-icons/io5";
 import { SubscriptionResult, useSubscription } from "@apollo/client";
-import { OnMessageSentSubscription } from "@/__generated__/graphql";
+import {
+  ChannelType,
+  OnMessageSentSubscription,
+} from "@/__generated__/graphql";
 import ThreadViewer from "./threadViewer";
+import { UserContext } from "../contexts/userContext";
 
 const ON_SEND_MESSAGE_SUBSCRIPTION = gql(`
 subscription OnMessageSent($channelId: String!) {
@@ -37,12 +41,11 @@ type ChannelRoomProps = {
 
 function ChannelRoom({ channelId }: ChannelRoomProps) {
   const { channels, setChannels } = useContext(ChatContext);
+  const { currentWorkspace } = useContext(UserContext);
   const [showThread, setShowThread] = useState(false);
   const [targetMessageId, setTargetMessageId] = useState("");
   const currentChannel = channels.find((c) => c.id == channelId);
   const currentChannelIndex = channels.findIndex((c) => c.id == channelId);
-
-  useEffect(() => scrollToBottom(), [channels, showThread]);
 
   const viewport = useRef<HTMLDivElement>(null);
 
@@ -66,6 +69,8 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
       <ChannelRoomHead
         channelId={channelId}
         channelName={currentChannel ? currentChannel.name : ""}
+        showControls={currentWorkspace?.isAdmin ? true : false}
+        isPrivate={currentChannel?.type == "PRIVATE" ? true : false}
       />
 
       {showThread ? (

@@ -22,6 +22,7 @@ import {
 import ThreadViewer from "./threadViewer";
 import { UserContext } from "../contexts/userContext";
 import { useDisclosure } from "@mantine/hooks";
+import AddMemberToChannel from "./AddMemberToChannel";
 
 const ON_SEND_MESSAGE_SUBSCRIPTION = gql(`
 subscription OnMessageSent($channelId: String!) {
@@ -198,7 +199,7 @@ function AddUserModal({
   return (
     <Modal
       title={`Add member to ${currentChannel?.name} channel`}
-      size={"lg"}
+      size={"xl"}
       opened={addUserOpened}
       centered
       onClose={closeAddUserFunction}
@@ -214,7 +215,7 @@ function AddUserModal({
         },
       }}
     >
-      AddUser
+      <AddMemberToChannel currentChannel={currentChannel} />
     </Modal>
   );
 }

@@ -4,6 +4,7 @@ import { useMutation } from "@apollo/client";
 import { gql } from "../../__generated__/gql";
 import { ChannelType } from "@/__generated__/graphql";
 import { ChatContext } from "../contexts/chatContext";
+import { UserContext } from "../contexts/userContext";
 
 const CREATE_PUBLIC_CHANNEL = gql(`
     mutation CreateChannel($input: CreateChannelInput!) {
@@ -24,6 +25,10 @@ mutation AddUserToChannel($input: AddUserToChannelInput!) {
       id
       name
       type
+      users {
+        fullName
+        username
+      }
     }
   }
 }
@@ -45,6 +50,7 @@ function CreateChannelModal({
   const [createChannel] = useMutation(CREATE_PUBLIC_CHANNEL);
   const [addUserToPrivateChannel] = useMutation(ADD_USER_TO_PRIVATE_CHANNEL);
   const { workspaceId, setChannels, username } = useContext(ChatContext);
+  const { currentWorkspace } = useContext(UserContext);
   return (
     <Stack w={"100%"}>
       <TextInput
@@ -94,6 +100,7 @@ function CreateChannelModal({
             id: data.createChannel.channel.id,
             name: data.createChannel.channel.name,
             type: "PUBLIC",
+            users: currentWorkspace ? currentWorkspace.users : [],
             message: [],
           });
         }
@@ -131,6 +138,7 @@ function CreateChannelModal({
                 id: createdChannelData.createChannel.channel.id,
                 name: createdChannelData.createChannel.channel.name,
                 type: "PRIVATE",
+                users: addedUserData.addUserToChannel.channel.users,
                 message: [],
               });
             }

@@ -53,10 +53,18 @@ query WorkspaceByID($workspaceId: UUID!, $username: String!) {
     id
     name
     createdBy
+    users {
+      fullName
+      username
+    }
     channels {
       id
       name
       type
+      users {
+        username
+        fullName
+      }
       messages {
         id
         text
@@ -316,7 +324,12 @@ export default function CurrentWorkspace({ params }: Workspace) {
         });
         if (data) {
           const allWorkspaces = data.userByUsername.workspaces.map((w) => {
-            return { id: w.id, name: w.name, createdBy: w.createdBy };
+            return {
+              id: w.id,
+              name: w.name,
+              createdBy: w.createdBy,
+              users: [],
+            };
           });
 
           setEmail(data.userByUsername.email);
@@ -348,6 +361,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
                 id: currentWorkspaceData.workspaceByID.id,
                 name: currentWorkspaceData.workspaceByID.name,
                 createdBy: currentWorkspaceData.workspaceByID.createdBy,
+                users: currentWorkspaceData.workspaceByID.users,
                 isAdmin: isAdmin,
               });
 
@@ -357,6 +371,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
                     id: c.id,
                     name: c.name,
                     type: c.type,
+                    users: c.users,
                     message: c.messages.map((m) => {
                       return {
                         text: m.text,
@@ -383,6 +398,11 @@ export default function CurrentWorkspace({ params }: Workspace) {
                   return newChannels;
                 });
               // currentWorkspaceData.workspaceByID.channels as channelType[]'
+              console.log(
+                "Current Workspace:",
+                currentWorkspaceData.workspaceByID
+              );
+
               console.log("Workspace Channels:", channels);
 
               setChannels(channels);

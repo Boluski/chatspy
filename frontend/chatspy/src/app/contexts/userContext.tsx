@@ -1,18 +1,9 @@
 "use client";
 
-import {
-  createContext,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
-import { fetchUserAttributes } from "aws-amplify/auth";
-import { gql } from "../../__generated__/gql";
-import { useLazyQuery } from "@apollo/client";
+import { createContext, Dispatch, SetStateAction, useState } from "react";
+
 import { Amplify } from "aws-amplify";
 import outputs from "../../../amplify_outputs.json";
-import { workerData } from "worker_threads";
 
 type userProviderProps = {
   children: React.ReactNode;
@@ -33,10 +24,16 @@ type valueType = {
   setCurrentWorkspace: Dispatch<SetStateAction<workspaceType | null>>;
 };
 
+export type userType = {
+  fullName: string;
+  username: string;
+};
+
 type workspaceType = {
   id: string;
   name: string;
   createdBy: string;
+  users: userType[];
   isAdmin?: boolean;
 };
 

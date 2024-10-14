@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, Dispatch, SetStateAction, useState } from "react";
+import { userType } from "./userContext";
 
 type ChatProviderProps = {
   children: React.ReactNode;
@@ -23,20 +24,14 @@ export type threadType = {
   id: string;
   text: string;
   date: string;
-  user: {
-    fullName: string;
-    username: string;
-  };
+  user: userType;
 };
 
 export type messageType = {
   id: string;
   text: string;
   date: string;
-  user: {
-    fullName: string;
-    username: string;
-  };
+  user: userType;
   threads: threadType[];
 };
 
@@ -44,6 +39,7 @@ export type channelType = {
   id: string;
   name: string;
   type: "PUBLIC" | "PRIVATE" | "DIRECT";
+  users: userType[];
   message: messageType[];
 };
 

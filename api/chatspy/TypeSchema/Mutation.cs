@@ -1,4 +1,5 @@
 using System;
+using System.Runtime.InteropServices;
 using chatspy.Data;
 using chatspy.Models;
 using chatspy.Utils;
@@ -205,6 +206,34 @@ public class Mutation
         };
 
         return workspace;
+    }
+
+    [GraphQLDescription(
+        "Removes a user from a private channel based on the channelId and the username"
+    )]
+    public async Task<Channel?> RemoveUserFromChannel(
+        ChatspyContext dbContext,
+        Guid channelId,
+        string username
+    )
+    {
+        var dbChannel = await dbContext
+            .Channels.Include(c => c.Users)
+            .SingleAsync((c) => c.Id == channelId);
+
+        var dbUser = await dbContext.Users.SingleAsync((u) => u.Username == username);
+
+        dbChannel.Users.Remove(dbUser);
+        await dbContext.SaveChangesAsync();
+
+        var channel = new Channel
+        {
+            Id = dbChannel.Id,
+            Name = dbChannel.Name,
+            Type = (ChannelType)dbChannel.Type,
+        };
+
+        return channel;
     }
 
     [GraphQLDescription(

@@ -17,9 +17,21 @@ const CREATE_PUBLIC_CHANNEL = gql(`
 }
     `);
 
+const ADD_USER_TO_PRIVATE_CHANNEL = gql(`
+mutation AddUserToChannel($input: AddUserToChannelInput!) {
+  addUserToChannel(input: $input) {
+    channel {
+      id
+      name
+      type
+    }
+  }
+}
+  `);
+
 type CreateChannelModalProps = {
   closeFunction: () => void;
-  channelType: "PUBLIC" | "PRIVATE" | "DIRECT";
+  channelType: ChannelType;
 };
 
 function CreateChannelModal({
@@ -31,7 +43,8 @@ function CreateChannelModal({
   const [enableCreateChannel, setEnableCreateChannel] = useState(false);
   const [loading, setLoading] = useState(false);
   const [createChannel] = useMutation(CREATE_PUBLIC_CHANNEL);
-  const { workspaceId, setChannels } = useContext(ChatContext);
+  const [addUserToPrivateChannel] = useMutation(ADD_USER_TO_PRIVATE_CHANNEL);
+  const { workspaceId, setChannels, username } = useContext(ChatContext);
   return (
     <Stack w={"100%"}>
       <TextInput
@@ -64,7 +77,7 @@ function CreateChannelModal({
 
   async function handleChannelCreation() {
     setLoading(true);
-    if (channelType == "PUBLIC") {
+    if (channelType == ChannelType.Public) {
       const { data } = await createChannel({
         variables: {
           input: {
@@ -78,13 +91,53 @@ function CreateChannelModal({
         const newChannels = [...prevChannels];
         if (data?.createChannel.channel != undefined) {
           newChannels.push({
-            id: data?.createChannel.channel?.id,
-            name: data?.createChannel.channel?.name,
+            id: data.createChannel.channel.id,
+            name: data.createChannel.channel.name,
             type: "PUBLIC",
+            message: [],
           });
         }
         return newChannels;
       });
+    } else if (channelType == ChannelType.Private) {
+      const { data: createdChannelData } = await createChannel({
+        variables: {
+          input: {
+            workspaceId: workspaceId,
+            name: name,
+            type: ChannelType.Private,
+          },
+        },
+      });
+
+      if (createdChannelData) {
+        const { data: addedUserData } = await addUserToPrivateChannel({
+          variables: {
+            input: {
+              privateChannelId: createdChannelData.createChannel.channel?.id,
+              username: username,
+            },
+          },
+        });
+
+        if (addedUserData) {
+          setChannels((prevChannels) => {
+            const newChannels = [...prevChannels];
+            if (
+              createdChannelData.createChannel.channel != undefined &&
+              addedUserData.addUserToChannel.channel != undefined
+            ) {
+              newChannels.push({
+                id: createdChannelData.createChannel.channel.id,
+                name: createdChannelData.createChannel.channel.name,
+                type: "PRIVATE",
+                message: [],
+              });
+            }
+            return newChannels;
+          });
+        }
+      }
     }
 
     closeFunction();

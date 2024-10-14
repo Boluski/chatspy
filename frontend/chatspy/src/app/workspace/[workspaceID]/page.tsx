@@ -278,7 +278,11 @@ export default function CurrentWorkspace({ params }: Workspace) {
         onClose={createChannelClose}
         opened={createChannelOpened}
         withCloseButton={false}
-        title="Create Public Channel"
+        title={
+          channelNav == ChannelType.Public
+            ? "Create Public Channel"
+            : "Create Private Channel"
+        }
         overlayProps={{
           backgroundOpacity: 0.4,
           blur: 4,
@@ -291,7 +295,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
         }}
       >
         <CreateChannelModal
-          channelType="PUBLIC"
+          channelType={channelNav}
           closeFunction={createChannelClose}
         />
       </Modal>

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from "react";
-import { ChatContext, messageType } from "../contexts/chatContext";
+import { channelType, ChatContext, messageType } from "../contexts/chatContext";
 import {
   DEFAULT_THEME,
   Stack,
@@ -7,6 +7,7 @@ import {
   ScrollArea,
   Group,
   Button,
+  Modal,
 } from "@mantine/core";
 import ChannelRoomHead from "./channelHead";
 import MessageSender from "./messageSender";
@@ -20,6 +21,7 @@ import {
 } from "@/__generated__/graphql";
 import ThreadViewer from "./threadViewer";
 import { UserContext } from "../contexts/userContext";
+import { useDisclosure } from "@mantine/hooks";
 
 const ON_SEND_MESSAGE_SUBSCRIPTION = gql(`
 subscription OnMessageSent($channelId: String!) {
@@ -47,6 +49,11 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
   const currentChannel = channels.find((c) => c.id == channelId);
   const currentChannelIndex = channels.findIndex((c) => c.id == channelId);
 
+  const [
+    addUserOpened,
+    { open: openAddUserFunction, close: closeAddUserFunction },
+  ] = useDisclosure(false);
+
   const viewport = useRef<HTMLDivElement>(null);
 
   useSubscription(ON_SEND_MESSAGE_SUBSCRIPTION, {
@@ -57,77 +64,89 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
     },
   });
   return (
-    <Stack
-      mah={"100%"}
-      h={"100%"}
-      gap={0}
-      justify={"space-between"}
-      style={{
-        borderRight: `2px solid ${DEFAULT_THEME.colors.dark[0]}`,
-      }}
-    >
-      <ChannelRoomHead
-        channelId={channelId}
-        channelName={currentChannel ? currentChannel.name : ""}
-        showControls={currentWorkspace?.isAdmin ? true : false}
-        isPrivate={currentChannel?.type == "PRIVATE" ? true : false}
-      />
+    <>
+      <Stack
+        mah={"100%"}
+        h={"100%"}
+        gap={0}
+        justify={"space-between"}
+        style={{
+          borderRight: `2px solid ${DEFAULT_THEME.colors.dark[0]}`,
+        }}
+      >
+        <ChannelRoomHead
+          channelId={channelId}
+          channelName={currentChannel ? currentChannel.name : ""}
+          showControls={currentWorkspace?.isAdmin ? true : false}
+          isPrivate={currentChannel?.type == "PRIVATE" ? true : false}
+          openAddUserFunction={openAddUserFunction}
+        />
 
-      {showThread ? (
-        <Stack gap={0} h={"100%"} mx={20}>
-          <Group align="center" gap={0}>
-            <Button
-              color="black"
-              variant="transparent"
-              size={"sm"}
-              onClick={() => {
-                setShowThread(false);
-              }}
-              leftSection={<IoChevronBackSharp size={"1rem"} />}
-            >
-              Back
-            </Button>
-          </Group>
-          <ThreadViewer
-            channelIndex={currentChannelIndex}
-            targetMessageId={targetMessageId}
-            setShowThread={setShowThread}
-          />
-        </Stack>
-      ) : (
-        <Stack gap={0} h={"100%"} style={{ flexGrow: 1, position: "relative" }}>
-          <Stack
-            h={"100%"}
-            mah={"78vh"}
-            justify={"flex-end"}
-            style={{ flexGrow: 1 }}
-          >
-            <ScrollArea type="never" viewportRef={viewport}>
-              <Stack gap={1} mx={20}>
-                {currentChannel?.message &&
-                  currentChannel.message.map((m, index) => {
-                    return (
-                      <MessageBox
-                        key={m.id}
-                        channelIndex={currentChannelIndex}
-                        messageId={m.id}
-                        messageIndex={index}
-                        setTargetMessageId={setTargetMessageId}
-                        setShowThread={setShowThread}
-                        showThread={showThread}
-                      />
-                    );
-                  })}
-                <Box style={{}} h={"4rem"}></Box>
-              </Stack>
-            </ScrollArea>
+        {showThread ? (
+          <Stack gap={0} h={"100%"} mx={20}>
+            <Group align="center" gap={0}>
+              <Button
+                color="black"
+                variant="transparent"
+                size={"sm"}
+                onClick={() => {
+                  setShowThread(false);
+                }}
+                leftSection={<IoChevronBackSharp size={"1rem"} />}
+              >
+                Back
+              </Button>
+            </Group>
+            <ThreadViewer
+              channelIndex={currentChannelIndex}
+              targetMessageId={targetMessageId}
+              setShowThread={setShowThread}
+            />
           </Stack>
-          <Box style={{ position: "absolute", bottom: 0, right: 0, left: 0 }}>
-            <MessageSender channelIndex={currentChannelIndex} />
-          </Box>
-        </Stack>
-      )}
-    </Stack>
+        ) : (
+          <Stack
+            gap={0}
+            h={"100%"}
+            style={{ flexGrow: 1, position: "relative" }}
+          >
+            <Stack
+              h={"100%"}
+              mah={"78vh"}
+              justify={"flex-end"}
+              style={{ flexGrow: 1 }}
+            >
+              <ScrollArea type="never" viewportRef={viewport}>
+                <Stack gap={1} mx={20}>
+                  {currentChannel?.message &&
+                    currentChannel.message.map((m, index) => {
+                      return (
+                        <MessageBox
+                          key={m.id}
+                          channelIndex={currentChannelIndex}
+                          messageId={m.id}
+                          messageIndex={index}
+                          setTargetMessageId={setTargetMessageId}
+                          setShowThread={setShowThread}
+                          showThread={showThread}
+                        />
+                      );
+                    })}
+                  <Box style={{}} h={"4rem"}></Box>
+                </Stack>
+              </ScrollArea>
+            </Stack>
+            <Box style={{ position: "absolute", bottom: 0, right: 0, left: 0 }}>
+              <MessageSender channelIndex={currentChannelIndex} />
+            </Box>
+          </Stack>
+        )}
+      </Stack>
+      <AddUserModal
+        addUserOpened={addUserOpened}
+        closeAddUserFunction={closeAddUserFunction}
+        currentChannel={currentChannel}
+      />
+    </>
   );
 
   function scrollToBottom() {
@@ -164,6 +183,40 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
       });
     }
   }
+}
+
+type AddUserModalProps = {
+  addUserOpened: boolean;
+  closeAddUserFunction: () => void;
+  currentChannel: channelType | undefined;
+};
+function AddUserModal({
+  addUserOpened,
+  closeAddUserFunction,
+  currentChannel,
+}: AddUserModalProps) {
+  return (
+    <Modal
+      title={`Add member to ${currentChannel?.name} channel`}
+      size={"lg"}
+      opened={addUserOpened}
+      centered
+      onClose={closeAddUserFunction}
+      withCloseButton={false}
+      overlayProps={{
+        backgroundOpacity: 0.4,
+        blur: 4,
+      }}
+      styles={{
+        title: {
+          fontWeight: "bold",
+          fontSize: "1.5rem",
+        },
+      }}
+    >
+      AddUser
+    </Modal>
+  );
 }
 
 export default ChannelRoom;

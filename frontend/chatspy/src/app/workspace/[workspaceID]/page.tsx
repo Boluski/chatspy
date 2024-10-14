@@ -10,8 +10,9 @@ import {
   Modal,
   TabsPanel,
   Box,
+  Title,
 } from "@mantine/core";
-import { MdAdd } from "react-icons/md";
+import { MdAdd, MdLocationSearching } from "react-icons/md";
 import WorkspaceHeader from "@/app/components/workspaceHeader";
 import WorkspaceNav from "@/app/components/workspaceNav";
 import { UserContext } from "../../contexts/userContext";
@@ -27,6 +28,7 @@ import CreateChannelModal from "@/app/components/createChannelModal";
 import ChannelRoom from "@/app/components/channelRoom";
 import { channelType } from "@/app/contexts/chatContext";
 import { ChannelType } from "@/__generated__/graphql";
+import { GiMagnifyingGlass } from "react-icons/gi";
 
 type Workspace = {
   params: { workspaceID: string };
@@ -156,9 +158,15 @@ export default function CurrentWorkspace({ params }: Workspace) {
                     }}
                   >
                     <Tabs
-                      defaultValue={channels.length != 0 ? channels[0].id : ""}
+                      defaultValue={
+                        channels.filter((ch) => ch.type == ChannelType.Public)
+                          .length != 0
+                          ? channels.find((ch) => ch.type == ChannelType.Public)
+                              ?.id
+                          : ""
+                      }
                       h={"100%"}
-                      color="violet.2"
+                      color="violet.8"
                       orientation="vertical"
                       variant="pills"
                       radius={0}
@@ -169,12 +177,14 @@ export default function CurrentWorkspace({ params }: Workspace) {
                         tab: {
                           width: "20rem",
                         },
+
                         tabLabel: { fontSize: "1.5rem" },
                       }}
                     >
                       <TabsList>
                         {currentWorkspace?.isAdmin ? (
                           <Button
+                            w={"20rem"}
                             my={0}
                             size="lg"
                             variant="light"
@@ -186,26 +196,53 @@ export default function CurrentWorkspace({ params }: Workspace) {
                           </Button>
                         ) : null}
 
-                        {channels.map((c) => {
-                          if (c.type == ChannelType.Public) {
-                            return (
-                              <TabsTab key={c.id} value={c.id}>
-                                {c.name}
-                              </TabsTab>
-                            );
-                          }
-                        })}
+                        {channels.filter((ch) => ch.type == ChannelType.Public)
+                          .length != 0 ? (
+                          channels
+                            .filter((ch) => ch.type == ChannelType.Public)
+                            .map((c) => {
+                              // if (c.type == ChannelType.Public) {
+                              return (
+                                <TabsTab key={c.id} value={c.id}>
+                                  {c.name}
+                                </TabsTab>
+                              );
+                              // }
+                            })
+                        ) : (
+                          <Stack
+                            w={"20rem"}
+                            // style={{ outline: "solid 2px orange" }}
+                            align="center"
+                            py={40}
+                          >
+                            <GiMagnifyingGlass
+                              size={"10rem"}
+                              color={DEFAULT_THEME.colors.violet[8]}
+                            />
+                            <Title
+                              c={"violet.8"}
+                              style={{ textAlign: "center" }}
+                              order={2}
+                              px={40}
+                            >
+                              You are not in any channel.
+                            </Title>
+                          </Stack>
+                        )}
                       </TabsList>
 
-                      {channels.map((c) => {
-                        if (c.type == ChannelType.Public) {
+                      {channels
+                        .filter((ch) => ch.type == ChannelType.Public)
+                        .map((c) => {
+                          // if (c.type == ChannelType.Public) {
                           return (
                             <TabsPanel key={c.id} value={c.id}>
                               <ChannelRoom key={c.id} channelId={c.id} />
                             </TabsPanel>
                           );
-                        }
-                      })}
+                          // }
+                        })}
                     </Tabs>
                   </Box>
 
@@ -219,9 +256,16 @@ export default function CurrentWorkspace({ params }: Workspace) {
                     }}
                   >
                     <Tabs
-                      defaultValue={channels.length != 0 ? channels[0].id : ""}
+                      defaultValue={
+                        channels.filter((ch) => ch.type == ChannelType.Private)
+                          .length != 0
+                          ? channels.find(
+                              (ch) => ch.type == ChannelType.Private
+                            )?.id
+                          : ""
+                      }
                       h={"100%"}
-                      color="violet.2"
+                      color="violet.8"
                       orientation="vertical"
                       variant="pills"
                       radius={0}
@@ -239,6 +283,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
                         {currentWorkspace?.isAdmin ? (
                           <Button
                             my={0}
+                            w={"20rem"}
                             size="lg"
                             variant="light"
                             color="gray"
@@ -249,26 +294,53 @@ export default function CurrentWorkspace({ params }: Workspace) {
                           </Button>
                         ) : null}
 
-                        {channels.map((c) => {
-                          if (c.type == ChannelType.Private) {
-                            return (
-                              <TabsTab key={c.id} value={c.id}>
-                                {c.name}
-                              </TabsTab>
-                            );
-                          }
-                        })}
+                        {channels.filter((ch) => ch.type == ChannelType.Private)
+                          .length != 0 ? (
+                          channels
+                            .filter((ch) => ch.type == ChannelType.Private)
+                            .map((c) => {
+                              // if (c.type == ChannelType.Private) {
+                              return (
+                                <TabsTab key={c.id} value={c.id}>
+                                  {c.name}
+                                </TabsTab>
+                              );
+                              // }
+                            })
+                        ) : (
+                          <Stack
+                            w={"20rem"}
+                            // style={{ outline: "solid 2px orange" }}
+                            align="center"
+                            py={40}
+                          >
+                            <GiMagnifyingGlass
+                              size={"10rem"}
+                              color={DEFAULT_THEME.colors.violet[8]}
+                            />
+                            <Title
+                              c={"violet.8"}
+                              style={{ textAlign: "center" }}
+                              order={2}
+                              px={40}
+                            >
+                              You are not in any channel.
+                            </Title>
+                          </Stack>
+                        )}
                       </TabsList>
 
-                      {channels.map((c) => {
-                        if (c.type == ChannelType.Private) {
+                      {channels
+                        .filter((ch) => ch.type == ChannelType.Private)
+                        .map((c) => {
+                          // if (c.type == ChannelType.Private) {
                           return (
                             <TabsPanel key={c.id} value={c.id}>
                               <ChannelRoom key={c.id} channelId={c.id} />
                             </TabsPanel>
                           );
-                        }
-                      })}
+                          // }
+                        })}
                     </Tabs>
                   </Box>
                 </>
@@ -320,6 +392,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
         setUsername(preferred_username);
 
         const { data } = await getUserData({
+          fetchPolicy: "network-only",
           variables: { username: preferred_username },
         });
         if (data) {
@@ -343,6 +416,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
             // User is authorized
             setIsAuthorized(true);
             const { data: currentWorkspaceData } = await getCurrentWorkspace({
+              fetchPolicy: "network-only",
               variables: {
                 username: preferred_username,
                 workspaceId: allWorkspaces[workspaceIndex].id,

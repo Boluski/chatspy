@@ -27,7 +27,6 @@ import WorkspaceCard from "../components/workspaceCard";
 import CreateWorkspaceModal from "../components/createWorkspaceModal";
 import { useRouter } from "next/navigation";
 import WorkspacesLoading from "../components/workspacesLoading";
-import CurrentWorkspace from "./[workspaceID]/page";
 
 Amplify.configure(outputs);
 
@@ -208,7 +207,10 @@ export default function AllWorkspaces() {
     const { preferred_username: username } = await fetchUserAttributes();
     if (username != undefined) {
       currentUsername.current = username;
-      const { data } = await getUser({ variables: { username: username } });
+      const { data } = await getUser({
+        fetchPolicy: "network-only",
+        variables: { username: username },
+      });
       if (data != undefined) {
         const currentUser = data.userByUsername;
         setFullName(currentUser.fullName);

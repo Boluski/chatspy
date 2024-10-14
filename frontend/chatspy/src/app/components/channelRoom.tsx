@@ -64,6 +64,10 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
       handleReceivedMessage(data.data);
     },
   });
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [channels, showThread]);
   return (
     <>
       <Stack
@@ -201,7 +205,7 @@ function AddUserModal({
 }: AddUserModalProps) {
   return (
     <Modal
-      title={`Add member to ${currentChannel?.name} channel`}
+      title={`Add member to "${currentChannel?.name}" channel`}
       size={"xl"}
       opened={addUserOpened}
       centered

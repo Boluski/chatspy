@@ -58,14 +58,16 @@ function AddMemberToChannel({
   currentChannelIndex,
 }: AddMemberToChannelProps) {
   const { currentWorkspace } = useContext(UserContext);
-  console.log("current channel", currentChannel);
 
+  const [searchTerm, setSearchTerm] = useState("");
   return (
     <Stack>
       <TextInput
         size="lg"
         placeholder="Search Member"
         leftSection={<IoSearchSharp size={"1.7rem"} />}
+        value={searchTerm}
+        onChange={(event) => setSearchTerm(event.currentTarget.value)}
       />
       <Stack>
         <Title order={2}>Members</Title>
@@ -73,6 +75,11 @@ function AddMemberToChannel({
           <Stack gap={5}>
             {currentWorkspace &&
               currentWorkspace.users
+                .filter((u) =>
+                  u.fullName
+                    .toLocaleLowerCase()
+                    .includes(searchTerm.trim().toLocaleLowerCase())
+                )
                 .filter((u) => u.username != currentWorkspace.createdBy)
                 .map((u) => {
                   let inChannel = false;
@@ -108,6 +115,7 @@ type WorkspaceMemberProps = {
   currentChannel: channelType | undefined;
   currentChannelIndex: number;
 };
+
 function WorkspaceMember({
   fullName,
   username,
@@ -121,11 +129,13 @@ function WorkspaceMember({
   const { setChannels } = useContext(ChatContext);
 
   return (
-    <Group align="center">
+    <Group py={10} align="center">
       <Avatar size={"lg"} name={fullName} />
-      <Title order={3} style={{ flexGrow: 1 }}>
-        {fullName}
-      </Title>
+      <Stack style={{ flexGrow: 1 }} gap={1}>
+        <Title order={3}>{fullName}</Title>
+        <Title order={6}>{username}</Title>
+      </Stack>
+
       <Box w={"10rem"}>
         {userInChannel ? (
           <Button

@@ -33,6 +33,21 @@ const ADD_USER_TO_PRIVATE_CHANNEL = gql(`
 }
     `);
 
+const REMOVE_USER_FROM_PRIVATE_CHANNEL = gql(`
+    mutation RemoveUserFromChannel($input: RemoveUserFromChannelInput!) {
+  removeUserFromChannel(input: $input) {
+    channel {
+      id
+      name
+      type
+      users {
+        fullName
+        username
+      }
+    }
+  }
+}`);
+
 type AddMemberToChannelProps = {
   currentChannel: channelType | undefined;
   currentChannelIndex: number;
@@ -102,7 +117,9 @@ function WorkspaceMember({
 }: WorkspaceMemberProps) {
   const [userInChannel, setUserInChannel] = useState(inChannel);
   const [addUserToChannel] = useMutation(ADD_USER_TO_PRIVATE_CHANNEL);
+  const [removeUserFromChannel] = useMutation(REMOVE_USER_FROM_PRIVATE_CHANNEL);
   const { setChannels } = useContext(ChatContext);
+
   return (
     <Group align="center">
       <Avatar size={"lg"} name={fullName} />
@@ -118,6 +135,7 @@ function WorkspaceMember({
             variant="outline"
             leftSection={<MdOutlineRemove size={"2rem"} />}
             onClick={() => {
+              handleRemoveUser();
               setUserInChannel((prev) => !prev);
             }}
           >
@@ -156,6 +174,27 @@ function WorkspaceMember({
         if (data.addUserToChannel.channel) {
           updatedChannel[currentChannelIndex].users =
             data.addUserToChannel.channel.users;
+        }
+
+        return updatedChannel;
+      });
+    }
+  }
+
+  async function handleRemoveUser() {
+    const { data } = await removeUserFromChannel({
+      variables: {
+        input: { channelId: currentChannel?.id, username: username },
+      },
+    });
+
+    if (data) {
+      setChannels((prevChannel) => {
+        const updatedChannel = [...prevChannel];
+
+        if (data.removeUserFromChannel.channel) {
+          updatedChannel[currentChannelIndex].users =
+            data.removeUserFromChannel.channel.users;
         }
 
         return updatedChannel;

@@ -234,6 +234,8 @@ export type Mutation = {
   editMessage: EditMessagePayload;
   /** Edits the thread's text based on it's Id. */
   editThread: EditThreadPayload;
+  /** Removes a user from a private channel based on the channelId and the username */
+  removeUserFromChannel: RemoveUserFromChannelPayload;
   /** Removes a user from a workspace based on the workspaceId and the username. */
   removeUserFromWorkspace: RemoveUserFromWorkspacePayload;
   /** Updates the name of a channel. This should be used only for public and private channels. */
@@ -315,6 +317,11 @@ export type MutationEditThreadArgs = {
 };
 
 
+export type MutationRemoveUserFromChannelArgs = {
+  input: RemoveUserFromChannelInput;
+};
+
+
 export type MutationRemoveUserFromWorkspaceArgs = {
   input: RemoveUserFromWorkspaceInput;
 };
@@ -382,6 +389,16 @@ export type QueryUserByUsernameArgs = {
 export type QueryWorkspaceByIdArgs = {
   username: Scalars['String']['input'];
   workspaceID: Scalars['UUID']['input'];
+};
+
+export type RemoveUserFromChannelInput = {
+  channelId: Scalars['UUID']['input'];
+  username: Scalars['String']['input'];
+};
+
+export type RemoveUserFromChannelPayload = {
+  __typename?: 'RemoveUserFromChannelPayload';
+  channel?: Maybe<Channel>;
 };
 
 export type RemoveUserFromWorkspaceInput = {
@@ -505,6 +522,13 @@ export type AddUserToChannelWmMutationVariables = Exact<{
 
 
 export type AddUserToChannelWmMutation = { __typename?: 'Mutation', addUserToChannel: { __typename?: 'AddUserToChannelPayload', channel?: { __typename?: 'Channel', id: any, name: string, type: ChannelType, users: Array<{ __typename?: 'User', fullName: string, username: string }> } | null } };
+
+export type RemoveUserFromChannelMutationVariables = Exact<{
+  input: RemoveUserFromChannelInput;
+}>;
+
+
+export type RemoveUserFromChannelMutation = { __typename?: 'Mutation', removeUserFromChannel: { __typename?: 'RemoveUserFromChannelPayload', channel?: { __typename?: 'Channel', id: any, name: string, type: ChannelType, users: Array<{ __typename?: 'User', fullName: string, username: string }> } | null } };
 
 export type AddUserToWorkspaceMutationVariables = Exact<{
   input: AddUserToWorkspaceInput;
@@ -684,6 +708,7 @@ export type UserByUsernameQuery = { __typename?: 'Query', userByUsername: { __ty
 
 
 export const AddUserToChannelWmDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddUserToChannelWM"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddUserToChannelInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addUserToChannel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"channel"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]}}]} as unknown as DocumentNode<AddUserToChannelWmMutation, AddUserToChannelWmMutationVariables>;
+export const RemoveUserFromChannelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"RemoveUserFromChannel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RemoveUserFromChannelInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"removeUserFromChannel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"channel"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}},{"kind":"Field","name":{"kind":"Name","value":"users"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"fullName"}},{"kind":"Field","name":{"kind":"Name","value":"username"}}]}}]}}]}}]}}]} as unknown as DocumentNode<RemoveUserFromChannelMutation, RemoveUserFromChannelMutationVariables>;
 export const AddUserToWorkspaceDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"AddUserToWorkspace"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"AddUserToWorkspaceInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"addUserToWorkspace"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"workspace"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}}]}}]}}]} as unknown as DocumentNode<AddUserToWorkspaceMutation, AddUserToWorkspaceMutationVariables>;
 export const OnMessageSentDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"subscription","name":{"kind":"Name","value":"OnMessageSent"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"channelId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"onMessageSent"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"channelId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"channelId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"text"}},{"kind":"Field","name":{"kind":"Name","value":"date"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"username"}},{"kind":"Field","name":{"kind":"Name","value":"fullName"}}]}}]}}]}}]} as unknown as DocumentNode<OnMessageSentSubscription, OnMessageSentSubscriptionVariables>;
 export const CreateChannelDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateChannel"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"input"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreateChannelInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createChannel"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"input"},"value":{"kind":"Variable","name":{"kind":"Name","value":"input"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"channel"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"type"}}]}}]}}]}}]} as unknown as DocumentNode<CreateChannelMutation, CreateChannelMutationVariables>;

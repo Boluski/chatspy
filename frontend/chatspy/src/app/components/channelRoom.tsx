@@ -43,7 +43,7 @@ type ChannelRoomProps = {
 };
 
 function ChannelRoom({ channelId }: ChannelRoomProps) {
-  const { channels, setChannels } = useContext(ChatContext);
+  const { channels, setChannels, username } = useContext(ChatContext);
   const { currentWorkspace } = useContext(UserContext);
   const [showThread, setShowThread] = useState(false);
   const [targetMessageId, setTargetMessageId] = useState("");
@@ -80,7 +80,6 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
         }}
       >
         <ChannelRoomHead
-          channelId={channelId}
           channelName={currentChannel ? currentChannel.name : ""}
           showControls={
             currentWorkspace?.isAdmin
@@ -89,8 +88,15 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
                 : false
               : false
           }
-          isPrivate={currentChannel?.type == "PRIVATE" ? true : false}
+          isPrivate={currentChannel?.type == ChannelType.Private ? true : false}
+          isDirect={currentChannel?.type == ChannelType.Direct ? true : false}
+          dmUsers={
+            currentChannel?.type == ChannelType.Direct
+              ? currentChannel.users
+              : undefined
+          }
           openAddUserFunction={openAddUserFunction}
+          username={username}
         />
 
         {showThread ? (

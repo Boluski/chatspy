@@ -32,12 +32,14 @@ const ADD_USER_TO_WORKSPACE = gql(`
 
 export default function AddMemberModal({ closeFunction }: AddMemberModalProps) {
   const { currentWorkspace, setCurrentWorkspace } = useContext(UserContext);
+
   const [emailList, setEmailList] = useState<string[]>([]);
   const [emailError, setEmailError] = useState("");
   const [enableAddMember, setEnableAddMember] = useState(false);
   const [loading, setLoading] = useState(false);
   const [addUserToWorkspace] = useMutation(ADD_USER_TO_WORKSPACE);
   const [getUser] = useLazyQuery(GET_USER);
+
   return (
     <Stack>
       <TagsInput

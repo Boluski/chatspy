@@ -445,7 +445,12 @@ export default function CurrentWorkspace({ params }: Workspace) {
                                     key={u.username}
                                     value={u.username}
                                   >
-                                    <ChatInvite fullName={u.fullName} />
+                                    <ChatInvite
+                                      username={username}
+                                      inviteFullName={u.fullName}
+                                      inviteUsername={u.username}
+                                      workspaceId={currentWorkspace.id}
+                                    />
                                   </TabsPanel>
                                 );
                               }

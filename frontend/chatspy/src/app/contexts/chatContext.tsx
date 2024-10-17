@@ -18,6 +18,8 @@ type valueType = {
   setMessageToEdit: Dispatch<SetStateAction<messageType | null>>;
   threadToEdit: threadType | null;
   setThreadToEdit: Dispatch<SetStateAction<threadType | null>>;
+  usernameDmChannels: usernameChannelMapType[];
+  setUsernameDmChannels: Dispatch<SetStateAction<usernameChannelMapType[]>>;
 };
 
 export type threadType = {
@@ -43,6 +45,11 @@ export type channelType = {
   message: messageType[];
 };
 
+export type usernameChannelMapType = {
+  username: string;
+  channelId: string;
+};
+
 const defaultValues = {
   channels: [],
   setChannels: () => [],
@@ -54,6 +61,8 @@ const defaultValues = {
   messageToEdit: null,
   threadToEdit: null,
   setThreadToEdit: () => null,
+  usernameDmChannels: [],
+  setUsernameDmChannels: () => [],
 } as valueType;
 
 export const ChatContext = createContext<valueType>(defaultValues);
@@ -61,6 +70,9 @@ export function ChatProvider({ children }: ChatProviderProps) {
   const [username, setUsername] = useState("");
   const [workspaceId, setWorkspaceId] = useState("");
   const [channels, setChannels] = useState<channelType[]>([]);
+  const [usernameDmChannels, setUsernameDmChannels] = useState<
+    usernameChannelMapType[]
+  >([]);
 
   // for Editing a specific message in a channel
   const [messageToEdit, setMessageToEdit] = useState<messageType | null>(null);
@@ -74,11 +86,13 @@ export function ChatProvider({ children }: ChatProviderProps) {
     workspaceId,
     messageToEdit,
     threadToEdit,
+    usernameDmChannels,
     setUsername,
     setWorkspaceId,
     setChannels,
     setMessageToEdit,
     setThreadToEdit,
+    setUsernameDmChannels,
   };
   return <ChatContext.Provider value={values}>{children}</ChatContext.Provider>;
 }

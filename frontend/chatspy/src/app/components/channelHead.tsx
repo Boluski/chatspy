@@ -14,6 +14,7 @@ function ChannelRoomHead({
   showControls,
   isPrivate,
   openAddUserFunction,
+  channelId,
 }: ChannelRoomHeadProps) {
   return (
     <>

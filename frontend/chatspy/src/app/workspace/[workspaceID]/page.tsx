@@ -15,8 +15,11 @@ import {
 import { MdAdd, MdLocationSearching } from "react-icons/md";
 import WorkspaceHeader from "@/app/components/workspaceHeader";
 import WorkspaceNav from "@/app/components/workspaceNav";
-import { UserContext } from "../../contexts/userContext";
-import { ChatContext } from "@/app/contexts/chatContext";
+import { UserContext, userType } from "../../contexts/userContext";
+import {
+  ChatContext,
+  usernameChannelMapType,
+} from "@/app/contexts/chatContext";
 import { useContext, useEffect, useState } from "react";
 import { gql } from "../../../__generated__/gql";
 import { useLazyQuery } from "@apollo/client";
@@ -115,8 +118,10 @@ export default function CurrentWorkspace({ params }: Workspace) {
   } = useContext(UserContext);
   const {
     channels,
+    usernameDmChannels,
     setChannels,
     setWorkspaceId,
+    setUsernameDmChannels,
     setUsername: cc_setUsername,
   } = useContext(ChatContext);
 
@@ -412,15 +417,32 @@ export default function CurrentWorkspace({ params }: Workspace) {
                         )}
                       </TabsList>
 
-                      {channels
-                        .filter((ch) => ch.type == ChannelType.Direct)
-                        .map((c) => {
-                          return (
-                            <TabsPanel key={c.id} value={c.id}>
-                              <ChannelRoom key={c.id} channelId={c.id} />
-                            </TabsPanel>
-                          );
-                        })}
+                      {currentWorkspace?.users.filter(
+                        (u) => u.username != username
+                      ).length != 0
+                        ? currentWorkspace?.users
+                            .filter((u) => u.username != username)
+                            .map((u) => {
+                              const channelLink = usernameDmChannels.find(
+                                (uc) => uc.username == u.username
+                              );
+                              if (channelLink) {
+                                return (
+                                  <TabsPanel
+                                    key={u.username}
+                                    value={u.username}
+                                  >
+                                    <ChannelRoom
+                                      key={channelLink.channelId}
+                                      channelId={channelLink.channelId}
+                                    />
+                                  </TabsPanel>
+                                );
+                              } else {
+                                return null;
+                              }
+                            })
+                        : ""}
                     </Tabs>
                   </Box>
                 </>
@@ -551,6 +573,21 @@ export default function CurrentWorkspace({ params }: Workspace) {
                   };
                   return newChannels;
                 });
+
+              const dmChannels =
+                currentWorkspaceData.workspaceByID.channels.filter(
+                  (ch) => ch.type == ChannelType.Direct
+                );
+              const usernameChannels = dmChannels.map((ch) => {
+                const dmUser = ch.users.filter(
+                  (u) => u.username != preferred_username
+                );
+
+                return {
+                  username: dmUser[0].username,
+                  channelId: ch.id,
+                } as usernameChannelMapType;
+              });
               // currentWorkspaceData.workspaceByID.channels as channelType[]'
               console.log(
                 "Current Workspace:",
@@ -559,7 +596,10 @@ export default function CurrentWorkspace({ params }: Workspace) {
 
               console.log("Workspace Channels:", channels);
 
+              console.log("username to channel:", usernameChannels);
+
               setChannels(channels);
+              setUsernameDmChannels(usernameChannels);
               cc_setUsername(preferred_username);
               setWorkspaceId(currentWorkspaceData.workspaceByID.id);
             }
@@ -571,5 +611,16 @@ export default function CurrentWorkspace({ params }: Workspace) {
     }
 
     setLoading(false);
+  }
+
+  function getDmId(username: string) {
+    const dmChannels = channels.filter((ch) => ch.type == ChannelType.Direct);
+    for (let index = 0; index < dmChannels.length; index++) {
+      const dmChannel = dmChannels[index];
+      let targetChannel = dmChannel.users.find((u) => u.username == username);
+      if (targetChannel) {
+        return dmChannel.id;
+      }
+    }
   }
 }

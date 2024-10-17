@@ -82,7 +82,13 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
         <ChannelRoomHead
           channelId={channelId}
           channelName={currentChannel ? currentChannel.name : ""}
-          showControls={currentWorkspace?.isAdmin ? true : false}
+          showControls={
+            currentWorkspace?.isAdmin
+              ? currentChannel?.type != ChannelType.Direct
+                ? true
+                : false
+              : false
+          }
           isPrivate={currentChannel?.type == "PRIVATE" ? true : false}
           openAddUserFunction={openAddUserFunction}
         />

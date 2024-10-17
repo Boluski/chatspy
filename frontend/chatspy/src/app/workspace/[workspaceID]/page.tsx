@@ -105,6 +105,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
   const {
     isAuthenticated,
     currentWorkspace,
+    username,
     setIsAuthenticated,
     setEmail,
     setUsername,
@@ -340,6 +341,85 @@ export default function CurrentWorkspace({ params }: Workspace) {
                             </TabsPanel>
                           );
                           // }
+                        })}
+                    </Tabs>
+                  </Box>
+
+                  <Box
+                    h={"100%"}
+                    style={{
+                      flexGrow: "1",
+
+                      display:
+                        channelNav == ChannelType.Direct ? "block" : "none",
+                    }}
+                  >
+                    <Tabs
+                      defaultValue={
+                        currentWorkspace
+                          ? currentWorkspace.users.filter(
+                              (u) => u.username != username
+                            ).length != 0
+                            ? currentWorkspace.users.filter(
+                                (u) => u.username != username
+                              )[0].username
+                            : ""
+                          : ""
+                      }
+                      h={"100%"}
+                      color="violet.8"
+                      orientation="vertical"
+                      variant="pills"
+                      radius={0}
+                      styles={{
+                        list: {
+                          borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
+                        },
+                        tab: {
+                          width: "20rem",
+                        },
+                        tabLabel: { fontSize: "1.5rem" },
+                      }}
+                    >
+                      <TabsList>
+                        {currentWorkspace?.users.filter(
+                          (u) => u.username != username
+                        ).length != 0 ? (
+                          currentWorkspace?.users
+                            .filter((u) => u.username != username)
+                            .map((u) => {
+                              return (
+                                <TabsTab key={u.username} value={u.username}>
+                                  {u.fullName}
+                                </TabsTab>
+                              );
+                            })
+                        ) : (
+                          <Stack w={"20rem"} align="center" py={40}>
+                            <GiMagnifyingGlass
+                              size={"10rem"}
+                              color={DEFAULT_THEME.colors.violet[8]}
+                            />
+                            <Title
+                              c={"violet.8"}
+                              style={{ textAlign: "center" }}
+                              order={2}
+                              px={40}
+                            >
+                              No member as been added to this workspace.
+                            </Title>
+                          </Stack>
+                        )}
+                      </TabsList>
+
+                      {channels
+                        .filter((ch) => ch.type == ChannelType.Direct)
+                        .map((c) => {
+                          return (
+                            <TabsPanel key={c.id} value={c.id}>
+                              <ChannelRoom key={c.id} channelId={c.id} />
+                            </TabsPanel>
+                          );
                         })}
                     </Tabs>
                   </Box>

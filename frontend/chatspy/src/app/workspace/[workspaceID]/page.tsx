@@ -12,10 +12,10 @@ import {
   Box,
   Title,
 } from "@mantine/core";
-import { MdAdd, MdLocationSearching } from "react-icons/md";
+import { MdAdd } from "react-icons/md";
 import WorkspaceHeader from "@/app/components/workspaceHeader";
 import WorkspaceNav from "@/app/components/workspaceNav";
-import { UserContext, userType } from "../../contexts/userContext";
+import { UserContext } from "../../contexts/userContext";
 import {
   ChatContext,
   usernameChannelMapType,
@@ -32,6 +32,7 @@ import ChannelRoom from "@/app/components/channelRoom";
 import { channelType } from "@/app/contexts/chatContext";
 import { ChannelType } from "@/__generated__/graphql";
 import { GiMagnifyingGlass } from "react-icons/gi";
+import ChatInvite from "@/app/components/chatInvite";
 
 type Workspace = {
   params: { workspaceID: string };
@@ -439,7 +440,14 @@ export default function CurrentWorkspace({ params }: Workspace) {
                                   </TabsPanel>
                                 );
                               } else {
-                                return null;
+                                return (
+                                  <TabsPanel
+                                    key={u.username}
+                                    value={u.username}
+                                  >
+                                    <ChatInvite fullName={u.fullName} />
+                                  </TabsPanel>
+                                );
                               }
                             })
                         : ""}

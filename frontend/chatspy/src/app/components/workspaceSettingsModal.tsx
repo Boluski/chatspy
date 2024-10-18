@@ -17,7 +17,7 @@ import {
   useEffect,
   useState,
 } from "react";
-import { UserContext, userType } from "../contexts/userContext";
+import { UserContext, userType, workspaceType } from "../contexts/userContext";
 import { MdOutlineRemove } from "react-icons/md";
 import { IoSearchSharp } from "react-icons/io5";
 import { useDisclosure } from "@mantine/hooks";
@@ -31,6 +31,21 @@ const RENAME_WORKSPACE = gql(`
       id
       name
       createdBy
+    }
+  }
+}
+    `);
+
+const REMOVE_USER_FROM_WORKSPACE = gql(`
+    mutation RemoveUserFromWorkspace($input: RemoveUserFromWorkspaceInput!) {
+  removeUserFromWorkspace(input: $input) {
+    workspace {
+      id
+      name
+      users {
+        fullName
+        username
+      }
     }
   }
 }
@@ -108,7 +123,15 @@ function WorkspaceSettingsModal({
                   )
                   .filter((u) => u.username != currentWorkspace.createdBy)
                   .map((u) => {
-                    return <WorkspaceMember user={u} />;
+                    return (
+                      <WorkspaceMember
+                        workspaceId={
+                          currentWorkspace ? currentWorkspace?.id : ""
+                        }
+                        user={u}
+                        setCurrentWorkspace={setCurrentWorkspace}
+                      />
+                    );
                   })}
             </Stack>
           </ScrollArea>
@@ -161,8 +184,15 @@ function WorkspaceSettingsModal({
 
 type workspaceMemberProps = {
   user: userType;
+  workspaceId: string;
+  setCurrentWorkspace: Dispatch<SetStateAction<workspaceType | null>>;
 };
-function WorkspaceMember({ user }: workspaceMemberProps) {
+function WorkspaceMember({
+  user,
+  workspaceId,
+  setCurrentWorkspace,
+}: workspaceMemberProps) {
+  const [removeUserFromWorkspace] = useMutation(REMOVE_USER_FROM_WORKSPACE);
   return (
     <Group py={10} align="center">
       <Avatar size={"lg"} name={user.fullName} />
@@ -178,16 +208,39 @@ function WorkspaceMember({ user }: workspaceMemberProps) {
           color="red"
           variant="outline"
           leftSection={<MdOutlineRemove size={"2rem"} />}
-          // onClick={() => {
-          //   handleRemoveUser();
-          //   setUserInChannel((prev) => !prev);
-          // }}
+          onClick={() => {
+            handleRemoveUserFromWorkspace();
+          }}
         >
           Remove
         </Button>
       </Box>
     </Group>
   );
+  async function handleRemoveUserFromWorkspace() {
+    try {
+      const { data } = await removeUserFromWorkspace({
+        variables: {
+          input: { workspaceID: workspaceId, username: user.username },
+        },
+      });
+
+      setCurrentWorkspace((prevWorkspace) => {
+        if (prevWorkspace) {
+          const updatedWorkspace = { ...prevWorkspace };
+          if (data?.removeUserFromWorkspace.workspace) {
+            updatedWorkspace.users = data.removeUserFromWorkspace.workspace
+              .users as userType[];
+          }
+          return updatedWorkspace;
+        } else {
+          return null;
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 type ConfirmDeleteProps = {

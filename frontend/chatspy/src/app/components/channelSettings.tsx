@@ -83,7 +83,7 @@ function ChannelSettings({
             color="violet.8"
             disabled={!enableSave}
             onClick={() => {
-              handleNameChannelNameChange();
+              handleChannelNameChange();
             }}
           >
             Save
@@ -107,7 +107,7 @@ function ChannelSettings({
       />
     </>
   );
-  async function handleNameChannelNameChange() {
+  async function handleChannelNameChange() {
     try {
       const { data } = await renameChannel({
         variables: {

@@ -1,16 +1,20 @@
 import { Avatar, Button, Group, Stack, Title } from "@mantine/core";
 import { signOut } from "aws-amplify/auth";
 import { useRouter } from "next/navigation";
+import { IoSettingsOutline } from "react-icons/io5";
+import { LuLogOut } from "react-icons/lu";
 
 type UserAccountPopOverProps = {
   fullName: string;
   username: string;
   email: string;
+  userSettingOpen: () => void;
 };
 function UserAccountPopOver({
   fullName,
   username,
   email,
+  userSettingOpen,
 }: UserAccountPopOverProps) {
   const router = useRouter();
   return (
@@ -23,15 +27,30 @@ function UserAccountPopOver({
           <Title size={"1.5rem"}>{email}</Title>
         </Stack>
       </Group>
-      <Button
-        color="violet.8"
-        onClick={async () => {
-          await signOut();
-          router.push("/login");
-        }}
-      >
-        Sign Out
-      </Button>
+      <Stack gap={5}>
+        <Button
+          leftSection={<IoSettingsOutline size={"1.2rem"} />}
+          size="md"
+          variant="subtle"
+          color="violet.8"
+          onClick={() => {
+            userSettingOpen();
+          }}
+        >
+          Account Settings
+        </Button>
+        <Button
+          size="md"
+          color="violet.8"
+          onClick={async () => {
+            await signOut();
+            router.push("/login");
+          }}
+          leftSection={<LuLogOut size={"1.2rem"} />}
+        >
+          Sign Out
+        </Button>
+      </Stack>
     </Stack>
   );
 }

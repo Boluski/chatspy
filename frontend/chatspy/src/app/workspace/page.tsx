@@ -28,6 +28,7 @@ import CreateWorkspaceModal from "../components/createWorkspaceModal";
 import { useRouter } from "next/navigation";
 import WorkspacesLoading from "../components/workspacesLoading";
 import UserAccountPopOver from "../components/UserAccountPopover";
+import UserSettingModal from "../components/UserSettingsModal";
 
 Amplify.configure(outputs);
 
@@ -54,6 +55,11 @@ export default function AllWorkspaces() {
   const [
     createWorkspaceOpened,
     { open: createWorkspaceOpen, close: createWorkspaceClose },
+  ] = useDisclosure(false);
+
+  const [
+    userSettingOpened,
+    { open: userSettingOpen, close: userSettingClose },
   ] = useDisclosure(false);
 
   const router = useRouter();
@@ -97,6 +103,7 @@ export default function AllWorkspaces() {
               fullName={fullName}
               email={email}
               username={currentUsername.current}
+              userSettingOpen={userSettingOpen}
             />
           </Popover.Dropdown>
         </Popover>
@@ -167,6 +174,30 @@ export default function AllWorkspaces() {
           closeFunction={createWorkspaceClose}
           username={currentUsername.current}
           setWorkspaces={setWorkspaces}
+        />
+      </Modal>
+
+      <Modal
+        size={"lg"}
+        opened={userSettingOpened}
+        onClose={userSettingClose}
+        withCloseButton={false}
+        title="Account Settings"
+        centered
+        overlayProps={{
+          backgroundOpacity: 0.4,
+          blur: 4,
+        }}
+        styles={{
+          title: {
+            fontWeight: "bold",
+            fontSize: "1.5rem",
+          },
+        }}
+      >
+        <UserSettingModal
+          closeFunction={userSettingClose}
+          fullName={fullName}
         />
       </Modal>
     </Stack>

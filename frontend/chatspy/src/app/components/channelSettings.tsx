@@ -105,33 +105,6 @@ function ChannelSettings({
         channelName={channelName}
         setDelete={setDeleteChannel}
       />
-      {/* <Modal
-        title={`Confirm delete "${currentChannel?.name}" channel?`}
-        size={"md"}
-        opened={opened}
-        centered
-        onClose={close}
-        withCloseButton={false}
-        overlayProps={{
-          backgroundOpacity: 0.4,
-          blur: 4,
-        }}
-        styles={{
-          title: {
-            fontWeight: "bold",
-            fontSize: "1.5rem",
-          },
-        }}
-      >
-        <Group grow>
-          <Button size="lg" color="violet.8" onClick={() => {}}>
-            Keep
-          </Button>
-          <Button size="lg" color="red.8" variant="outline" onClick={() => {}}>
-            Delete
-          </Button>
-        </Group>
-      </Modal> */}
     </>
   );
   async function handleNameChannelNameChange() {
@@ -187,7 +160,7 @@ function ConfirmDelete({
   return (
     <>
       <Modal
-        title={`Confirm delete "${channelName}" channel?`}
+        title={`Confirm deletion of "${channelName}" channel?`}
         size={"md"}
         opened={opened}
         centered

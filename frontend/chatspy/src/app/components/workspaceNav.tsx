@@ -12,6 +12,7 @@ import { UserContext } from "../contexts/userContext";
 import { Dispatch, SetStateAction, useContext, useState } from "react";
 import AddMemberModal from "./addMemberModal";
 import { ChannelType } from "@/__generated__/graphql";
+import WorkspaceSettingsModal from "./workspaceSettingsModal";
 
 type WorkspaceNavProps = {
   setChannelNav: Dispatch<SetStateAction<ChannelType>>;
@@ -21,6 +22,10 @@ export default function WorkspaceNav({ setChannelNav }: WorkspaceNavProps) {
   const { currentWorkspace } = useContext(UserContext);
   const [addMemberOpened, { open: addMemberOpen, close: addMemberClose }] =
     useDisclosure();
+  const [
+    workspaceSettingsOpened,
+    { open: workspaceSettingsOpen, close: workspaceSettingClose },
+  ] = useDisclosure();
 
   const [enablePublic, setEnablePublic] = useState(false);
   const [enablePrivate, setEnablePrivate] = useState(true);
@@ -141,6 +146,7 @@ export default function WorkspaceNav({ setChannelNav }: WorkspaceNavProps) {
                 variant="light"
                 size="xl"
                 style={{ width: "4rem", height: "4rem" }}
+                onClick={workspaceSettingsOpen}
               >
                 <IoSettingsOutline size={"2.5rem"} />
               </ActionIcon>
@@ -174,6 +180,26 @@ export default function WorkspaceNav({ setChannelNav }: WorkspaceNavProps) {
         }}
       >
         <AddMemberModal closeFunction={addMemberClose} />
+      </Modal>
+      <Modal
+        size={"xl"}
+        centered
+        opened={workspaceSettingsOpened}
+        onClose={workspaceSettingClose}
+        withCloseButton={false}
+        title={`"${currentWorkspace?.name}" Workspace Settings`}
+        overlayProps={{
+          backgroundOpacity: 0.4,
+          blur: 4,
+        }}
+        styles={{
+          title: {
+            fontWeight: "bold",
+            fontSize: "1.5rem",
+          },
+        }}
+      >
+        <WorkspaceSettingsModal closeFunction={workspaceSettingClose} />
       </Modal>
     </>
   );

@@ -3,6 +3,8 @@ import { AiOutlineUserAdd } from "react-icons/ai";
 import { VscSettings } from "react-icons/vsc";
 import { userType } from "../contexts/userContext";
 import { FaUserAlt } from "react-icons/fa";
+import { IoLockClosed } from "react-icons/io5";
+import { FaHashtag } from "react-icons/fa6";
 
 type ChannelRoomHeadProps = {
   channelName: string;
@@ -37,6 +39,20 @@ function ChannelRoomHead({
         <Group>
           {isDirect ? (
             <FaUserAlt
+              color={`${DEFAULT_THEME.colors.violet[8]}`}
+              size={"2rem"}
+            />
+          ) : null}
+
+          {isPrivate ? (
+            <IoLockClosed
+              color={`${DEFAULT_THEME.colors.violet[8]}`}
+              size={"2rem"}
+            />
+          ) : null}
+
+          {isPrivate == false && isDirect == false ? (
+            <FaHashtag
               color={`${DEFAULT_THEME.colors.violet[8]}`}
               size={"2rem"}
             />

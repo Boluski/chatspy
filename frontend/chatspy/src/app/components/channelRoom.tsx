@@ -289,6 +289,7 @@ function ChannelSettingsModal({
       <ChannelSettings
         currentChannel={currentChannel}
         currentChannelIndex={currentChannelIndex}
+        closeChannelSettingsFunction={closeChannelSettingsFunction}
       />
     </Modal>
   );

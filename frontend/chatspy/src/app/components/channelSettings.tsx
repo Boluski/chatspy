@@ -1,21 +1,64 @@
 import { Group, Stack, TextInput, Button, Modal } from "@mantine/core";
 import { channelType } from "../contexts/chatContext";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useDisclosure } from "@mantine/hooks";
+import { gql } from "@/__generated__/gql";
+import { useMutation } from "@apollo/client";
+import { useContext } from "react";
+import { ChatContext } from "../contexts/chatContext";
+
+const RENAME_CHANNEL = gql(`
+    mutation UpdateChannelName($input: UpdateChannelNameInput!) {
+  updateChannelName(input: $input) {
+    channel {
+      id
+      name
+    }
+  }
+}
+    `);
+
+const DELETE_CHANNEL = gql(`
+        mutation DeleteChannel($input: DeleteChannelInput!) {
+  deleteChannel(input: $input) {
+    channel {
+      id
+      name
+    }
+  }
+}
+        `);
 
 type ChannelSettingsProps = {
   currentChannel: channelType | undefined;
   currentChannelIndex: number;
+  closeChannelSettingsFunction: () => void;
 };
 
-function ChannelSettings({ currentChannel }: ChannelSettingsProps) {
+function ChannelSettings({
+  currentChannel,
+  currentChannelIndex,
+  closeChannelSettingsFunction,
+}: ChannelSettingsProps) {
   const [channelName, setChannelName] = useState<string>(
     currentChannel ? currentChannel.name : ""
   );
   const [opened, { open, close }] = useDisclosure();
   const [enableSave, setEnableSave] = useState(false);
   const [deleteChannel, setDeleteChannel] = useState(false);
+
+  const { setChannels } = useContext(ChatContext);
+  const [renameChannel] = useMutation(RENAME_CHANNEL);
+  const [deleteChannelFunction] = useMutation(DELETE_CHANNEL);
+
+  useEffect(() => {
+    if (deleteChannel) {
+      console.log("Delete is true");
+      handleDeleteChannel();
+      closeChannelSettingsFunction();
+    }
+  }, [deleteChannel]);
   return (
     <>
       <Stack>
@@ -40,7 +83,7 @@ function ChannelSettings({ currentChannel }: ChannelSettingsProps) {
             color="violet.8"
             disabled={!enableSave}
             onClick={() => {
-              handleNameChannelNameChange;
+              handleNameChannelNameChange();
             }}
           >
             Save
@@ -91,7 +134,41 @@ function ChannelSettings({ currentChannel }: ChannelSettingsProps) {
       </Modal> */}
     </>
   );
-  function handleNameChannelNameChange() {}
+  async function handleNameChannelNameChange() {
+    try {
+      const { data } = await renameChannel({
+        variables: {
+          input: { channelId: currentChannel?.id, name: channelName.trim() },
+        },
+      });
+
+      if (data) {
+        setChannels((prevChannel) => {
+          const updatedChannel = [...prevChannel];
+          updatedChannel[currentChannelIndex].name = channelName.trim();
+          return updatedChannel;
+        });
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function handleDeleteChannel() {
+    try {
+      await deleteChannelFunction({
+        variables: { input: { channelId: currentChannel?.id } },
+      });
+
+      setChannels((prevChannel) => {
+        const updatedChannel = [...prevChannel];
+        updatedChannel.splice(currentChannelIndex, 1);
+        return updatedChannel;
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 type ConfirmDeleteProps = {

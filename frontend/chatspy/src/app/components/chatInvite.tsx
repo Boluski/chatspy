@@ -1,8 +1,15 @@
 import { Stack, Title, Button } from "@mantine/core";
 import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
-import { useMutation } from "@apollo/client";
+import {
+  SubscriptionResult,
+  useMutation,
+  useSubscription,
+} from "@apollo/client";
 import { gql } from "@/__generated__/gql";
-import { ChannelType } from "@/__generated__/graphql";
+import {
+  ChannelType,
+  OnDmChannelCreatedSubscription,
+} from "@/__generated__/graphql";
 import { useContext } from "react";
 import { ChatContext } from "../contexts/chatContext";
 
@@ -17,33 +24,50 @@ const CREATE_DIRECT_MESSAGE = gql(`
         fullName
         username
       }
-      # messages {
-      #   id
-      #   text
-      #   date
-      #   threads {
-      #     id
-      #     text
-      #     date
-      #   }
-      # }
     }
+  }
+}
+    `);
+const ON_DIRECT_MESSAGE_CREATED_SUBSCRIPTION = gql(`
+subscription OnDMChannelCreated($workspaceId: String!, $rootUsername: String!, $directUsername: String!) {
+  onDMChannelCreated(workspaceId: $workspaceId, rootUsername: $rootUsername, directUsername: $directUsername) {
+    id
+    name
+    type
+    # users {
+    #   fullName
+    #   username
+    # }
   }
 }
     `);
 
 type ChatInviteProps = {
+  fullName: string;
   inviteFullName: string;
   username: string;
   inviteUsername: string;
   workspaceId: string;
 };
 function ChatInvite({
+  fullName,
   inviteFullName,
   inviteUsername,
   username,
   workspaceId,
 }: ChatInviteProps) {
+  useSubscription(ON_DIRECT_MESSAGE_CREATED_SUBSCRIPTION, {
+    variables: {
+      workspaceId: workspaceId,
+      rootUsername: username,
+      directUsername: inviteUsername,
+    },
+    onData(data) {
+      console.log(">>>", data);
+      handleDMCreated(data.data);
+    },
+  });
+
   const { setChannels, setUsernameDmChannels } = useContext(ChatContext);
   const [createDM] = useMutation(CREATE_DIRECT_MESSAGE);
 
@@ -73,8 +97,8 @@ function ChatInvite({
       const { data } = await createDM({
         variables: {
           input: {
-            directUsername: inviteUsername,
             rootUsername: username,
+            directUsername: inviteUsername,
             name: `${username}-${inviteUsername}`,
             type: ChannelType.Direct,
             workspaceId: workspaceId,
@@ -84,7 +108,6 @@ function ChatInvite({
       if (data) {
         setChannels((prevChannels) => {
           const newChannels = [...prevChannels];
-
           if (data.createChannel.channel) {
             newChannels.push({
               id: data.createChannel.channel.id,
@@ -94,13 +117,10 @@ function ChatInvite({
               message: [],
             });
           }
-
           return newChannels;
         });
-
         setUsernameDmChannels((prevUDC) => {
           const newUDC = [...prevUDC];
-
           newUDC.push({
             username: inviteUsername,
             channelId: data.createChannel.channel?.id,
@@ -110,6 +130,44 @@ function ChatInvite({
       }
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  function handleDMCreated(
+    data: SubscriptionResult<OnDmChannelCreatedSubscription, any>
+  ) {
+    console.log(">>>", data);
+    const onDMChannelCreatedData = data.data;
+
+    if (onDMChannelCreatedData) {
+      setChannels((prevChannels) => {
+        const newChannels = [...prevChannels];
+
+        if (onDMChannelCreatedData.onDMChannelCreated) {
+          newChannels.push({
+            id: onDMChannelCreatedData.onDMChannelCreated.id,
+            name: onDMChannelCreatedData.onDMChannelCreated.name,
+            type: "DIRECT",
+            users: [
+              { username: username, fullName: fullName },
+              { username: inviteUsername, fullName: inviteFullName },
+            ],
+            message: [],
+          });
+        }
+
+        return newChannels;
+      });
+
+      setUsernameDmChannels((prevUDC) => {
+        const newUDC = [...prevUDC];
+
+        newUDC.push({
+          username: inviteUsername,
+          channelId: onDMChannelCreatedData.onDMChannelCreated.id,
+        });
+        return newUDC;
+      });
     }
   }
 }

@@ -8,6 +8,21 @@ namespace chatspy.TypeSchema;
 
 public class Subscription
 {
+    // On New DM Channel created
+    public async ValueTask<ISourceStream<Channel>> OnDMChannelCreatedReceiver(
+        string workspaceId,
+        string rootUsername,
+        string directUsername,
+        [Service] ITopicEventReceiver receiver
+    ) =>
+        await receiver.SubscribeAsync<Channel>(
+            $"[NEW_DM]{workspaceId}-{rootUsername}-{directUsername}"
+        );
+
+    [GraphQLDescription("Is triggered when a new DM channel is created.")]
+    [Subscribe(With = nameof(OnDMChannelCreatedReceiver))]
+    public Channel OnDMChannelCreated([EventMessage] Channel createdDmChannel) => createdDmChannel;
+
     // OnMessageSent
     public async ValueTask<ISourceStream<Message>> OnMessageSentReceiver(
         string ChannelId,

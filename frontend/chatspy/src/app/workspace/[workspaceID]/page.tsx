@@ -110,6 +110,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
     isAuthenticated,
     currentWorkspace,
     username,
+    fullName,
     setIsAuthenticated,
     setEmail,
     setUsername,
@@ -447,6 +448,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
                                   >
                                     <ChatInvite
                                       username={username}
+                                      fullName={fullName}
                                       inviteFullName={u.fullName}
                                       inviteUsername={u.username}
                                       workspaceId={currentWorkspace.id}
@@ -624,16 +626,5 @@ export default function CurrentWorkspace({ params }: Workspace) {
     }
 
     setLoading(false);
-  }
-
-  function getDmId(username: string) {
-    const dmChannels = channels.filter((ch) => ch.type == ChannelType.Direct);
-    for (let index = 0; index < dmChannels.length; index++) {
-      const dmChannel = dmChannels[index];
-      let targetChannel = dmChannel.users.find((u) => u.username == username);
-      if (targetChannel) {
-        return dmChannel.id;
-      }
-    }
   }
 }

@@ -13,21 +13,24 @@ public class Channel
     public async Task<List<User>> Users(ChatspyContext dbContext)
     {
         List<User> users;
-        List<UserModel> dbUsers = null!;
+        // List<UserModel> dbUsers = null!;
         var dbChannel = await dbContext
             .Channels.Include(c => c.Workspace.Users)
-            .Include(c => c.Users)
-            .SingleAsync(c => c.Id == Id);
+            // .Include(c => c.Users)
+            .SingleOrDefaultAsync(c => c.Id == Id);
+
+        var dbUsers = await dbContext
+            .Users.Where((u) => u.Channels.Any(c => c.Id == Id))
+            .ToListAsync();
 
         if (Type == ChannelType.Private)
         {
-            dbUsers = dbChannel.Users.ToList();
+            // dbUsers = dbChannel.Users.ToList();
         }
         else if (Type == ChannelType.Direct)
         {
-            dbUsers = dbChannel.Users.ToList();
+            // dbUsers = dbChannel.Users.ToList();
         }
-        //Type == ChannelType.Public
         else
         {
             dbUsers = dbChannel.Workspace.Users.ToList();

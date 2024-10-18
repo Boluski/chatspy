@@ -245,7 +245,8 @@ public class Mutation
         string name,
         ChannelType type,
         string? rootUsername,
-        string? directUsername
+        string? directUsername,
+        [Service] ITopicEventSender sender
     )
     {
         var dbWorkspace = await dbContext.Workspaces.SingleAsync(w => w.Id == workspaceId);
@@ -278,6 +279,14 @@ public class Mutation
             Name = dbChannel.Name,
             Type = (ChannelType)dbChannel.Type,
         };
+
+        if (rootUsername != null && directUsername != null && type == ChannelType.Direct)
+        {
+            await sender.SendAsync(
+                $"[NEW_DM]{workspaceId}-{directUsername}-{rootUsername}",
+                Channel
+            );
+        }
 
         return Channel;
     }

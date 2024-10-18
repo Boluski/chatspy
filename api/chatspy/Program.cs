@@ -23,7 +23,7 @@ builder
     .AddInMemorySubscriptions()
     .AddDefaultTransactionScopeHandler()
     .AddMutationConventions(applyToAllMutations: true)
-    .RegisterDbContext<ChatspyContext>()
+    .RegisterDbContext<ChatspyContext>(DbContextKind.Synchronized)
     .AddQueryType<Query>()
     .AddMutationType<Mutation>()
     .AddSubscriptionType<Subscription>();

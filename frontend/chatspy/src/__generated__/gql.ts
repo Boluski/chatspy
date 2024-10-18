@@ -43,6 +43,7 @@ const documents = {
     "\n        subscription OnMessageDeletedTV($messageId: String!) {\n          onMessageDeleted(messageId: $messageId) {\n            id\n          }\n        }\n            ": types.OnMessageDeletedTvDocument,
     "\n    mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {\n  updateWorkspace(input: $input) {\n    workspace {\n      id\n      name\n      createdBy\n    }\n  }\n}\n    ": types.UpdateWorkspaceDocument,
     "\n    mutation RemoveUserFromWorkspace($input: RemoveUserFromWorkspaceInput!) {\n  removeUserFromWorkspace(input: $input) {\n    workspace {\n      id\n      name\n      users {\n        fullName\n        username\n      }\n    }\n  }\n}\n    ": types.RemoveUserFromWorkspaceDocument,
+    "\n    mutation DeleteWorkspace($input: DeleteWorkspaceInput!) {\n  deleteWorkspace(input: $input) {\n    workspace {\n      id\n    }\n  }\n}\n    ": types.DeleteWorkspaceDocument,
     "\n        mutation CreateUser($input: CreateUserInput!) {\n        createUser(input: $input) {\n            user {\n            username\n            fullName\n            email\n            }\n        }\n        }\n    ": types.CreateUserDocument,
     "\n  query UserData($username: String!) {\nuserByUsername(username: $username) {\n  username\n  fullName\n  email\n  workspaces {\n    id\n    name\n    createdBy\n  }\n}\n}\n  ": types.UserDataDocument,
     "\nquery WorkspaceByID($workspaceId: UUID!, $username: String!) {\n  workspaceByID(workspaceID: $workspaceId, username: $username) {\n    id\n    name\n    createdBy\n    users {\n      fullName\n      username\n    }\n    channels {\n      id\n      name\n      type\n      users {\n        username\n        fullName\n      }\n      messages {\n        id\n        text\n        date\n   \n        user {\n          username\n          fullName\n        }     \n        threads {\n          id\n          text\n          date\n          user {\n            username\n            fullName\n          }\n        }\n      }\n    }\n  }\n}\n  ": types.WorkspaceByIdDocument,
@@ -183,6 +184,10 @@ export function gql(source: "\n    mutation UpdateWorkspace($input: UpdateWorksp
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n    mutation RemoveUserFromWorkspace($input: RemoveUserFromWorkspaceInput!) {\n  removeUserFromWorkspace(input: $input) {\n    workspace {\n      id\n      name\n      users {\n        fullName\n        username\n      }\n    }\n  }\n}\n    "): (typeof documents)["\n    mutation RemoveUserFromWorkspace($input: RemoveUserFromWorkspaceInput!) {\n  removeUserFromWorkspace(input: $input) {\n    workspace {\n      id\n      name\n      users {\n        fullName\n        username\n      }\n    }\n  }\n}\n    "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n    mutation DeleteWorkspace($input: DeleteWorkspaceInput!) {\n  deleteWorkspace(input: $input) {\n    workspace {\n      id\n    }\n  }\n}\n    "): (typeof documents)["\n    mutation DeleteWorkspace($input: DeleteWorkspaceInput!) {\n  deleteWorkspace(input: $input) {\n    workspace {\n      id\n    }\n  }\n}\n    "];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

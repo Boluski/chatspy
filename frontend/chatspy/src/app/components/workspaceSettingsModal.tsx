@@ -23,6 +23,7 @@ import { IoSearchSharp } from "react-icons/io5";
 import { useDisclosure } from "@mantine/hooks";
 import { useMutation } from "@apollo/client";
 import { gql } from "@/__generated__/gql";
+import { useRouter } from "next/navigation";
 
 const RENAME_WORKSPACE = gql(`
     mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
@@ -51,12 +52,23 @@ const REMOVE_USER_FROM_WORKSPACE = gql(`
 }
     `);
 
+const DELETE_WORKSPACE = gql(`
+    mutation DeleteWorkspace($input: DeleteWorkspaceInput!) {
+  deleteWorkspace(input: $input) {
+    workspace {
+      id
+    }
+  }
+}
+    `);
+
 type WorkspaceSettingsModalProps = {
   closeFunction: () => void;
 };
 function WorkspaceSettingsModal({
   closeFunction,
 }: WorkspaceSettingsModalProps) {
+  const router = useRouter();
   const { currentWorkspace, setCurrentWorkspace } = useContext(UserContext);
   const [searchTerm, setSearchTerm] = useState("");
   const [workspaceName, setWorkspaceName] = useState<string>(
@@ -66,10 +78,12 @@ function WorkspaceSettingsModal({
   const [deleteWorkspace, setDeleteWorkspace] = useState(false);
   const [opened, { open, close }] = useDisclosure();
   const [renameWorkspace] = useMutation(RENAME_WORKSPACE);
+  const [deleteWorkspaceFunction] = useMutation(DELETE_WORKSPACE);
 
   useEffect(() => {
     if (deleteWorkspace) {
       closeFunction();
+      handleWorkspaceDelete();
     }
   }, [deleteWorkspace]);
   return (
@@ -176,6 +190,20 @@ function WorkspaceSettingsModal({
           return null;
         }
       });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function handleWorkspaceDelete() {
+    try {
+      await deleteWorkspaceFunction({
+        variables: {
+          input: { id: currentWorkspace ? currentWorkspace.id : "" },
+        },
+      });
+
+      router.push("/workspace");
     } catch (error) {
       console.log(error);
     }

@@ -20,7 +20,7 @@ type WorkspaceHeaderProps = {
 export default function WorkspaceHeader({
   workspaceDrawOpen,
 }: WorkspaceHeaderProps) {
-  const { fullName, username, email, currentWorkspace } =
+  const { fullName, username, email, currentWorkspace, setFullName } =
     useContext(UserContext);
   const [
     userSettingOpened,
@@ -89,6 +89,9 @@ export default function WorkspaceHeader({
         <UserSettingModal
           closeFunction={userSettingClose}
           fullName={fullName}
+          email={email}
+          username={username}
+          setFullName={setFullName}
         />
       </Modal>
     </>

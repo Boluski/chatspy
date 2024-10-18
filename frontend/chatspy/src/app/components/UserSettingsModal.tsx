@@ -2,16 +2,38 @@ import { Button, Group, Modal, Stack, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { gql } from "@/__generated__/gql";
+import { useMutation } from "@apollo/client";
+
+const UPDATE_USER_FULL_NAME = gql(`
+    mutation UpdateUser($input: UpdateUserInput!) {
+  updateUser(input: $input) {
+    user {
+      username
+    }
+  }
+}
+    `);
 
 type UserSettingModalProps = {
   fullName: string;
+  email: string;
+  username: string;
   closeFunction: () => void;
+  setFullName: Dispatch<SetStateAction<string>>;
 };
-function UserSettingModal({ fullName, closeFunction }: UserSettingModalProps) {
+function UserSettingModal({
+  fullName,
+  closeFunction,
+  email,
+  username,
+  setFullName,
+}: UserSettingModalProps) {
   const [opened, { open, close }] = useDisclosure();
   const [newFullName, setNewFullName] = useState(fullName);
   const [enableSave, setEnableSave] = useState(false);
   const [deleteUser, setDeleteUser] = useState(false);
+  const [updateUserFullName] = useMutation(UPDATE_USER_FULL_NAME);
   useEffect(() => {
     if (deleteUser) {
       console.log("Deleted");
@@ -42,7 +64,7 @@ function UserSettingModal({ fullName, closeFunction }: UserSettingModalProps) {
             color="violet.8"
             disabled={!enableSave}
             onClick={() => {
-              // handleChannelNameChange();
+              handleUserFullNameChange();
             }}
           >
             Save
@@ -61,6 +83,24 @@ function UserSettingModal({ fullName, closeFunction }: UserSettingModalProps) {
       <ConfirmDelete opened={opened} close={close} setDelete={setDeleteUser} />
     </>
   );
+
+  async function handleUserFullNameChange() {
+    try {
+      await updateUserFullName({
+        variables: {
+          input: {
+            fullName: newFullName.trim(),
+            profilePicture: "",
+            username: username,
+            email: email,
+          },
+        },
+      });
+      setFullName(newFullName.trim());
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 type ConfirmDeleteProps = {

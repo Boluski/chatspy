@@ -66,6 +66,7 @@ export default function AllWorkspaces() {
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  // const [username, setUsername] = useState("")
   const [workspaces, setWorkspaces] = useState<workspaceState[]>([]);
   const [searchableWorkspaces, setSearchableWorkspaces] = useState<
     workspaceState[]
@@ -198,6 +199,9 @@ export default function AllWorkspaces() {
         <UserSettingModal
           closeFunction={userSettingClose}
           fullName={fullName}
+          username={currentUsername.current}
+          email={email}
+          setFullName={setFullName}
         />
       </Modal>
     </Stack>

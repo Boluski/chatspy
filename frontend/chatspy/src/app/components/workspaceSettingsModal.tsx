@@ -21,6 +21,20 @@ import { UserContext, userType } from "../contexts/userContext";
 import { MdOutlineRemove } from "react-icons/md";
 import { IoSearchSharp } from "react-icons/io5";
 import { useDisclosure } from "@mantine/hooks";
+import { useMutation } from "@apollo/client";
+import { gql } from "@/__generated__/gql";
+
+const RENAME_WORKSPACE = gql(`
+    mutation UpdateWorkspace($input: UpdateWorkspaceInput!) {
+  updateWorkspace(input: $input) {
+    workspace {
+      id
+      name
+      createdBy
+    }
+  }
+}
+    `);
 
 type WorkspaceSettingsModalProps = {
   closeFunction: () => void;
@@ -28,12 +42,15 @@ type WorkspaceSettingsModalProps = {
 function WorkspaceSettingsModal({
   closeFunction,
 }: WorkspaceSettingsModalProps) {
-  const { currentWorkspace } = useContext(UserContext);
+  const { currentWorkspace, setCurrentWorkspace } = useContext(UserContext);
   const [searchTerm, setSearchTerm] = useState("");
-  const [workspaceName, setWorkspaceName] = useState(currentWorkspace?.name);
+  const [workspaceName, setWorkspaceName] = useState<string>(
+    currentWorkspace ? currentWorkspace.name : ""
+  );
   const [enableSave, setEnableSave] = useState(false);
   const [deleteWorkspace, setDeleteWorkspace] = useState(false);
   const [opened, { open, close }] = useDisclosure();
+  const [renameWorkspace] = useMutation(RENAME_WORKSPACE);
 
   useEffect(() => {
     if (deleteWorkspace) {
@@ -64,7 +81,7 @@ function WorkspaceSettingsModal({
             color="violet.8"
             disabled={!enableSave}
             onClick={() => {
-              // handleNameChannelNameChange();
+              handleWorkspaceNameChange();
             }}
           >
             Save
@@ -114,6 +131,32 @@ function WorkspaceSettingsModal({
       />
     </>
   );
+
+  async function handleWorkspaceNameChange() {
+    try {
+      await renameWorkspace({
+        variables: {
+          input: {
+            id: currentWorkspace ? currentWorkspace?.id : "",
+            name: workspaceName.trim(),
+            createdBy: currentWorkspace ? currentWorkspace?.createdBy : "",
+          },
+        },
+      });
+
+      setCurrentWorkspace((prevWorkspace) => {
+        if (prevWorkspace) {
+          const updatedWorkspace = { ...prevWorkspace };
+          updatedWorkspace.name = workspaceName.trim();
+          return updatedWorkspace;
+        } else {
+          return null;
+        }
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 type workspaceMemberProps = {

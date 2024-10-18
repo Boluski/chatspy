@@ -1,7 +1,15 @@
-import { Group, Avatar, Title, TextInput, DEFAULT_THEME } from "@mantine/core";
+import {
+  Group,
+  Avatar,
+  Title,
+  TextInput,
+  DEFAULT_THEME,
+  Popover,
+} from "@mantine/core";
 import { useContext } from "react";
 import { IoSearchSharp } from "react-icons/io5";
 import { UserContext } from "../contexts/userContext";
+import UserAccountPopOver from "./UserAccountPopover";
 
 type WorkspaceHeaderProps = {
   workspaceDrawOpen: () => void;
@@ -9,7 +17,8 @@ type WorkspaceHeaderProps = {
 export default function WorkspaceHeader({
   workspaceDrawOpen,
 }: WorkspaceHeaderProps) {
-  const { fullName, currentWorkspace } = useContext(UserContext);
+  const { fullName, username, email, currentWorkspace } =
+    useContext(UserContext);
 
   return (
     <Group
@@ -37,7 +46,18 @@ export default function WorkspaceHeader({
         placeholder="Search Anything"
         leftSection={<IoSearchSharp size={"1.7rem"} />}
       />
-      <Avatar name={fullName} size={"lg"} />
+      <Popover>
+        <Popover.Target>
+          <Avatar name={fullName} size={"lg"} />
+        </Popover.Target>
+        <Popover.Dropdown>
+          <UserAccountPopOver
+            username={username}
+            fullName={fullName}
+            email={email}
+          />
+        </Popover.Dropdown>
+      </Popover>
     </Group>
   );
 }

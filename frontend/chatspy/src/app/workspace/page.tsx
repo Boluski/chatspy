@@ -27,6 +27,7 @@ import WorkspaceCard from "../components/workspaceCard";
 import CreateWorkspaceModal from "../components/createWorkspaceModal";
 import { useRouter } from "next/navigation";
 import WorkspacesLoading from "../components/workspacesLoading";
+import UserAccountPopOver from "../components/UserAccountPopover";
 
 Amplify.configure(outputs);
 
@@ -92,25 +93,11 @@ export default function AllWorkspaces() {
             <Avatar name={fullName} size={"lg"} />
           </Popover.Target>
           <Popover.Dropdown>
-            <Stack>
-              <Title>{fullName}</Title>
-              <Group>
-                <Avatar name={fullName} size={"xl"} />
-                <Stack gap={5}>
-                  <Title size={"1.5rem"}>{currentUsername.current}</Title>
-                  <Title size={"1.5rem"}>{email}</Title>
-                </Stack>
-              </Group>
-              <Button
-                color="violet.8"
-                onClick={async () => {
-                  await signOut();
-                  router.push("/login");
-                }}
-              >
-                Sign Out
-              </Button>
-            </Stack>
+            <UserAccountPopOver
+              fullName={fullName}
+              email={email}
+              username={currentUsername.current}
+            />
           </Popover.Dropdown>
         </Popover>
       </Group>

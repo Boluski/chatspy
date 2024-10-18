@@ -324,12 +324,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
                               // }
                             })
                         ) : (
-                          <Stack
-                            w={"20rem"}
-                            // style={{ outline: "solid 2px orange" }}
-                            align="center"
-                            py={40}
-                          >
+                          <Stack w={"20rem"} align="center" py={40}>
                             <GiMagnifyingGlass
                               size={"10rem"}
                               color={DEFAULT_THEME.colors.violet[8]}
@@ -349,13 +344,11 @@ export default function CurrentWorkspace({ params }: Workspace) {
                       {channels
                         .filter((ch) => ch.type == ChannelType.Private)
                         .map((c) => {
-                          // if (c.type == ChannelType.Private) {
                           return (
                             <TabsPanel key={c.id} value={c.id}>
                               <ChannelRoom key={c.id} channelId={c.id} />
                             </TabsPanel>
                           );
-                          // }
                         })}
                     </Tabs>
                   </Box>

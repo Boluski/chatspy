@@ -64,6 +64,7 @@ function AddMemberToChannel({
     <Stack>
       <TextInput
         size="lg"
+        variant="filled"
         placeholder="Search Member"
         leftSection={<IoSearchSharp size={"1.7rem"} />}
         value={searchTerm}

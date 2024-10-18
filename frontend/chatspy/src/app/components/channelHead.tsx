@@ -11,6 +11,7 @@ type ChannelRoomHeadProps = {
   showControls: boolean;
   isPrivate: boolean;
   openAddUserFunction: () => void;
+  openChannelSettingsFunction: () => void;
   isDirect: boolean;
   dmUsers?: userType[];
   username: string;
@@ -21,6 +22,7 @@ function ChannelRoomHead({
   showControls,
   isPrivate,
   openAddUserFunction,
+  openChannelSettingsFunction,
   isDirect,
   dmUsers,
   username,
@@ -80,7 +82,14 @@ function ChannelRoomHead({
               </ActionIcon>
             )}
 
-            <ActionIcon color="dark.5" variant={"transparent"} size={"lg"}>
+            <ActionIcon
+              color="dark.5"
+              variant={"transparent"}
+              size={"lg"}
+              onClick={() => {
+                openChannelSettingsFunction();
+              }}
+            >
               <VscSettings size={"2rem"} />
             </ActionIcon>
           </Group>

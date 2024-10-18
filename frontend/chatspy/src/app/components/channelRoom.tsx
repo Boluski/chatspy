@@ -23,6 +23,7 @@ import ThreadViewer from "./threadViewer";
 import { UserContext } from "../contexts/userContext";
 import { useDisclosure } from "@mantine/hooks";
 import AddMemberToChannel from "./AddMemberToChannel";
+import ChannelSettings from "./channelSettings";
 
 const ON_SEND_MESSAGE_SUBSCRIPTION = gql(`
 subscription OnMessageSent($channelId: String!) {
@@ -53,6 +54,10 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
   const [
     addUserOpened,
     { open: openAddUserFunction, close: closeAddUserFunction },
+  ] = useDisclosure(false);
+  const [
+    channelSettingsOpened,
+    { open: openChannelSettingsFunction, close: closeChannelSettingsFunction },
   ] = useDisclosure(false);
 
   const viewport = useRef<HTMLDivElement>(null);
@@ -96,6 +101,7 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
               : undefined
           }
           openAddUserFunction={openAddUserFunction}
+          openChannelSettingsFunction={openChannelSettingsFunction}
           username={username}
         />
 
@@ -161,6 +167,13 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
       <AddUserModal
         addUserOpened={addUserOpened}
         closeAddUserFunction={closeAddUserFunction}
+        currentChannel={currentChannel}
+        currentChannelIndex={currentChannelIndex}
+      />
+
+      <ChannelSettingsModal
+        channelSettingsOpened={channelSettingsOpened}
+        closeChannelSettingsFunction={closeChannelSettingsFunction}
         currentChannel={currentChannel}
         currentChannelIndex={currentChannelIndex}
       />
@@ -235,6 +248,45 @@ function AddUserModal({
       }}
     >
       <AddMemberToChannel
+        currentChannel={currentChannel}
+        currentChannelIndex={currentChannelIndex}
+      />
+    </Modal>
+  );
+}
+
+type ChannelSettingsModalProps = {
+  channelSettingsOpened: boolean;
+  closeChannelSettingsFunction: () => void;
+  currentChannel: channelType | undefined;
+  currentChannelIndex: number;
+};
+function ChannelSettingsModal({
+  channelSettingsOpened,
+  closeChannelSettingsFunction,
+  currentChannel,
+  currentChannelIndex,
+}: ChannelSettingsModalProps) {
+  return (
+    <Modal
+      title={`"${currentChannel?.name}" channel settings`}
+      size={"xl"}
+      opened={channelSettingsOpened}
+      centered
+      onClose={closeChannelSettingsFunction}
+      withCloseButton={false}
+      overlayProps={{
+        backgroundOpacity: 0.4,
+        blur: 4,
+      }}
+      styles={{
+        title: {
+          fontWeight: "bold",
+          fontSize: "1.5rem",
+        },
+      }}
+    >
+      <ChannelSettings
         currentChannel={currentChannel}
         currentChannelIndex={currentChannelIndex}
       />

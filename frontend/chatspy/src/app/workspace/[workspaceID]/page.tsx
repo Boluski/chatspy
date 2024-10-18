@@ -11,6 +11,8 @@ import {
   TabsPanel,
   Box,
   Title,
+  Drawer,
+  ScrollArea,
 } from "@mantine/core";
 import { MdAdd } from "react-icons/md";
 import WorkspaceHeader from "@/app/components/workspaceHeader";
@@ -33,6 +35,7 @@ import { channelType } from "@/app/contexts/chatContext";
 import { ChannelType } from "@/__generated__/graphql";
 import { GiMagnifyingGlass } from "react-icons/gi";
 import ChatInvite from "@/app/components/chatInvite";
+import { useRouter } from "next/navigation";
 
 type Workspace = {
   params: { workspaceID: string };
@@ -106,9 +109,14 @@ export default function CurrentWorkspace({ params }: Workspace) {
     createChannelOpened,
     { open: createChannelOpen, close: createChannelClose },
   ] = useDisclosure(false);
+  const [
+    workspaceDrawOpened,
+    { open: workspaceDrawOpen, close: workspaceDrawClose },
+  ] = useDisclosure(false);
   const {
     isAuthenticated,
     currentWorkspace,
+    userWorkspaces,
     username,
     fullName,
     setIsAuthenticated,
@@ -146,7 +154,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
         ) : isAuthenticated ? (
           isAuthorized ? (
             <>
-              <WorkspaceHeader />
+              <WorkspaceHeader workspaceDrawOpen={workspaceDrawOpen} />
               <Group
                 w={"100%"}
                 style={{ flexGrow: "1" }}
@@ -496,6 +504,38 @@ export default function CurrentWorkspace({ params }: Workspace) {
           closeFunction={createChannelClose}
         />
       </Modal>
+      <Drawer
+        size={"sm"}
+        overlayProps={{
+          backgroundOpacity: 0.4,
+          blur: 4,
+        }}
+        onClose={workspaceDrawClose}
+        opened={workspaceDrawOpened}
+        withCloseButton={false}
+      >
+        <Stack h={"100vh"}>
+          <Title c={"violet.8"} ta={"center"}>
+            Chatspy
+          </Title>
+          <Title order={2}>Workspaces</Title>
+          <ScrollArea h={"100%"} type="never">
+            <Stack>
+              {currentWorkspace &&
+                userWorkspaces
+                  .filter((w) => w.id != currentWorkspace.id)
+                  .map((w) => {
+                    return (
+                      <DrawerWorkspaceCard
+                        workspaceId={w.id}
+                        workspaceName={w.name}
+                      />
+                    );
+                  })}
+            </Stack>
+          </ScrollArea>
+        </Stack>
+      </Drawer>
     </>
   );
   async function handleInitialLoad() {
@@ -627,4 +667,37 @@ export default function CurrentWorkspace({ params }: Workspace) {
 
     setLoading(false);
   }
+}
+
+type DrawerWorkspaceCardProps = {
+  workspaceName: string;
+  workspaceId: string;
+};
+function DrawerWorkspaceCard({
+  workspaceId,
+  workspaceName,
+}: DrawerWorkspaceCardProps) {
+  const router = useRouter();
+  return (
+    <Group
+      style={{
+        border: `solid ${DEFAULT_THEME.colors.dark[0]} 2px`,
+        borderRadius: "0.5rem",
+      }}
+      p={10}
+      bg={"gray.1"}
+    >
+      <Title style={{ flexGrow: 1 }} order={3}>
+        {workspaceName}
+      </Title>
+      <Button
+        size="md"
+        color={"gray"}
+        variant="light"
+        onClick={() => router.push(`/workspace/${workspaceId}`)}
+      >
+        Open
+      </Button>
+    </Group>
+  );
 }

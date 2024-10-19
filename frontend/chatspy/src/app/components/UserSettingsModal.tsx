@@ -4,10 +4,22 @@ import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { gql } from "@/__generated__/gql";
 import { useMutation } from "@apollo/client";
+import { useRouter } from "next/navigation";
+import { deleteUser } from "aws-amplify/auth";
 
 const UPDATE_USER_FULL_NAME = gql(`
     mutation UpdateUser($input: UpdateUserInput!) {
   updateUser(input: $input) {
+    user {
+      username
+    }
+  }
+}
+    `);
+
+const DELETE_USER = gql(`
+    mutation DeleteUser($input: DeleteUserInput!) {
+  deleteUser(input: $input) {
     user {
       username
     }
@@ -32,14 +44,16 @@ function UserSettingModal({
   const [opened, { open, close }] = useDisclosure();
   const [newFullName, setNewFullName] = useState(fullName);
   const [enableSave, setEnableSave] = useState(false);
-  const [deleteUser, setDeleteUser] = useState(false);
+  const [canDeleteUser, setCanDeleteUser] = useState(false);
   const [updateUserFullName] = useMutation(UPDATE_USER_FULL_NAME);
+  const [deleteUserFunction] = useMutation(DELETE_USER);
+  const router = useRouter();
   useEffect(() => {
-    if (deleteUser) {
-      console.log("Deleted");
+    if (canDeleteUser) {
       closeFunction();
+      handleUserDeletion();
     }
-  }, [deleteUser]);
+  }, [canDeleteUser]);
   return (
     <>
       <Stack>
@@ -80,7 +94,11 @@ function UserSettingModal({
           Delete Account
         </Button>
       </Stack>
-      <ConfirmDelete opened={opened} close={close} setDelete={setDeleteUser} />
+      <ConfirmDelete
+        opened={opened}
+        close={close}
+        setDelete={setCanDeleteUser}
+      />
     </>
   );
 
@@ -97,6 +115,18 @@ function UserSettingModal({
         },
       });
       setFullName(newFullName.trim());
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async function handleUserDeletion() {
+    try {
+      await deleteUserFunction({
+        variables: { input: { username: username } },
+      });
+      await deleteUser();
+      router.push("/signUp");
     } catch (error) {
       console.log(error);
     }

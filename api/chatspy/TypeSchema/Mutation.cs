@@ -73,7 +73,23 @@ public class Mutation
     [GraphQLDescription("Deletes a user based on the username.")]
     public async Task<User?> DeleteUser(ChatspyContext dbContext, [ID] string Username)
     {
-        var dbUser = await dbContext.Users.SingleAsync(dbUser => dbUser.Username == Username);
+        var dbUser = await dbContext
+            .Users.Include(dbUser => dbUser.Workspaces)
+            .SingleAsync(dbUser => dbUser.Username == Username);
+
+        var workspaceList = dbUser.Workspaces.ToList();
+
+        for (int i = 0; i < workspaceList.Count; i++)
+        {
+            var dbWorkspace = workspaceList[i];
+            dbUser.Workspaces.Remove(dbWorkspace);
+            if (dbWorkspace.CreatedBy == dbUser.Username)
+            {
+                dbContext.Workspaces.Remove(dbWorkspace);
+            }
+        }
+        await dbContext.SaveChangesAsync();
+
         dbContext.Remove(dbUser);
         await dbContext.SaveChangesAsync();
 
@@ -184,7 +200,7 @@ public class Mutation
     [GraphQLDescription(
         "Removes a user from a workspace based on the workspaceId and the username."
     )]
-    public async Task<Workspace?> RemoveUserFromWorkspace(
+    public async Task<Workspace?> RemoveUserFromWorkspace( /////////
         ChatspyContext dbContext,
         Guid workspaceID,
         string username

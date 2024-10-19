@@ -626,16 +626,19 @@ export default function CurrentWorkspace({ params }: Workspace) {
                 currentWorkspaceData.workspaceByID.channels.filter(
                   (ch) => ch.type == ChannelType.Direct
                 );
-              const usernameChannels = dmChannels.map((ch) => {
-                const dmUser = ch.users.filter(
-                  (u) => u.username != preferred_username
-                );
+              const usernameChannels = dmChannels
+                .filter((ch) => ch.users.length != 1)
+                .map((ch) => {
+                  console.log("ch", ch);
 
-                return {
-                  username: dmUser[0].username,
-                  channelId: ch.id,
-                } as usernameChannelMapType;
-              });
+                  const dmUser = ch.users.filter(
+                    (u) => u.username != preferred_username
+                  );
+                  return {
+                    username: dmUser[0].username,
+                    channelId: ch.id,
+                  } as usernameChannelMapType;
+                });
               // currentWorkspaceData.workspaceByID.channels as channelType[]'
               console.log(
                 "Current Workspace:",

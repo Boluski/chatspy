@@ -37,7 +37,7 @@ import { GiMagnifyingGlass } from "react-icons/gi";
 import ChatInvite from "@/app/components/chatInvite";
 import { useRouter } from "next/navigation";
 
-type Workspace = {
+type CurrentWorkspaceProps = {
   params: { workspaceID: string };
 };
 
@@ -99,7 +99,7 @@ query WorkspaceByID($workspaceId: UUID!, $username: String!) {
   `);
 
 Amplify.configure(outputs);
-export default function CurrentWorkspace({ params }: Workspace) {
+export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
   const [getUserData] = useLazyQuery(USER_DATA);
   const [getCurrentWorkspace] = useLazyQuery(CURRENT_WORKSPACE);
   const [loading, setLoading] = useState(true);

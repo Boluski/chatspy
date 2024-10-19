@@ -16,9 +16,13 @@ import WorkspaceSettingsModal from "./workspaceSettingsModal";
 
 type WorkspaceNavProps = {
   setChannelNav: Dispatch<SetStateAction<ChannelType>>;
+  workspaceId: string;
 };
 
-export default function WorkspaceNav({ setChannelNav }: WorkspaceNavProps) {
+export default function WorkspaceNav({
+  setChannelNav,
+  workspaceId,
+}: WorkspaceNavProps) {
   const { currentWorkspace } = useContext(UserContext);
   const [addMemberOpened, { open: addMemberOpen, close: addMemberClose }] =
     useDisclosure();
@@ -163,7 +167,7 @@ export default function WorkspaceNav({ setChannelNav }: WorkspaceNavProps) {
         ) : null}
       </Stack>
       <Modal
-        size={"lg"}
+        size={"xl"}
         opened={addMemberOpened}
         onClose={addMemberClose}
         withCloseButton={false}
@@ -179,7 +183,10 @@ export default function WorkspaceNav({ setChannelNav }: WorkspaceNavProps) {
           },
         }}
       >
-        <AddMemberModal closeFunction={addMemberClose} />
+        <AddMemberModal
+          workspaceId={workspaceId}
+          closeFunction={addMemberClose}
+        />
       </Modal>
       <Modal
         size={"xl"}

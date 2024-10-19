@@ -1,4 +1,14 @@
-import { Stack, TextInput, Button, TagsInput } from "@mantine/core";
+import {
+  Stack,
+  TextInput,
+  Button,
+  TagsInput,
+  Group,
+  Title,
+  CopyButton,
+  ActionIcon,
+  rem,
+} from "@mantine/core";
 import { useContext, useState } from "react";
 import { useMutation, useLazyQuery } from "@apollo/client";
 import { gql } from "../../__generated__/gql";
@@ -6,9 +16,12 @@ import * as EmailValidator from "email-validator";
 
 import { UserContext } from "../contexts/userContext";
 import { workspaceType } from "../contexts/userContext";
+import { IoCopyOutline } from "react-icons/io5";
+import { FaCheck } from "react-icons/fa6";
 
 type AddMemberModalProps = {
   closeFunction: () => void;
+  workspaceId: string;
 };
 
 const GET_USER = gql(`
@@ -30,7 +43,10 @@ const ADD_USER_TO_WORKSPACE = gql(`
 }
     `);
 
-export default function AddMemberModal({ closeFunction }: AddMemberModalProps) {
+export default function AddMemberModal({
+  closeFunction,
+  workspaceId,
+}: AddMemberModalProps) {
   const { currentWorkspace, setCurrentWorkspace } = useContext(UserContext);
 
   const [emailList, setEmailList] = useState<string[]>([]);
@@ -40,8 +56,33 @@ export default function AddMemberModal({ closeFunction }: AddMemberModalProps) {
   const [addUserToWorkspace] = useMutation(ADD_USER_TO_WORKSPACE);
   const [getUser] = useLazyQuery(GET_USER);
 
+  const shareLink = `http://localhost:3000/join/${workspaceId}`;
+
   return (
     <Stack>
+      <Stack gap={1}>
+        <Title order={3}>Share link</Title>
+        <Group gap={1}>
+          <Title order={5}>{shareLink}</Title>
+          <CopyButton value={shareLink} timeout={2000}>
+            {({ copied, copy }) => (
+              <ActionIcon
+                color={copied ? "green" : "violet.8"}
+                variant="transparent"
+                onClick={copy}
+                size={"lg"}
+              >
+                {copied ? (
+                  <FaCheck size={"1.5rem"} />
+                ) : (
+                  <IoCopyOutline size={"1.5rem"} />
+                )}
+              </ActionIcon>
+            )}
+          </CopyButton>
+        </Group>
+      </Stack>
+
       <TagsInput
         clearable
         size={"md"}
@@ -78,7 +119,7 @@ export default function AddMemberModal({ closeFunction }: AddMemberModalProps) {
         color="violet.8"
         loading={loading}
       >
-        Create Workspace
+        Add Members
       </Button>
     </Stack>
   );

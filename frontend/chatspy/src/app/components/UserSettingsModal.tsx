@@ -60,6 +60,9 @@ function UserSettingModal({
         <Group align={"end"}>
           <TextInput
             style={{ flexGrow: 1 }}
+            styles={{
+              label: { fontWeight: "bold", fontSize: "1.3rem" },
+            }}
             size="lg"
             label={"Full Name"}
             value={newFullName}

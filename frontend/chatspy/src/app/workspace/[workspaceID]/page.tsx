@@ -162,7 +162,10 @@ export default function CurrentWorkspace({ params }: Workspace) {
                 gap={0}
                 wrap={"nowrap"}
               >
-                <WorkspaceNav setChannelNav={setChannelNav} />
+                <WorkspaceNav
+                  workspaceId={currentWorkspace ? currentWorkspace?.id : ""}
+                  setChannelNav={setChannelNav}
+                />
                 <>
                   <Box
                     h={"100%"}

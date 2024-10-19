@@ -139,6 +139,7 @@ function WorkspaceSettingsModal({
                   .map((u) => {
                     return (
                       <WorkspaceMember
+                        key={currentWorkspace ? currentWorkspace?.id : ""}
                         workspaceId={
                           currentWorkspace ? currentWorkspace?.id : ""
                         }

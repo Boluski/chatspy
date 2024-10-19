@@ -520,6 +520,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
                   .map((w) => {
                     return (
                       <DrawerWorkspaceCard
+                        key={w.id}
                         workspaceId={w.id}
                         workspaceName={w.name}
                       />
@@ -639,7 +640,7 @@ export default function CurrentWorkspace({ params }: Workspace) {
                     channelId: ch.id,
                   } as usernameChannelMapType;
                 });
-              // currentWorkspaceData.workspaceByID.channels as channelType[]'
+
               console.log(
                 "Current Workspace:",
                 currentWorkspaceData.workspaceByID

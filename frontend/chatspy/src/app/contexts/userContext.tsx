@@ -13,13 +13,11 @@ type valueType = {
   username: string;
   email: string;
   fullName: string;
-  isAuthenticated: boolean;
   userWorkspaces: workspaceType[];
   currentWorkspace: workspaceType | null;
   setUsername: Dispatch<SetStateAction<string>>;
   setEmail: Dispatch<SetStateAction<string>>;
   setFullName: Dispatch<SetStateAction<string>>;
-  setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
   setUserWorkspaces: Dispatch<SetStateAction<workspaceType[]>>;
   setCurrentWorkspace: Dispatch<SetStateAction<workspaceType | null>>;
 };
@@ -41,10 +39,8 @@ const defaultValues = {
   username: "",
   email: "",
   fullName: "",
-  isAuthenticated: false,
   userWorkspaces: [],
   currentWorkspace: null,
-  setIsAuthenticated: () => false,
   setEmail: () => "",
   setUsername: () => "",
   setFullName: () => "",
@@ -60,8 +56,6 @@ export const UserProvider = ({ children }: userProviderProps) => {
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [userWorkspaces, setUserWorkspaces] = useState<workspaceType[]>([]);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   const [currentWorkspace, setCurrentWorkspace] =
     useState<workspaceType | null>(null);
 
@@ -69,10 +63,8 @@ export const UserProvider = ({ children }: userProviderProps) => {
     username,
     email,
     fullName,
-    isAuthenticated,
     userWorkspaces,
     currentWorkspace,
-    setIsAuthenticated,
     setUsername,
     setFullName,
     setEmail,

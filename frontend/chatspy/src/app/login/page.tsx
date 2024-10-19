@@ -9,12 +9,14 @@ import {
   Button,
   Anchor,
   Center,
+  Loader,
+  Group,
 } from "@mantine/core";
 import FormBase from "../components/formBase";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import * as EmailValidator from "email-validator";
 import passwordValidator from "password-validator";
-import { signIn } from "aws-amplify/auth";
+import { fetchUserAttributes, signIn } from "aws-amplify/auth";
 import outputs from "../../../amplify_outputs.json";
 import { Amplify } from "aws-amplify";
 import Link from "next/link";
@@ -40,7 +42,6 @@ passwordSchema
   .has()
   .not()
   .spaces();
-
 export default function Login() {
   const [email, setEmail] = useState("");
   const [emailError, setEmailError] = useState("");
@@ -50,82 +51,96 @@ export default function Login() {
 
   const [enableLogin, setEnableLogin] = useState(false);
   const [loginLoading, setLoginLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const router = useRouter();
+
+  useEffect(() => {
+    handleInitialLoad();
+  }, []);
 
   return (
     <FormBase
       title="Welcome Back👋"
       message="Time to chat and collaborate with the team!"
     >
-      <Paper shadow="xl" radius={"0.5rem"}>
-        <Stack
-          style={{ borderRadius: "0.5rem" }}
-          w={"35rem"}
-          bg={"gray.0"}
-          p={"lg"}
-        >
-          <Title c={"violet.8"} size={"2rem"}>
-            Login
+      {loading ? (
+        <Group>
+          <Loader size={"xl"} color={"violet.8"} />
+          <Title c={"violet.8"} order={2}>
+            Loading...
           </Title>
-          <TextInput
-            label="Email:"
-            error={emailError}
-            onChange={(event) => {
-              setEmail(event.currentTarget.value);
-              if (EmailValidator.validate(event.currentTarget.value)) {
-                setEmailError("");
-                if (password != "") {
-                  setEnableLogin(true);
-                } else {
-                  setEnableLogin(false);
-                }
-              } else {
-                setEmailError("This is not a valid email address.");
-                setEnableLogin(false);
-              }
-            }}
-          />
-          <PasswordInput
-            label="Password:"
-            error={passwordError}
-            onChange={(event) => {
-              setPassword(event.currentTarget.value);
-              if (passwordSchema.validate(event.currentTarget.value)) {
-                setPasswordError("");
-                if (email != "") {
-                  setEnableLogin(true);
-                } else {
-                  setEnableLogin(false);
-                }
-              } else {
-                setPasswordError(
-                  "Password must contain uppercase, lowercase, number, symbol, and must be at least 8 characters."
-                );
-                setEnableLogin(false);
-              }
-            }}
-          />
-          <Button
-            disabled={!enableLogin}
-            loading={loginLoading}
-            color="violet.8"
-            onClick={handleClick}
+        </Group>
+      ) : (
+        <Paper shadow="xl" radius={"0.5rem"}>
+          <Stack
+            style={{ borderRadius: "0.5rem" }}
+            w={"35rem"}
+            bg={"gray.0"}
+            p={"lg"}
           >
-            Login
-          </Button>
-          <Center>
-            <Anchor
-              component={Link}
-              href={"signUp/"}
-              c={"violet.8"}
-              underline="always"
+            <Title c={"violet.8"} size={"2rem"}>
+              Login
+            </Title>
+            <TextInput
+              label="Email:"
+              error={emailError}
+              onChange={(event) => {
+                setEmail(event.currentTarget.value);
+                if (EmailValidator.validate(event.currentTarget.value)) {
+                  setEmailError("");
+                  if (password != "") {
+                    setEnableLogin(true);
+                  } else {
+                    setEnableLogin(false);
+                  }
+                } else {
+                  setEmailError("This is not a valid email address.");
+                  setEnableLogin(false);
+                }
+              }}
+            />
+            <PasswordInput
+              label="Password:"
+              error={passwordError}
+              onChange={(event) => {
+                setPassword(event.currentTarget.value);
+                if (passwordSchema.validate(event.currentTarget.value)) {
+                  setPasswordError("");
+                  if (email != "") {
+                    setEnableLogin(true);
+                  } else {
+                    setEnableLogin(false);
+                  }
+                } else {
+                  setPasswordError(
+                    "Password must contain uppercase, lowercase, number, symbol, and must be at least 8 characters."
+                  );
+                  setEnableLogin(false);
+                }
+              }}
+            />
+            <Button
+              disabled={!enableLogin}
+              loading={loginLoading}
+              color="violet.8"
+              onClick={handleClick}
             >
-              Don't have an account - Create an account
-            </Anchor>
-          </Center>
-        </Stack>
-      </Paper>
+              Login
+            </Button>
+            <Center>
+              <Anchor
+                component={Link}
+                href={"signUp/"}
+                c={"violet.8"}
+                underline="always"
+              >
+                Don't have an account - Create an account
+              </Anchor>
+            </Center>
+          </Stack>
+        </Paper>
+      )}
     </FormBase>
   );
 
@@ -137,11 +152,35 @@ export default function Login() {
         username: email,
         password: password,
       });
-      router.push("/workspace");
+
+      const workspaceToJoin = sessionStorage.getItem("workspaceToJoin");
+      if (workspaceToJoin) {
+        sessionStorage.removeItem("workspaceToJoin");
+        router.push(`join/${workspaceToJoin}`);
+      } else {
+        router.push("/workspace");
+      }
     } catch (error) {
       setEmailError("Email may be incorrect.");
       setPasswordError("Password may be incorrect.");
       setLoginLoading(false);
+    }
+  }
+
+  async function handleInitialLoad() {
+    try {
+      const { preferred_username } = await fetchUserAttributes();
+      if (preferred_username) {
+        const lastVisitedWorkspace = localStorage.getItem(
+          "lastVisitedWorkspace"
+        );
+
+        if (lastVisitedWorkspace) {
+          router.push(`/workspace/${lastVisitedWorkspace}`);
+        } else router.push("/workspace");
+      }
+    } catch (error) {
+      setLoading(false);
     }
   }
 }

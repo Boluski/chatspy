@@ -49,6 +49,7 @@ function Join({ params }: JoinProps) {
   });
   const [addUserToWorkspace] = useMutation(ADD_USER_TO_WORKSPACE);
   const [joinLoading, setJoinLoading] = useState(false);
+  const [noJoinLoading, setNoJoinLoading] = useState(false);
 
   if (loading) return <>Loading</>;
   if (error) return <>{error.message}</>;
@@ -108,6 +109,15 @@ function Join({ params }: JoinProps) {
         >
           Join workspace
         </Button>
+        <Button
+          loading={noJoinLoading}
+          size="xl"
+          color="violet.8"
+          variant={"transparent"}
+          onClick={handleNoJoinWorkspace}
+        >
+          Don't want to join
+        </Button>
       </Stack>
     </Stack>
   );
@@ -123,6 +133,25 @@ function Join({ params }: JoinProps) {
           },
         });
         router.push(`/workspace/${params.workspaceID}`);
+      }
+    } catch (error) {
+      sessionStorage.setItem("workspaceToJoin", params.workspaceID);
+      router.push("/login");
+    }
+  }
+
+  async function handleNoJoinWorkspace() {
+    setNoJoinLoading(true);
+    try {
+      const { preferred_username } = await fetchUserAttributes();
+      if (preferred_username) {
+        const lastVisitedWorkspace = localStorage.getItem(
+          "lastVisitedWorkspace"
+        );
+
+        if (lastVisitedWorkspace) {
+          router.push(`/workspace/${lastVisitedWorkspace}`);
+        } else router.push("/workspace");
       }
     } catch (error) {
       router.push("/login");

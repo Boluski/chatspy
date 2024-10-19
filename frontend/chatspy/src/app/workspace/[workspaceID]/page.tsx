@@ -100,10 +100,10 @@ query WorkspaceByID($workspaceId: UUID!, $username: String!) {
 
 Amplify.configure(outputs);
 export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
+  const router = useRouter();
   const [getUserData] = useLazyQuery(USER_DATA);
   const [getCurrentWorkspace] = useLazyQuery(CURRENT_WORKSPACE);
   const [loading, setLoading] = useState(true);
-  const [isAuthorized, setIsAuthorized] = useState(false);
   const [channelNav, setChannelNav] = useState<ChannelType>(ChannelType.Public);
   const [
     createChannelOpened,
@@ -114,12 +114,10 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
     { open: workspaceDrawOpen, close: workspaceDrawClose },
   ] = useDisclosure(false);
   const {
-    isAuthenticated,
     currentWorkspace,
     userWorkspaces,
     username,
     fullName,
-    setIsAuthenticated,
     setEmail,
     setUsername,
     setFullName,
@@ -151,327 +149,314 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
       >
         {loading ? (
           <>loading</>
-        ) : isAuthenticated ? (
-          isAuthorized ? (
-            <>
-              <WorkspaceHeader workspaceDrawOpen={workspaceDrawOpen} />
-              <Group
-                w={"100%"}
-                style={{ flexGrow: "1" }}
-                align={"start"}
-                gap={0}
-                wrap={"nowrap"}
-              >
-                <WorkspaceNav
-                  workspaceId={currentWorkspace ? currentWorkspace?.id : ""}
-                  setChannelNav={setChannelNav}
-                />
-                <>
-                  <Box
-                    h={"100%"}
-                    style={{
-                      flexGrow: "1",
+        ) : (
+          <>
+            <WorkspaceHeader workspaceDrawOpen={workspaceDrawOpen} />
+            <Group
+              w={"100%"}
+              style={{ flexGrow: "1" }}
+              align={"start"}
+              gap={0}
+              wrap={"nowrap"}
+            >
+              <WorkspaceNav
+                workspaceId={currentWorkspace ? currentWorkspace?.id : ""}
+                setChannelNav={setChannelNav}
+              />
+              <>
+                <Box
+                  h={"100%"}
+                  style={{
+                    flexGrow: "1",
 
-                      display:
-                        channelNav == ChannelType.Public ? "block" : "none",
+                    display:
+                      channelNav == ChannelType.Public ? "block" : "none",
+                  }}
+                >
+                  <Tabs
+                    defaultValue={
+                      channels.filter((ch) => ch.type == ChannelType.Public)
+                        .length != 0
+                        ? channels.find((ch) => ch.type == ChannelType.Public)
+                            ?.id
+                        : ""
+                    }
+                    h={"100%"}
+                    color="violet.8"
+                    orientation="vertical"
+                    variant="pills"
+                    radius={0}
+                    styles={{
+                      list: {
+                        borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
+                      },
+                      tab: {
+                        width: "20rem",
+                      },
+
+                      tabLabel: { fontSize: "1.5rem" },
                     }}
                   >
-                    <Tabs
-                      defaultValue={
-                        channels.filter((ch) => ch.type == ChannelType.Public)
-                          .length != 0
-                          ? channels.find((ch) => ch.type == ChannelType.Public)
-                              ?.id
-                          : ""
-                      }
-                      h={"100%"}
-                      color="violet.8"
-                      orientation="vertical"
-                      variant="pills"
-                      radius={0}
-                      styles={{
-                        list: {
-                          borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
-                        },
-                        tab: {
-                          width: "20rem",
-                        },
+                    <TabsList>
+                      {currentWorkspace?.isAdmin ? (
+                        <Button
+                          w={"20rem"}
+                          my={0}
+                          size="lg"
+                          variant="light"
+                          color="gray"
+                          leftSection={<MdAdd size={"2rem"} />}
+                          onClick={createChannelOpen}
+                        >
+                          Create New Channel
+                        </Button>
+                      ) : null}
 
-                        tabLabel: { fontSize: "1.5rem" },
-                      }}
-                    >
-                      <TabsList>
-                        {currentWorkspace?.isAdmin ? (
-                          <Button
-                            w={"20rem"}
-                            my={0}
-                            size="lg"
-                            variant="light"
-                            color="gray"
-                            leftSection={<MdAdd size={"2rem"} />}
-                            onClick={createChannelOpen}
+                      {channels.filter((ch) => ch.type == ChannelType.Public)
+                        .length != 0 ? (
+                        channels
+                          .filter((ch) => ch.type == ChannelType.Public)
+                          .map((c) => {
+                            // if (c.type == ChannelType.Public) {
+                            return (
+                              <TabsTab key={c.id} value={c.id}>
+                                {c.name}
+                              </TabsTab>
+                            );
+                            // }
+                          })
+                      ) : (
+                        <Stack
+                          w={"20rem"}
+                          // style={{ outline: "solid 2px orange" }}
+                          align="center"
+                          py={40}
+                        >
+                          <GiMagnifyingGlass
+                            size={"10rem"}
+                            color={DEFAULT_THEME.colors.violet[8]}
+                          />
+                          <Title
+                            c={"violet.8"}
+                            style={{ textAlign: "center" }}
+                            order={2}
+                            px={40}
                           >
-                            Create New Channel
-                          </Button>
-                        ) : null}
+                            You are not in any channel.
+                          </Title>
+                        </Stack>
+                      )}
+                    </TabsList>
 
-                        {channels.filter((ch) => ch.type == ChannelType.Public)
-                          .length != 0 ? (
-                          channels
-                            .filter((ch) => ch.type == ChannelType.Public)
-                            .map((c) => {
-                              // if (c.type == ChannelType.Public) {
-                              return (
-                                <TabsTab key={c.id} value={c.id}>
-                                  {c.name}
-                                </TabsTab>
-                              );
-                              // }
-                            })
-                        ) : (
-                          <Stack
-                            w={"20rem"}
-                            // style={{ outline: "solid 2px orange" }}
-                            align="center"
-                            py={40}
-                          >
-                            <GiMagnifyingGlass
-                              size={"10rem"}
-                              color={DEFAULT_THEME.colors.violet[8]}
-                            />
-                            <Title
-                              c={"violet.8"}
-                              style={{ textAlign: "center" }}
-                              order={2}
-                              px={40}
-                            >
-                              You are not in any channel.
-                            </Title>
-                          </Stack>
-                        )}
-                      </TabsList>
+                    {channels
+                      .filter((ch) => ch.type == ChannelType.Public)
+                      .map((c) => {
+                        // if (c.type == ChannelType.Public) {
+                        return (
+                          <TabsPanel key={c.id} value={c.id}>
+                            <ChannelRoom key={c.id} channelId={c.id} />
+                          </TabsPanel>
+                        );
+                        // }
+                      })}
+                  </Tabs>
+                </Box>
 
-                      {channels
-                        .filter((ch) => ch.type == ChannelType.Public)
-                        .map((c) => {
-                          // if (c.type == ChannelType.Public) {
-                          return (
-                            <TabsPanel key={c.id} value={c.id}>
-                              <ChannelRoom key={c.id} channelId={c.id} />
-                            </TabsPanel>
-                          );
-                          // }
-                        })}
-                    </Tabs>
-                  </Box>
+                <Box
+                  h={"100%"}
+                  style={{
+                    flexGrow: "1",
 
-                  <Box
+                    display:
+                      channelNav == ChannelType.Private ? "block" : "none",
+                  }}
+                >
+                  <Tabs
+                    defaultValue={
+                      channels.filter((ch) => ch.type == ChannelType.Private)
+                        .length != 0
+                        ? channels.find((ch) => ch.type == ChannelType.Private)
+                            ?.id
+                        : ""
+                    }
                     h={"100%"}
-                    style={{
-                      flexGrow: "1",
-
-                      display:
-                        channelNav == ChannelType.Private ? "block" : "none",
+                    color="violet.8"
+                    orientation="vertical"
+                    variant="pills"
+                    radius={0}
+                    styles={{
+                      list: {
+                        borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
+                      },
+                      tab: {
+                        width: "20rem",
+                      },
+                      tabLabel: { fontSize: "1.5rem" },
                     }}
                   >
-                    <Tabs
-                      defaultValue={
-                        channels.filter((ch) => ch.type == ChannelType.Private)
-                          .length != 0
-                          ? channels.find(
-                              (ch) => ch.type == ChannelType.Private
-                            )?.id
-                          : ""
-                      }
-                      h={"100%"}
-                      color="violet.8"
-                      orientation="vertical"
-                      variant="pills"
-                      radius={0}
-                      styles={{
-                        list: {
-                          borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
-                        },
-                        tab: {
-                          width: "20rem",
-                        },
-                        tabLabel: { fontSize: "1.5rem" },
-                      }}
-                    >
-                      <TabsList>
-                        {currentWorkspace?.isAdmin ? (
-                          <Button
-                            my={0}
-                            w={"20rem"}
-                            size="lg"
-                            variant="light"
-                            color="gray"
-                            leftSection={<MdAdd size={"2rem"} />}
-                            onClick={createChannelOpen}
+                    <TabsList>
+                      {currentWorkspace?.isAdmin ? (
+                        <Button
+                          my={0}
+                          w={"20rem"}
+                          size="lg"
+                          variant="light"
+                          color="gray"
+                          leftSection={<MdAdd size={"2rem"} />}
+                          onClick={createChannelOpen}
+                        >
+                          Create New Channel
+                        </Button>
+                      ) : null}
+
+                      {channels.filter((ch) => ch.type == ChannelType.Private)
+                        .length != 0 ? (
+                        channels
+                          .filter((ch) => ch.type == ChannelType.Private)
+                          .map((c) => {
+                            // if (c.type == ChannelType.Private) {
+                            return (
+                              <TabsTab key={c.id} value={c.id}>
+                                {c.name}
+                              </TabsTab>
+                            );
+                            // }
+                          })
+                      ) : (
+                        <Stack w={"20rem"} align="center" py={40}>
+                          <GiMagnifyingGlass
+                            size={"10rem"}
+                            color={DEFAULT_THEME.colors.violet[8]}
+                          />
+                          <Title
+                            c={"violet.8"}
+                            style={{ textAlign: "center" }}
+                            order={2}
+                            px={40}
                           >
-                            Create New Channel
-                          </Button>
-                        ) : null}
+                            You are not in any channel.
+                          </Title>
+                        </Stack>
+                      )}
+                    </TabsList>
 
-                        {channels.filter((ch) => ch.type == ChannelType.Private)
-                          .length != 0 ? (
-                          channels
-                            .filter((ch) => ch.type == ChannelType.Private)
-                            .map((c) => {
-                              // if (c.type == ChannelType.Private) {
-                              return (
-                                <TabsTab key={c.id} value={c.id}>
-                                  {c.name}
-                                </TabsTab>
-                              );
-                              // }
-                            })
-                        ) : (
-                          <Stack w={"20rem"} align="center" py={40}>
-                            <GiMagnifyingGlass
-                              size={"10rem"}
-                              color={DEFAULT_THEME.colors.violet[8]}
-                            />
-                            <Title
-                              c={"violet.8"}
-                              style={{ textAlign: "center" }}
-                              order={2}
-                              px={40}
-                            >
-                              You are not in any channel.
-                            </Title>
-                          </Stack>
-                        )}
-                      </TabsList>
+                    {channels
+                      .filter((ch) => ch.type == ChannelType.Private)
+                      .map((c) => {
+                        return (
+                          <TabsPanel key={c.id} value={c.id}>
+                            <ChannelRoom key={c.id} channelId={c.id} />
+                          </TabsPanel>
+                        );
+                      })}
+                  </Tabs>
+                </Box>
 
-                      {channels
-                        .filter((ch) => ch.type == ChannelType.Private)
-                        .map((c) => {
-                          return (
-                            <TabsPanel key={c.id} value={c.id}>
-                              <ChannelRoom key={c.id} channelId={c.id} />
-                            </TabsPanel>
-                          );
-                        })}
-                    </Tabs>
-                  </Box>
+                <Box
+                  h={"100%"}
+                  style={{
+                    flexGrow: "1",
 
-                  <Box
-                    h={"100%"}
-                    style={{
-                      flexGrow: "1",
-
-                      display:
-                        channelNav == ChannelType.Direct ? "block" : "none",
-                    }}
-                  >
-                    <Tabs
-                      defaultValue={
-                        currentWorkspace
+                    display:
+                      channelNav == ChannelType.Direct ? "block" : "none",
+                  }}
+                >
+                  <Tabs
+                    defaultValue={
+                      currentWorkspace
+                        ? currentWorkspace.users.filter(
+                            (u) => u.username != username
+                          ).length != 0
                           ? currentWorkspace.users.filter(
                               (u) => u.username != username
-                            ).length != 0
-                            ? currentWorkspace.users.filter(
-                                (u) => u.username != username
-                              )[0].username
-                            : ""
+                            )[0].username
                           : ""
-                      }
-                      h={"100%"}
-                      color="violet.8"
-                      orientation="vertical"
-                      variant="pills"
-                      radius={0}
-                      styles={{
-                        list: {
-                          borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
-                        },
-                        tab: {
-                          width: "20rem",
-                        },
-                        tabLabel: { fontSize: "1.5rem" },
-                      }}
-                    >
-                      <TabsList>
-                        {currentWorkspace?.users.filter(
-                          (u) => u.username != username
-                        ).length != 0 ? (
-                          currentWorkspace?.users
-                            .filter((u) => u.username != username)
-                            .map((u) => {
-                              return (
-                                <TabsTab key={u.username} value={u.username}>
-                                  {u.fullName}
-                                </TabsTab>
-                              );
-                            })
-                        ) : (
-                          <Stack w={"20rem"} align="center" py={40}>
-                            <GiMagnifyingGlass
-                              size={"10rem"}
-                              color={DEFAULT_THEME.colors.violet[8]}
-                            />
-                            <Title
-                              c={"violet.8"}
-                              style={{ textAlign: "center" }}
-                              order={2}
-                              px={40}
-                            >
-                              No member as been added to this workspace.
-                            </Title>
-                          </Stack>
-                        )}
-                      </TabsList>
-
+                        : ""
+                    }
+                    h={"100%"}
+                    color="violet.8"
+                    orientation="vertical"
+                    variant="pills"
+                    radius={0}
+                    styles={{
+                      list: {
+                        borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}`,
+                      },
+                      tab: {
+                        width: "20rem",
+                      },
+                      tabLabel: { fontSize: "1.5rem" },
+                    }}
+                  >
+                    <TabsList>
                       {currentWorkspace?.users.filter(
                         (u) => u.username != username
-                      ).length != 0
-                        ? currentWorkspace?.users
-                            .filter((u) => u.username != username)
-                            .map((u) => {
-                              const channelLink = usernameDmChannels.find(
-                                (uc) => uc.username == u.username
+                      ).length != 0 ? (
+                        currentWorkspace?.users
+                          .filter((u) => u.username != username)
+                          .map((u) => {
+                            return (
+                              <TabsTab key={u.username} value={u.username}>
+                                {u.fullName}
+                              </TabsTab>
+                            );
+                          })
+                      ) : (
+                        <Stack w={"20rem"} align="center" py={40}>
+                          <GiMagnifyingGlass
+                            size={"10rem"}
+                            color={DEFAULT_THEME.colors.violet[8]}
+                          />
+                          <Title
+                            c={"violet.8"}
+                            style={{ textAlign: "center" }}
+                            order={2}
+                            px={40}
+                          >
+                            No member as been added to this workspace.
+                          </Title>
+                        </Stack>
+                      )}
+                    </TabsList>
+
+                    {currentWorkspace?.users.filter(
+                      (u) => u.username != username
+                    ).length != 0
+                      ? currentWorkspace?.users
+                          .filter((u) => u.username != username)
+                          .map((u) => {
+                            const channelLink = usernameDmChannels.find(
+                              (uc) => uc.username == u.username
+                            );
+                            if (channelLink) {
+                              return (
+                                <TabsPanel key={u.username} value={u.username}>
+                                  <ChannelRoom
+                                    key={channelLink.channelId}
+                                    channelId={channelLink.channelId}
+                                  />
+                                </TabsPanel>
                               );
-                              if (channelLink) {
-                                return (
-                                  <TabsPanel
-                                    key={u.username}
-                                    value={u.username}
-                                  >
-                                    <ChannelRoom
-                                      key={channelLink.channelId}
-                                      channelId={channelLink.channelId}
-                                    />
-                                  </TabsPanel>
-                                );
-                              } else {
-                                return (
-                                  <TabsPanel
-                                    key={u.username}
-                                    value={u.username}
-                                  >
-                                    <ChatInvite
-                                      username={username}
-                                      fullName={fullName}
-                                      inviteFullName={u.fullName}
-                                      inviteUsername={u.username}
-                                      workspaceId={currentWorkspace.id}
-                                    />
-                                  </TabsPanel>
-                                );
-                              }
-                            })
-                        : ""}
-                    </Tabs>
-                  </Box>
-                </>
-              </Group>
-            </>
-          ) : (
-            <> Not Authorized</>
-          )
-        ) : (
-          <>Not Authenticated</>
+                            } else {
+                              return (
+                                <TabsPanel key={u.username} value={u.username}>
+                                  <ChatInvite
+                                    username={username}
+                                    fullName={fullName}
+                                    inviteFullName={u.fullName}
+                                    inviteUsername={u.username}
+                                    workspaceId={currentWorkspace.id}
+                                  />
+                                </TabsPanel>
+                              );
+                            }
+                          })
+                      : ""}
+                  </Tabs>
+                </Box>
+              </>
+            </Group>
+          </>
         )}
       </Stack>
       <Modal
@@ -542,7 +527,6 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
 
       if (preferred_username) {
         // User is authenticated
-        setIsAuthenticated(true);
         setUsername(preferred_username);
 
         const { data } = await getUserData({
@@ -568,7 +552,7 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
           //
           if (workspaceIndex != -1) {
             // User is authorized
-            setIsAuthorized(true);
+            localStorage.setItem("lastVisitedWorkspace", params.workspaceID);
             const { data: currentWorkspaceData } = await getCurrentWorkspace({
               fetchPolicy: "network-only",
               variables: {
@@ -657,15 +641,17 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
               setUsernameDmChannels(usernameChannels);
               cc_setUsername(preferred_username);
               setWorkspaceId(currentWorkspaceData.workspaceByID.id);
+              setLoading(false);
             }
+          } else {
+            router.push("/workspace");
           }
         }
       }
     } catch (error) {
+      router.push("/login");
       console.log(error);
     }
-
-    setLoading(false);
   }
 }
 

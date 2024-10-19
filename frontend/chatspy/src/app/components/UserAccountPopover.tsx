@@ -42,10 +42,7 @@ function UserAccountPopOver({
         <Button
           size="md"
           color="violet.8"
-          onClick={async () => {
-            await signOut();
-            router.push("/login");
-          }}
+          onClick={handleSignOut}
           leftSection={<LuLogOut size={"1.2rem"} />}
         >
           Sign Out
@@ -53,6 +50,16 @@ function UserAccountPopOver({
       </Stack>
     </Stack>
   );
+
+  async function handleSignOut() {
+    try {
+      await signOut();
+      localStorage.removeItem("lastVisitedWorkspace");
+      router.push("/login");
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 export default UserAccountPopOver;

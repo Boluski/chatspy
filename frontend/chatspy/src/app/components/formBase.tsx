@@ -18,6 +18,15 @@ export default function FormBase({ title, message, children }: FormBaseProps) {
       >
         <Title
           px={"xl"}
+          pb={"2rem"}
+          style={{ textAlign: "center" }}
+          c={"gray.0"}
+          size={"3rem"}
+        >
+          Chatspy
+        </Title>
+        <Title
+          px={"xl"}
           style={{ textAlign: "center" }}
           c={"gray.0"}
           size={"4rem"}

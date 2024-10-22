@@ -42,7 +42,9 @@ subscription OnMessageSent($channelId: String!) {
 type ChannelRoomProps = {
   channelId: string;
 };
-
+const screenSize = "100vh";
+const workspaceHeaderSize = "4.4rem";
+const channelHeadSize = "3.8rem";
 function ChannelRoom({ channelId }: ChannelRoomProps) {
   const { channels, setChannels, username } = useContext(ChatContext);
   const { currentWorkspace } = useContext(UserContext);
@@ -76,38 +78,43 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
   return (
     <>
       <Stack
-        mah={"100%"}
-        h={"100%"}
+        h={`calc(${screenSize} - ${workspaceHeaderSize})`}
         gap={0}
-        justify={"space-between"}
-        style={{
-          borderRight: `2px solid ${DEFAULT_THEME.colors.dark[0]}`,
-        }}
+        pos={"relative"}
       >
-        <ChannelRoomHead
-          channelName={currentChannel ? currentChannel.name : ""}
-          showControls={
-            currentWorkspace?.isAdmin
-              ? currentChannel?.type != ChannelType.Direct
-                ? true
+        <Box pos={"absolute"} left={0} right={0} style={{ zIndex: 100 }}>
+          <ChannelRoomHead
+            channelName={currentChannel ? currentChannel.name : ""}
+            showControls={
+              currentWorkspace?.isAdmin
+                ? currentChannel?.type != ChannelType.Direct
+                  ? true
+                  : false
                 : false
-              : false
-          }
-          isPrivate={currentChannel?.type == ChannelType.Private ? true : false}
-          isDirect={currentChannel?.type == ChannelType.Direct ? true : false}
-          dmUsers={
-            currentChannel?.type == ChannelType.Direct
-              ? currentChannel.users
-              : undefined
-          }
-          openAddUserFunction={openAddUserFunction}
-          openChannelSettingsFunction={openChannelSettingsFunction}
-          username={username}
-        />
+            }
+            isPrivate={
+              currentChannel?.type == ChannelType.Private ? true : false
+            }
+            isDirect={currentChannel?.type == ChannelType.Direct ? true : false}
+            dmUsers={
+              currentChannel?.type == ChannelType.Direct
+                ? currentChannel.users
+                : undefined
+            }
+            openAddUserFunction={openAddUserFunction}
+            openChannelSettingsFunction={openChannelSettingsFunction}
+            username={username}
+          />
+        </Box>
 
         {showThread ? (
-          <Stack gap={0} h={"100%"} mx={20}>
-            <Group align="center" gap={0}>
+          <Stack
+            gap={0}
+            mx={20}
+            h={`calc(${screenSize} - ${workspaceHeaderSize} - ${channelHeadSize})`}
+            mt={"auto"}
+          >
+            <Group align="center" gap={0} h={"2.2rem"}>
               <Button
                 color="black"
                 variant="transparent"
@@ -127,41 +134,40 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
             />
           </Stack>
         ) : (
-          <Stack
-            gap={0}
-            h={"100%"}
-            style={{ flexGrow: 1, position: "relative" }}
-          >
-            <Stack
-              h={"100%"}
-              mah={"78vh"}
-              justify={"flex-end"}
-              style={{ flexGrow: 1 }}
-            >
-              <ScrollArea type="never" viewportRef={viewport}>
-                <Stack gap={1} mx={20}>
-                  {currentChannel?.message &&
-                    currentChannel.message.map((m, index) => {
-                      return (
-                        <MessageBox
-                          key={m.id}
-                          channelIndex={currentChannelIndex}
-                          messageId={m.id}
-                          messageIndex={index}
-                          setTargetMessageId={setTargetMessageId}
-                          setShowThread={setShowThread}
-                          showThread={showThread}
-                        />
-                      );
-                    })}
-                  <Box style={{}} h={"4rem"}></Box>
-                </Stack>
-              </ScrollArea>
-            </Stack>
-            <Box style={{ position: "absolute", bottom: 0, right: 0, left: 0 }}>
-              <MessageSender channelIndex={currentChannelIndex} />
-            </Box>
+          <Stack h={"100%"} justify={"flex-end"}>
+            <ScrollArea type="never" viewportRef={viewport}>
+              <Stack gap={1} mx={20}>
+                {currentChannel?.message &&
+                  currentChannel.message.map((m, index) => {
+                    return (
+                      <MessageBox
+                        key={m.id}
+                        channelIndex={currentChannelIndex}
+                        messageId={m.id}
+                        messageIndex={index}
+                        setTargetMessageId={setTargetMessageId}
+                        setShowThread={setShowThread}
+                        showThread={showThread}
+                      />
+                    );
+                  })}
+                <Box style={{}} h={"6rem"} my={6}></Box>
+              </Stack>
+            </ScrollArea>
           </Stack>
+        )}
+
+        {!showThread && (
+          <Box
+            style={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              left: 0,
+            }}
+          >
+            <MessageSender channelIndex={currentChannelIndex} />
+          </Box>
         )}
       </Stack>
       <AddUserModal

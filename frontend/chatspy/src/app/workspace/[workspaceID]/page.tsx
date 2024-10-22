@@ -98,6 +98,9 @@ query WorkspaceByID($workspaceId: UUID!, $username: String!) {
 }
   `);
 
+const screenSize = "100vh";
+const workspaceHeaderSize = "4.4rem";
+
 Amplify.configure(outputs);
 export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
   const router = useRouter();
@@ -145,7 +148,7 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
         mah={"100vh"}
         bg={"gray.0"}
         px={15}
-        py={10}
+        gap={0}
       >
         {loading ? (
           <>loading</>
@@ -154,7 +157,7 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
             <WorkspaceHeader workspaceDrawOpen={workspaceDrawOpen} />
             <Group
               w={"100%"}
-              style={{ flexGrow: "1" }}
+              h={`calc(${screenSize} - ${workspaceHeaderSize})`}
               align={"start"}
               gap={0}
               wrap={"nowrap"}
@@ -201,8 +204,9 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                       {currentWorkspace?.isAdmin ? (
                         <Button
                           w={"20rem"}
+                          h={"3.8rem"}
                           my={0}
-                          size="lg"
+                          size="xl"
                           variant="light"
                           color="gray"
                           leftSection={<MdAdd size={"2rem"} />}
@@ -251,13 +255,11 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                     {channels
                       .filter((ch) => ch.type == ChannelType.Public)
                       .map((c) => {
-                        // if (c.type == ChannelType.Public) {
                         return (
                           <TabsPanel key={c.id} value={c.id}>
                             <ChannelRoom key={c.id} channelId={c.id} />
                           </TabsPanel>
                         );
-                        // }
                       })}
                   </Tabs>
                 </Box>
@@ -299,7 +301,8 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                         <Button
                           my={0}
                           w={"20rem"}
-                          size="lg"
+                          h={"3.8rem"}
+                          size="xl"
                           variant="light"
                           color="gray"
                           leftSection={<MdAdd size={"2rem"} />}
@@ -495,28 +498,36 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
         opened={workspaceDrawOpened}
         withCloseButton={false}
       >
-        <Stack h={"100vh"}>
+        <Stack
+          top={0}
+          pos={"sticky"}
+          style={{
+            zIndex: 100,
+          }}
+          bg={"white"}
+        >
           <Title c={"violet.8"} ta={"center"}>
             Chatspy
           </Title>
           <Title order={2}>Workspaces</Title>
-          <ScrollArea h={"100%"} type="never">
-            <Stack>
-              {currentWorkspace &&
-                userWorkspaces
-                  .filter((w) => w.id != currentWorkspace.id)
-                  .map((w) => {
-                    return (
-                      <DrawerWorkspaceCard
-                        key={w.id}
-                        workspaceId={w.id}
-                        workspaceName={w.name}
-                      />
-                    );
-                  })}
-            </Stack>
-          </ScrollArea>
         </Stack>
+
+        <ScrollArea h={"100%"} type="never">
+          <Stack>
+            {currentWorkspace &&
+              userWorkspaces
+                .filter((w) => w.id != currentWorkspace.id)
+                .map((w) => {
+                  return (
+                    <DrawerWorkspaceCard
+                      key={w.id}
+                      workspaceId={w.id}
+                      workspaceName={w.name}
+                    />
+                  );
+                })}
+          </Stack>
+        </ScrollArea>
       </Drawer>
     </>
   );

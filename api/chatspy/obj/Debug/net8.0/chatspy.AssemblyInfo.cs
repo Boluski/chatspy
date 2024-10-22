@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("chatspy")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1a4921a2924eba18dc779224b3646a17fb96bba4")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+76f1a94e7dc8b800ba9113890e6018af1dd1c199")]
 [assembly: System.Reflection.AssemblyProductAttribute("chatspy")]
 [assembly: System.Reflection.AssemblyTitleAttribute("chatspy")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

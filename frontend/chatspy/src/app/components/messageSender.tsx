@@ -41,7 +41,7 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
   const [enableSendButton, setEnableSendButton] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { username, channels, setChannels, messageToEdit, setMessageToEdit } =
+  const { username, channels, messageToEdit, setMessageToEdit } =
     useContext(ChatContext);
   const currentChannel = channels[channelIndex];
   const [createMessage] = useMutation(CREATE_MESSAGE);
@@ -51,7 +51,8 @@ function MessageSender({ channelIndex }: MessageSenderProps) {
       bg={"white"}
       p={10}
       mx={20}
-      my={5}
+      my={10}
+      h={"6rem"}
       style={{
         borderRadius: "0.5rem",
         border: `solid ${DEFAULT_THEME.colors.dark[0]} 2px`,

@@ -73,6 +73,10 @@ type ThreadViewerProps = {
   targetMessageId: string;
   setShowThread: Dispatch<SetStateAction<boolean>>;
 };
+const screenSize = "100vh";
+const workspaceHeaderSize = "4.4rem";
+const channelHeadSize = "3.8rem";
+const threadBackButtonSize = "2.2rem";
 function ThreadViewer({
   channelIndex,
   targetMessageId,
@@ -133,9 +137,21 @@ function ThreadViewer({
   });
 
   return (
-    <Stack gap={2}>
+    <Stack
+      gap={2}
+      h={`calc(${screenSize} - ${workspaceHeaderSize} - ${channelHeadSize} - ${threadBackButtonSize})`}
+      pos={"relative"}
+    >
       {messageThread && (
-        <Box>
+        <Box
+          pos={"absolute"}
+          left={0}
+          right={0}
+          top={0}
+          bg={"gray.0"}
+          style={{ zIndex: 100 }}
+          h={"7rem"}
+        >
           <TargetMessage isUser={isUser} message={messageThread} />
           <Divider
             styles={{
@@ -150,37 +166,26 @@ function ThreadViewer({
           />
         </Box>
       )}
-      <Stack
-        h={"1000rem"}
-        mah={"62vh"}
-        gap={0}
-        style={{
-          position: "relative",
-        }}
-      >
-        <ScrollArea type={"never"} viewportRef={viewport}>
-          {messageThread &&
-            messageThread.threads.map((th) => {
-              return (
-                <Group pl={"2rem"} key={th.id} wrap={"nowrap"}>
-                  <Divider
-                    color="violet.8"
-                    size={"sm"}
-                    orientation="vertical"
-                  />
-                  <Box style={{ flexGrow: 1 }} pb={2}>
-                    <ThreadBox thread={th} />
-                  </Box>
-                </Group>
-              );
-            })}
-          <Box style={{}} h={"6rem"}></Box>
-        </ScrollArea>
 
-        <Box style={{ position: "absolute", bottom: 0, right: 0, left: 0 }}>
-          <ThreadSender messageId={messageThread ? messageThread.id : ""} />
-        </Box>
-      </Stack>
+      <ScrollArea type={"never"} viewportRef={viewport}>
+        <Box h={"7.2rem"}></Box>
+        {messageThread &&
+          messageThread.threads.map((th) => {
+            return (
+              <Group pl={"2rem"} key={th.id} wrap={"nowrap"}>
+                <Divider color="violet.8" size={"sm"} orientation="vertical" />
+                <Box style={{ flexGrow: 1 }} pb={2}>
+                  <ThreadBox thread={th} />
+                </Box>
+              </Group>
+            );
+          })}
+        <Box h={"6rem"} my={6}></Box>
+      </ScrollArea>
+
+      <Box pos={"absolute"} bottom={0} right={0} left={0}>
+        <ThreadSender messageId={messageThread ? messageThread.id : ""} />
+      </Box>
     </Stack>
   );
   function scrollToBottom() {

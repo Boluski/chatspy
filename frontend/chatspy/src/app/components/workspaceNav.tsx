@@ -1,10 +1,6 @@
 import { ActionIcon, DEFAULT_THEME, Modal, Stack, Title } from "@mantine/core";
 import { FaHashtag } from "react-icons/fa";
-import {
-  IoLockClosed,
-  IoPersonSharp,
-  IoSettingsOutline,
-} from "react-icons/io5";
+import { IoLockClosed, IoSettingsOutline } from "react-icons/io5";
 import { HiOutlineChatBubbleLeftRight } from "react-icons/hi2";
 import { useDisclosure } from "@mantine/hooks";
 import { MdAdd } from "react-icons/md";
@@ -43,6 +39,7 @@ export default function WorkspaceNav({
         justify={"space-between"}
         style={{ borderRight: `solid 2px ${DEFAULT_THEME.colors.dark[0]}` }}
         pr={"sm"}
+        py={10}
       >
         <Stack>
           <Stack align="center" gap={"0.5rem"}>

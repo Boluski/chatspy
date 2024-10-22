@@ -51,8 +51,8 @@ function ThreadSender({ messageId }: MessageSenderProps) {
     <Group
       bg={"white"}
       p={10}
-      mx={20}
-      my={5}
+      my={10}
+      h={"6rem"}
       style={{
         borderRadius: "0.5rem",
         border: `solid ${DEFAULT_THEME.colors.dark[0]} 2px`,

@@ -1,4 +1,4 @@
-import { Group, Title, DEFAULT_THEME, ActionIcon, Avatar } from "@mantine/core";
+import { Group, Title, DEFAULT_THEME, ActionIcon } from "@mantine/core";
 import { AiOutlineUserAdd } from "react-icons/ai";
 import { VscSettings } from "react-icons/vsc";
 import { userType } from "../contexts/userContext";
@@ -30,13 +30,14 @@ function ChannelRoomHead({
   return (
     <>
       <Group
-        p={5}
         px={20}
+        h={"3.8rem"}
         justify={"space-between"}
         align="center"
         style={{
           borderBottom: `2px solid ${DEFAULT_THEME.colors.dark[0]}`,
         }}
+        bg={"gray.0"}
       >
         <Group>
           {isDirect ? (

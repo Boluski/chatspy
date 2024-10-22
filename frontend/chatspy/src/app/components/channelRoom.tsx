@@ -41,11 +41,12 @@ subscription OnMessageSent($channelId: String!) {
 
 type ChannelRoomProps = {
   channelId: string;
+  onTabClicked: number;
 };
 const screenSize = "100vh";
 const workspaceHeaderSize = "4.4rem";
 const channelHeadSize = "3.8rem";
-function ChannelRoom({ channelId }: ChannelRoomProps) {
+function ChannelRoom({ channelId, onTabClicked }: ChannelRoomProps) {
   const { channels, setChannels, username } = useContext(ChatContext);
   const { currentWorkspace } = useContext(UserContext);
   const [showThread, setShowThread] = useState(false);
@@ -71,10 +72,13 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
       handleReceivedMessage(data.data);
     },
   });
+  useEffect(() => {
+    scrollToBottom();
+  }, []);
 
   useEffect(() => {
     scrollToBottom();
-  }, [channels, showThread]);
+  }, [channels, showThread, onTabClicked]);
   return (
     <>
       <Stack
@@ -136,6 +140,7 @@ function ChannelRoom({ channelId }: ChannelRoomProps) {
         ) : (
           <Stack h={"100%"} justify={"flex-end"}>
             <ScrollArea type="never" viewportRef={viewport}>
+              <Box h={"3.8rem"}></Box>
               <Stack gap={1} mx={20}>
                 {currentChannel?.message &&
                   currentChannel.message.map((m, index) => {

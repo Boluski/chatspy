@@ -107,6 +107,7 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
   const [getUserData] = useLazyQuery(USER_DATA);
   const [getCurrentWorkspace] = useLazyQuery(CURRENT_WORKSPACE);
   const [loading, setLoading] = useState(true);
+  const [onTabClicked, setOnTabClicked] = useState(0);
   const [channelNav, setChannelNav] = useState<ChannelType>(ChannelType.Public);
   const [
     createChannelOpened,
@@ -223,7 +224,15 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                           .map((c) => {
                             // if (c.type == ChannelType.Public) {
                             return (
-                              <TabsTab key={c.id} value={c.id}>
+                              <TabsTab
+                                key={c.id}
+                                value={c.id}
+                                onClick={() => {
+                                  setOnTabClicked((count) => {
+                                    return count + 1;
+                                  });
+                                }}
+                              >
                                 {c.name}
                               </TabsTab>
                             );
@@ -257,7 +266,11 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                       .map((c) => {
                         return (
                           <TabsPanel key={c.id} value={c.id}>
-                            <ChannelRoom key={c.id} channelId={c.id} />
+                            <ChannelRoom
+                              onTabClicked={onTabClicked}
+                              key={c.id}
+                              channelId={c.id}
+                            />
                           </TabsPanel>
                         );
                       })}
@@ -319,7 +332,15 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                           .map((c) => {
                             // if (c.type == ChannelType.Private) {
                             return (
-                              <TabsTab key={c.id} value={c.id}>
+                              <TabsTab
+                                onClick={() => {
+                                  setOnTabClicked((count) => {
+                                    return count + 1;
+                                  });
+                                }}
+                                key={c.id}
+                                value={c.id}
+                              >
                                 {c.name}
                               </TabsTab>
                             );
@@ -348,7 +369,11 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                       .map((c) => {
                         return (
                           <TabsPanel key={c.id} value={c.id}>
-                            <ChannelRoom key={c.id} channelId={c.id} />
+                            <ChannelRoom
+                              onTabClicked={onTabClicked}
+                              key={c.id}
+                              channelId={c.id}
+                            />
                           </TabsPanel>
                         );
                       })}
@@ -399,7 +424,15 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                           .filter((u) => u.username != username)
                           .map((u) => {
                             return (
-                              <TabsTab key={u.username} value={u.username}>
+                              <TabsTab
+                                onClick={() => {
+                                  setOnTabClicked((count) => {
+                                    return count + 1;
+                                  });
+                                }}
+                                key={u.username}
+                                value={u.username}
+                              >
                                 {u.fullName}
                               </TabsTab>
                             );
@@ -435,6 +468,7 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                               return (
                                 <TabsPanel key={u.username} value={u.username}>
                                   <ChannelRoom
+                                    onTabClicked={onTabClicked}
                                     key={channelLink.channelId}
                                     channelId={channelLink.channelId}
                                   />

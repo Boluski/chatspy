@@ -13,6 +13,8 @@ import {
   Title,
   Drawer,
   ScrollArea,
+  TextInput,
+  Anchor,
 } from "@mantine/core";
 import { MdAdd } from "react-icons/md";
 import WorkspaceHeader from "@/app/components/workspaceHeader";
@@ -117,6 +119,7 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
     workspaceDrawOpened,
     { open: workspaceDrawOpen, close: workspaceDrawClose },
   ] = useDisclosure(false);
+
   const {
     currentWorkspace,
     userWorkspaces,
@@ -522,6 +525,7 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
           closeFunction={createChannelClose}
         />
       </Modal>
+
       <Drawer
         size={"sm"}
         overlayProps={{
@@ -548,6 +552,17 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
 
         <ScrollArea h={"100%"} type="never">
           <Stack>
+            <Button
+              size="lg"
+              color={"violet.8"}
+              variant="light"
+              onClick={() => {
+                router.push("/workspace");
+              }}
+            >
+              Go To Workspace Hub
+            </Button>
+
             {currentWorkspace &&
               userWorkspaces
                 .filter((w) => w.id != currentWorkspace.id)

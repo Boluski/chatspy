@@ -31,6 +31,7 @@ import { useMutation } from "@apollo/client";
 import { gql } from "../../__generated__/gql";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import SignUpLoading from "../components/signUpLoaging";
 
 const CREATE_USER_QUERY = gql(`
         mutation CreateUser($input: CreateUserInput!) {
@@ -101,12 +102,7 @@ export default function SignUp() {
       message="Get ready to speed up your communication and get projects done."
     >
       {loading ? (
-        <Group>
-          <Loader size={"xl"} color={"violet.8"} />
-          <Title c={"violet.8"} order={2}>
-            Loading...
-          </Title>
-        </Group>
+        <SignUpLoading />
       ) : (
         <Paper shadow="xl" radius={"0.5rem"}>
           {nextStep ? (

@@ -21,6 +21,7 @@ import outputs from "../../../amplify_outputs.json";
 import { Amplify } from "aws-amplify";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import LoginLoading from "../components/loginLoading";
 
 Amplify.configure(outputs);
 
@@ -65,12 +66,7 @@ export default function Login() {
       message="Time to chat and collaborate with the team!"
     >
       {loading ? (
-        <Group>
-          <Loader size={"xl"} color={"violet.8"} />
-          <Title c={"violet.8"} order={2}>
-            Loading...
-          </Title>
-        </Group>
+        <LoginLoading />
       ) : (
         <Paper shadow="xl" radius={"0.5rem"}>
           <Stack

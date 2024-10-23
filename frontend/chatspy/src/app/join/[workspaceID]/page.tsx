@@ -15,6 +15,7 @@ import { gql } from "@/__generated__/gql";
 import { fetchUserAttributes } from "aws-amplify/auth";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import JoinLoading from "@/app/components/JoinLoading";
 
 const GET_WORKSPACE_DATA = gql(`
     query WorkspaceByIDJoin($workspaceId: UUID!, $username: String!) {
@@ -51,7 +52,7 @@ function Join({ params }: JoinProps) {
   const [joinLoading, setJoinLoading] = useState(false);
   const [noJoinLoading, setNoJoinLoading] = useState(false);
 
-  if (loading) return <>Loading</>;
+  if (loading) return <JoinLoading />;
   if (error) return <>{error.message}</>;
   return (
     <Stack h={"100vh"} bg={"violet.0"} px={20} py={10}>

@@ -1,4 +1,4 @@
-import { Paper, Skeleton, Stack } from "@mantine/core";
+import { Center, Paper, Skeleton, Stack } from "@mantine/core";
 
 function SignUpLoading() {
   return (
@@ -21,7 +21,9 @@ function SignUpLoading() {
 
         <Skeleton height={35} mt={10}></Skeleton>
 
-        <Skeleton height={20}></Skeleton>
+        <Center>
+          <Skeleton height={20} width={250}></Skeleton>
+        </Center>
       </Stack>
     </Paper>
   );

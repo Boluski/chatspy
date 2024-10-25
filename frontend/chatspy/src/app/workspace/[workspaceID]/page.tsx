@@ -38,6 +38,7 @@ import { ChannelType } from "@/__generated__/graphql";
 import { GiMagnifyingGlass } from "react-icons/gi";
 import ChatInvite from "@/app/components/chatInvite";
 import { useRouter } from "next/navigation";
+import WorkspaceLoading from "@/app/components/workspaceLoading";
 
 type CurrentWorkspaceProps = {
   params: { workspaceID: string };
@@ -146,18 +147,18 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
 
   return (
     <>
-      <Stack
-        w={"100vw"}
-        h={"100vh"}
-        mah={"100vh"}
-        bg={"gray.0"}
-        px={15}
-        gap={0}
-      >
+      <>
         {loading ? (
-          <>loading</>
+          <WorkspaceLoading />
         ) : (
-          <>
+          <Stack
+            w={"100vw"}
+            h={"100vh"}
+            mah={"100vh"}
+            bg={"gray.0"}
+            px={15}
+            gap={0}
+          >
             <WorkspaceHeader workspaceDrawOpen={workspaceDrawOpen} />
             <Group
               w={"100%"}
@@ -496,9 +497,9 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                 </Box>
               </>
             </Group>
-          </>
+          </Stack>
         )}
-      </Stack>
+      </>
       <Modal
         size={"md"}
         onClose={createChannelClose}

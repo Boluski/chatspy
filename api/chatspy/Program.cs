@@ -5,8 +5,6 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
 
-// var connectionString = "server=localhost;user=root;password=boluSKI080#;database=chatspy";
-//  "connectionString" : "server=localhost;user=root;password=boluSKI080#;database=chatspy"
 var configuration = builder.Configuration;
 var connectionString = configuration["connectionString"];
 builder.Services.AddDbContext<ChatspyContext>(options =>

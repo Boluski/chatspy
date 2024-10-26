@@ -226,24 +226,28 @@ export default function AllWorkspaces() {
   }
 
   async function handleInitialLoad() {
-    const { preferred_username: username } = await fetchUserAttributes();
-    if (username != undefined) {
-      currentUsername.current = username;
-      const { data } = await getUser({
-        fetchPolicy: "network-only",
-        variables: { username: username },
-      });
-      if (data != undefined) {
-        const currentUser = data.userByUsername;
-        setFullName(currentUser.fullName);
-        setEmail(currentUser.email);
-        setWorkspaces(() => {
-          return currentUser.workspaces.map((w) => {
-            return { id: w.id as string, name: w.name };
-          });
+    try {
+      const { preferred_username: username } = await fetchUserAttributes();
+      if (username != undefined) {
+        currentUsername.current = username;
+        const { data } = await getUser({
+          fetchPolicy: "network-only",
+          variables: { username: username },
         });
-        setLoading(false);
+        if (data != undefined) {
+          const currentUser = data.userByUsername;
+          setFullName(currentUser.fullName);
+          setEmail(currentUser.email);
+          setWorkspaces(() => {
+            return currentUser.workspaces.map((w) => {
+              return { id: w.id as string, name: w.name };
+            });
+          });
+          setLoading(false);
+        }
       }
+    } catch (error) {
+      router.push("login");
     }
   }
 }

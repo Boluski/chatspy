@@ -1,1 +1,1 @@
-# chatspy
+# Chatspy - Teams Communication App

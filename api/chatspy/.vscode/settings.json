@@ -1,0 +1,10 @@
+{
+  "cSpell.words": ["chatspy"],
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.formatOnPaste": true,
+  "editor.defaultFormatter": "csharpier.csharpier-vscode",
+  "editor.fontVariations": false,
+  "terminal.integrated.fontSize": 26,
+  "debug.console.fontSize": 26
+}

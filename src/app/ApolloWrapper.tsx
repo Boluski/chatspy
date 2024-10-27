@@ -15,7 +15,8 @@ import { getMainDefinition } from "@apollo/client/utilities";
 function makeClient() {
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: "ws://localhost:5100/graphql/",
+      // url: "ws://localhost:5100/graphql/",
+      url: "ws://chatspy-dev-v1.azurewebsites.net/graphql/",
     })
   );
   const httpLink = new HttpLink({

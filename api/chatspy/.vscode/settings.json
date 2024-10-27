@@ -1,0 +1,13 @@
+{
+  "cSpell.words": ["chatspy"],
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.formatOnPaste": true,
+  "editor.defaultFormatter": "csharpier.csharpier-vscode",
+  "editor.fontVariations": false,
+  "terminal.integrated.fontSize": 26,
+  "debug.console.fontSize": 26,
+  "appService.preDeployTask": "publish-release",
+  "appService.deploySubpath": "bin/Release/net8.0/publish",
+  "appService.defaultWebAppToDeploy": "/subscriptions/b7c2e489-c880-4c42-9719-f73d55cf9d6a/resourceGroups/chatspy-dev/providers/Microsoft.Web/sites/chatspy-dev-v1"
+}

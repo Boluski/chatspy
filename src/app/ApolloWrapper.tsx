@@ -20,6 +20,8 @@ function makeClient() {
       // url: "wss://chatspy-dev-v1.azurewebsites.net/graphql/",
     })
   );
+  console.log("wsLink", wsLink);
+
   const httpLink = new HttpLink({
     // this needs to be an absolute url, as relative urls cannot be used in SSR
     uri: process.env.NEXT_PUBLIC_HTTP_URL as string,
@@ -33,6 +35,7 @@ function makeClient() {
     // to an Apollo Client data fetching hook, e.g.:
     // const { data } = useSuspenseQuery(MY_QUERY, { context: { fetchOptions: { cache: "force-cache" }}});
   });
+  console.log("httpLink", httpLink);
 
   const splitLink = split(
     ({ query }) => {
@@ -45,6 +48,8 @@ function makeClient() {
     wsLink,
     httpLink
   );
+  console.log("splitLink", splitLink);
+
   // use the `ApolloClient` from "@apollo/experimental-nextjs-app-support"
   return new ApolloClient({
     // use the `InMemoryCache` from "@apollo/experimental-nextjs-app-support"

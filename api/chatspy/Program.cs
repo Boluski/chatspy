@@ -26,16 +26,18 @@ builder
     .AddMutationType<Mutation>()
     .AddSubscriptionType<Subscription>();
 
-// Enable Apollo Sandbox
+// Enable Cors
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
+        // Allowed Origins
         builder
             .WithOrigins(
                 "https://studio.apollographql.com",
                 "http://localhost:3000",
-                "https://dev.d3snqv7mkpyhje.amplifyapp.com"
+                "https://dev.d3snqv7mkpyhje.amplifyapp.com",
+                "https://main.d3snqv7mkpyhje.amplifyapp.com"
             )
             .AllowAnyHeader()
             .AllowAnyMethod();

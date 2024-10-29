@@ -20,7 +20,7 @@ function makeClient() {
       // url: "wss://chatspy-dev-v1.azurewebsites.net/graphql/",
     })
   );
-  console.log("wsLink", wsLink);
+  // console.log("wsLink", wsLink);
 
   const httpLink = new HttpLink({
     // this needs to be an absolute url, as relative urls cannot be used in SSR
@@ -35,7 +35,7 @@ function makeClient() {
     // to an Apollo Client data fetching hook, e.g.:
     // const { data } = useSuspenseQuery(MY_QUERY, { context: { fetchOptions: { cache: "force-cache" }}});
   });
-  console.log("httpLink", httpLink);
+  // console.log("httpLink", httpLink);
 
   const splitLink = split(
     ({ query }) => {
@@ -48,7 +48,7 @@ function makeClient() {
     wsLink,
     httpLink
   );
-  console.log("splitLink", splitLink);
+  // console.log("splitLink", splitLink);
 
   // use the `ApolloClient` from "@apollo/experimental-nextjs-app-support"
   return new ApolloClient({
@@ -60,11 +60,11 @@ function makeClient() {
 
 // you need to create a component to wrap your app in
 export function ApolloWrapper({ children }: React.PropsWithChildren) {
-  console.log(
-    "NEXT_PUBLIC_WEBSOCKET_URL",
-    process.env.NEXT_PUBLIC_WEBSOCKET_URL
-  );
-  console.log("NEXT_PUBLIC_HTTP_URL:", process.env.NEXT_PUBLIC_HTTP_URL);
+  // console.log(
+  //   "NEXT_PUBLIC_WEBSOCKET_URL",
+  //   process.env.NEXT_PUBLIC_WEBSOCKET_URL
+  // );
+  // console.log("NEXT_PUBLIC_HTTP_URL:", process.env.NEXT_PUBLIC_HTTP_URL);
 
   return (
     <ApolloNextAppProvider makeClient={makeClient}>

@@ -13,8 +13,6 @@ import {
   Title,
   Drawer,
   ScrollArea,
-  TextInput,
-  Anchor,
 } from "@mantine/core";
 import { MdAdd } from "react-icons/md";
 import WorkspaceHeader from "@/app/components/workspaceHeader";
@@ -678,8 +676,6 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
               const usernameChannels = dmChannels
                 .filter((ch) => ch.users.length != 1)
                 .map((ch) => {
-                  console.log("ch", ch);
-
                   const dmUser = ch.users.filter(
                     (u) => u.username != preferred_username
                   );
@@ -688,15 +684,6 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                     channelId: ch.id,
                   } as usernameChannelMapType;
                 });
-
-              console.log(
-                "Current Workspace:",
-                currentWorkspaceData.workspaceByID
-              );
-
-              console.log("Workspace Channels:", channels);
-
-              console.log("username to channel:", usernameChannels);
 
               setChannels(channels);
               setUsernameDmChannels(usernameChannels);
@@ -711,7 +698,6 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
       }
     } catch (error) {
       router.push("/login");
-      console.log(error);
     }
   }
 }

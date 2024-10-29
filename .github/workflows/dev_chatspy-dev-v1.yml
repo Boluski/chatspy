@@ -21,10 +21,20 @@ jobs:
         with:
           dotnet-version: '8.x'
 
-      - name: Directry
+      - name: Directory
         run: pwd
+        
+      - name: LS
+        run: ls
+        
       - name: Move to the API folder
         run: cd ./api/chatspy
+
+      - name: Directory
+        run: pwd
+        
+      - name: LS
+        run: ls
       
       - name: Build with dotnet
         run: dotnet build --configuration Release

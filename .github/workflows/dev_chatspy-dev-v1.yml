@@ -12,6 +12,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./api/chatspy
 
     steps:
       - uses: actions/checkout@v4
@@ -27,14 +30,14 @@ jobs:
       - name: LS
         run: ls
         
-      - name: Move to the API folder
-        run: cd ./api/chatspy
+      # - name: Move to the API folder
+      #   run: cd ./api/chatspy
 
-      - name: Directory
-        run: pwd
+      # - name: Directory
+      #   run: pwd
         
-      - name: LS
-        run: ls
+      # - name: LS
+      #   run: ls
       
       - name: Build with dotnet
         run: dotnet build --configuration Release

@@ -6,7 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
 
 var configuration = builder.Configuration;
-var connectionString = configuration["connectionString"];
+var connectionString = configuration["CONNECTION_STRING"];
+
 builder.Services.AddDbContext<ChatspyContext>(options =>
     options
         .UseMySql(connectionString, serverVersion)

@@ -6,7 +6,8 @@ var builder = WebApplication.CreateBuilder(args);
 var serverVersion = new MySqlServerVersion(new Version(8, 0, 29));
 
 var configuration = builder.Configuration;
-var connectionString = configuration["connectionString"];
+var connectionString = configuration["CONNECTION_STRING"];
+
 builder.Services.AddDbContext<ChatspyContext>(options =>
     options
         .UseMySql(connectionString, serverVersion)
@@ -25,13 +26,19 @@ builder
     .AddMutationType<Mutation>()
     .AddSubscriptionType<Subscription>();
 
-// Enable Apollo Sandbox
+// Enable Cors
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(builder =>
     {
+        // Allowed Origins
         builder
-            .WithOrigins("https://studio.apollographql.com", "http://localhost:3000")
+            .WithOrigins(
+                "https://studio.apollographql.com",
+                "http://localhost:3000",
+                "https://dev.d3snqv7mkpyhje.amplifyapp.com",
+                "https://main.d3snqv7mkpyhje.amplifyapp.com"
+            )
             .AllowAnyHeader()
             .AllowAnyMethod();
     });

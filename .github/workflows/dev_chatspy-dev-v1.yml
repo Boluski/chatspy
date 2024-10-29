@@ -21,7 +21,7 @@ jobs:
         with:
           dotnet-version: '8.x'
       - name: Move to the API folder
-      - run: cd ./api/chatspy
+        run: cd ./api/chatspy
       
       - name: Build with dotnet
         run: dotnet build --configuration Release

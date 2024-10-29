@@ -15,13 +15,15 @@ import { getMainDefinition } from "@apollo/client/utilities";
 function makeClient() {
   const wsLink = new GraphQLWsLink(
     createClient({
-      url: "ws://localhost:5100/graphql/",
+      url: process.env.NEXT_PUBLIC_WEBSOCKET_URL as string,
+      // url: "ws://localhost:5100/graphql/",
       // url: "wss://chatspy-dev-v1.azurewebsites.net/graphql/",
     })
   );
   const httpLink = new HttpLink({
     // this needs to be an absolute url, as relative urls cannot be used in SSR
-    uri: "http://localhost:5100/graphql/",
+    uri: process.env.NEXT_PUBLIC_HTTP_URL as string,
+    // uri: "http://localhost:5100/graphql/",
     // uri: "https://chatspy-dev-v1.azurewebsites.net/graphql/",
     // you can disable result caching here if you want to
     // (this does not work if you are rendering your page with `export const dynamic = "force-static"`)
@@ -53,6 +55,12 @@ function makeClient() {
 
 // you need to create a component to wrap your app in
 export function ApolloWrapper({ children }: React.PropsWithChildren) {
+  console.log(
+    "NEXT_PUBLIC_WEBSOCKET_URL",
+    process.env.NEXT_PUBLIC_WEBSOCKET_URL
+  );
+  console.log("NEXT_PUBLIC_HTTP_URL:", process.env.NEXT_PUBLIC_HTTP_URL);
+
   return (
     <ApolloNextAppProvider makeClient={makeClient}>
       {children}

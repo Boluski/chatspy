@@ -56,7 +56,7 @@ export default function AddMemberModal({
   const [addUserToWorkspace] = useMutation(ADD_USER_TO_WORKSPACE);
   const [getUser] = useLazyQuery(GET_USER);
 
-  const shareLink = `http://localhost:3000/join/${workspaceId}`;
+  const shareLink = `${process.env.NEXT_PUBLIC_FRONTEND_HOST_NAME}/join/${workspaceId}`;
 
   return (
     <Stack>

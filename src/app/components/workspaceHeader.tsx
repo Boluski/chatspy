@@ -31,9 +31,7 @@ export default function WorkspaceHeader({
     <>
       <Group
         style={{ borderBottom: `solid 2px ${DEFAULT_THEME.colors.dark[0]}` }}
-        // py={5}
         h={"4.4rem"}
-        // style={{ border: "solid red 2px" }}
       >
         <Group
           gap={5}

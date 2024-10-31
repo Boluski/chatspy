@@ -224,7 +224,6 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                         channels
                           .filter((ch) => ch.type == ChannelType.Public)
                           .map((c) => {
-                            // if (c.type == ChannelType.Public) {
                             return (
                               <TabsTab
                                 key={c.id}
@@ -241,12 +240,7 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                             // }
                           })
                       ) : (
-                        <Stack
-                          w={"20rem"}
-                          // style={{ outline: "solid 2px orange" }}
-                          align="center"
-                          py={40}
-                        >
+                        <Stack w={"20rem"} align="center" py={40}>
                           <GiMagnifyingGlass
                             size={"10rem"}
                             color={DEFAULT_THEME.colors.violet[8]}
@@ -332,7 +326,6 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                         channels
                           .filter((ch) => ch.type == ChannelType.Private)
                           .map((c) => {
-                            // if (c.type == ChannelType.Private) {
                             return (
                               <TabsTab
                                 onClick={() => {
@@ -346,7 +339,6 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
                                 {c.name}
                               </TabsTab>
                             );
-                            // }
                           })
                       ) : (
                         <Stack w={"20rem"} align="center" py={40}>
@@ -608,7 +600,7 @@ export default function CurrentWorkspace({ params }: CurrentWorkspaceProps) {
           const workspaceIndex = allWorkspaces.findIndex(
             (w) => w.id == params.workspaceID
           );
-          //
+
           if (workspaceIndex != -1) {
             // User is authorized
             localStorage.setItem("lastVisitedWorkspace", params.workspaceID);

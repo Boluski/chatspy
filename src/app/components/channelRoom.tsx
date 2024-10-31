@@ -1,14 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react";
 import { channelType, ChatContext, messageType } from "../contexts/chatContext";
-import {
-  DEFAULT_THEME,
-  Stack,
-  Box,
-  ScrollArea,
-  Group,
-  Button,
-  Modal,
-} from "@mantine/core";
+import { Stack, Box, ScrollArea, Group, Button, Modal } from "@mantine/core";
 import ChannelRoomHead from "./channelHead";
 import MessageSender from "./messageSender";
 import MessageBox from "./messageBox";

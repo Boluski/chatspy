@@ -14,7 +14,7 @@ import {
   Popover,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { signOut, fetchUserAttributes } from "aws-amplify/auth";
+import { fetchUserAttributes } from "aws-amplify/auth";
 import outputs from "../../../amplify_outputs.json";
 import { Amplify } from "aws-amplify";
 import { MdAdd } from "react-icons/md";
@@ -66,7 +66,7 @@ export default function AllWorkspaces() {
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  // const [username, setUsername] = useState("")
+
   const [workspaces, setWorkspaces] = useState<workspaceState[]>([]);
   const [searchableWorkspaces, setSearchableWorkspaces] = useState<
     workspaceState[]
@@ -159,7 +159,6 @@ export default function AllWorkspaces() {
         onClose={createWorkspaceClose}
         withCloseButton={false}
         title="Create Workspace"
-        // centered
         overlayProps={{
           backgroundOpacity: 0.4,
           blur: 4,

@@ -9,8 +9,6 @@ import {
   Button,
   Anchor,
   Center,
-  Loader,
-  Group,
 } from "@mantine/core";
 import FormBase from "../components/formBase";
 import { useEffect, useState } from "react";

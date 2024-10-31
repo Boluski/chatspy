@@ -1,5 +1,3 @@
-using System;
-
 namespace chatspy.Models;
 
 public class MessageModel

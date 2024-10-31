@@ -1,13 +1,11 @@
 import {
   Stack,
-  TextInput,
   Button,
   TagsInput,
   Group,
   Title,
   CopyButton,
   ActionIcon,
-  rem,
 } from "@mantine/core";
 import { useContext, useState } from "react";
 import { useMutation, useLazyQuery } from "@apollo/client";

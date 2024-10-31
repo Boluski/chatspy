@@ -1,5 +1,4 @@
 using chatspy.Data;
-using chatspy.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace chatspy.TypeSchema;

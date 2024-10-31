@@ -1,5 +1,5 @@
 import { Button, Stack, TextInput } from "@mantine/core";
-import { Dispatch, SetStateAction, useState, useContext } from "react";
+import { useState, useContext } from "react";
 import { useMutation } from "@apollo/client";
 import { gql } from "../../__generated__/gql";
 import { ChannelType } from "@/__generated__/graphql";

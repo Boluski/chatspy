@@ -1,5 +1,4 @@
 using chatspy.Data;
-using chatspy.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace chatspy.TypeSchema;
@@ -13,10 +12,9 @@ public class Channel
     public async Task<List<User>> Users(ChatspyContext dbContext)
     {
         List<User> users;
-        // List<UserModel> dbUsers = null!;
+ 
         var dbChannel = await dbContext
             .Channels.Include(c => c.Workspace.Users)
-            // .Include(c => c.Users)
             .SingleOrDefaultAsync(c => c.Id == Id);
 
         var dbUsers = await dbContext

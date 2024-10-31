@@ -42,9 +42,8 @@ function ThreadSender({ messageId }: MessageSenderProps) {
   const [enableSendButton, setEnableSendButton] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const { username, channels, setChannels, threadToEdit, setThreadToEdit } =
-    useContext(ChatContext);
-  //   const currentChannel = channels[channelIndex];
+  const { username, threadToEdit, setThreadToEdit } = useContext(ChatContext);
+
   const [createThread] = useMutation(CREATE_THREAD);
   const [editThread] = useMutation(EDIT_THREAD);
   return (

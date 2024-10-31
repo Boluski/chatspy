@@ -1,1 +1,1 @@
-# Chatspy - Teams Communication App
+![Chatspy - Team communication app!](./DocAssets/banner.png "Chatspy")

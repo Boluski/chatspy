@@ -34,10 +34,6 @@ subscription OnDMChannelCreated($workspaceId: String!, $rootUsername: String!, $
     id
     name
     type
-    # users {
-    #   fullName
-    #   username
-    # }
   }
 }
     `);
@@ -73,9 +69,6 @@ function ChatInvite({
 
   return (
     <Stack w={"100%"} h={"100%"} justify="center" align="center" gap={40}>
-      {/* <Group gap={10}>
-    
-      </Group> */}
       <Stack align="center" gap={2}>
         <Title fz={"2.5rem"}>Start a conversation with</Title>
         <Title c={"violet.8"}>{inviteFullName}</Title>

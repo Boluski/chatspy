@@ -1,4 +1,4 @@
-import { Box, Group, Center, Title, Text, Stack } from "@mantine/core";
+import { Group, Center, Title, Text, Stack } from "@mantine/core";
 
 type FormBaseProps = {
   title: string;

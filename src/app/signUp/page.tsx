@@ -11,8 +11,6 @@ import {
   Center,
   PinInput,
   DEFAULT_THEME,
-  Group,
-  Loader,
 } from "@mantine/core";
 import FormBase from "../components/formBase";
 import { useEffect, useState } from "react";

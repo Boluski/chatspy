@@ -22,4 +22,7 @@
 
 **Chatspy** is an app that aims to help teams and communities have all their conversation in one place.
 
+### Project Demo
+
 https://github.com/user-attachments/assets/5b984ab2-485c-469a-8967-2efef964ff82
+I apologize for the low video frame rate.

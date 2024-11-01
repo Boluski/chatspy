@@ -52,6 +52,20 @@ https://github.com/user-attachments/assets/9cbb3520-a2b4-4d71-b2e8-13dbc8e4215d
 
 #### Create or join a workspace
 
+Once you have signed up or logged in, you will be redirected to the workspace hub page.
+
+#### Creating a workspace
+
+In the workspace hub page, you can create a new workspace.
+
+#### Join a workspace via email
+
+If you are joining a workspace, you can give the admin your email so they can add you.
+
+#### Join a workspace via share link
+
+You can also join a workspace via a share link. This is provided by the admin.
+
 #### Adding or removing members form a workspace
 
 #### Public Channels

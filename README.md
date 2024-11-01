@@ -21,3 +21,7 @@
 ### Project Description
 
 **Chatspy** is an app that aims to help teams and communities have all their conversation in one place.
+
+<video width="320" height="240" controls>
+  <source src="https://drive.google.com/file/d/15DXj_A3evoawsrw6AWl5lX_6_Euvh8lQ/view?usp=sharing" type="video/mp4">
+</video>

@@ -20,7 +20,7 @@
 
 ### Project Description
 
-**Chatspy** is an app that aims to help teams and communities have all their conversation in one place.
+**[Chatspy](https://main.d3snqv7mkpyhje.amplifyapp.com/)** is an app that aims to help teams and communities have all their conversations in one place.
 
 ### Project Demo
 

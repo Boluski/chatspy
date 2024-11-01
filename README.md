@@ -36,13 +36,19 @@ In order to use [Chatspy](https://main.d3snqv7mkpyhje.amplifyapp.com/), you must
 
 > When signing up, make sure the email you are using is valid in other to successfully create an account.
 
-##### Signing up
+#### Signing up
 
-##### Logging in
+https://github.com/user-attachments/assets/4500ccfc-78b0-4924-8e50-9d74edfe9200
 
-##### Sign out
+#### Logging in
+
+https://github.com/user-attachments/assets/6b0fdb4b-a623-44e0-84fc-b53f0fa46d76
+
+#### Sign out
 
 You can easily sign-out of the app by click the avatar icon at the top right corner of page and click `sign out`.
+
+https://github.com/user-attachments/assets/9cbb3520-a2b4-4d71-b2e8-13dbc8e4215d
 
 #### Create or join a workspace
 

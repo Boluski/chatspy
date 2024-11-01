@@ -27,3 +27,29 @@
 https://github.com/user-attachments/assets/5b984ab2-485c-469a-8967-2efef964ff82
 
 I apologize for the low video frame rate.
+
+### How To Use Chatspy
+
+#### Signing up and logging in
+
+In order to use [Chatspy](https://main.d3snqv7mkpyhje.amplifyapp.com/), you must have an account. You can create an account by going to the sign-up page and providing the required information.
+
+> When signing up, make sure the email you are using is valid in other to successfully create an account.
+
+##### Signing up
+
+##### Logging in
+
+#### Create or join a workspace
+
+#### Adding or removing members form a workspace
+
+#### Public Channels
+
+#### Private Channels
+
+#### Direct Message Channels
+
+#### Workspace Settings
+
+#### User Settings

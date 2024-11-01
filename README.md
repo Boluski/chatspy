@@ -40,6 +40,10 @@ In order to use [Chatspy](https://main.d3snqv7mkpyhje.amplifyapp.com/), you must
 
 ##### Logging in
 
+##### Sign out
+
+You can easily sign-out of the app by click the avatar icon at the top right corner of page and click `sign out`.
+
 #### Create or join a workspace
 
 #### Adding or removing members form a workspace

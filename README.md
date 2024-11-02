@@ -72,13 +72,9 @@ You can also join a workspace via a share link. This is provided by the admin.
 
 https://github.com/user-attachments/assets/f9e0add6-253e-4b70-a157-41770f13a7e9
 
-#### Removing members form a workspace
-
-Remove and add members to a workspace can only be done by the workspace admin.
-
 #### Public Channels
 
-Public channels are visible to all members of a workspace.
+Public channels are visible to all members in a workspace.
 
 #### Private Channels
 

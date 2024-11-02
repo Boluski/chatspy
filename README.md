@@ -66,13 +66,21 @@ If you are joining a workspace, you can give the admin your email so they can ad
 
 You can also join a workspace via a share link. This is provided by the admin.
 
-#### Adding or removing members form a workspace
+#### Removing members form a workspace
+
+Remove and add members to a workspace can only be done by the workspace admin.
 
 #### Public Channels
 
+Public channels are visible to all members of a workspace.
+
 #### Private Channels
 
+Private channels are visible to those who tha admin has added.
+
 #### Direct Message Channels
+
+This channel type is a way to have one on one conversations between members of a workspace.
 
 #### Workspace Settings
 

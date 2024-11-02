@@ -76,13 +76,19 @@ https://github.com/user-attachments/assets/f9e0add6-253e-4b70-a157-41770f13a7e9
 
 Public channels are visible to all members in a workspace.
 
+https://github.com/user-attachments/assets/cf8564d7-3265-4ccd-b1b4-76f1f42e4584
+
 #### Private Channels
 
 Private channels are visible to those who tha admin has added.
 
+https://github.com/user-attachments/assets/65d1d55a-2310-433a-9ba4-8e890d8b12f6
+
 #### Direct Message Channels
 
 This channel type is a way to have one on one conversations between members of a workspace.
+
+https://github.com/user-attachments/assets/709deaf1-f178-4611-aff9-a41eb51124cc
 
 #### Workspace Settings
 

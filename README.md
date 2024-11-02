@@ -90,6 +90,16 @@ This channel type is a way to have one on one conversations between members of a
 
 https://github.com/user-attachments/assets/709deaf1-f178-4611-aff9-a41eb51124cc
 
+#### All About Messaging
+
+Chatspy allows you to send messages to members in your workspace in real time.
+
+You can also quickly edit messages in real time to fix mistakes.
+
+You also have the ability to delete a message you have sent.
+
+With Chatspy, you also have the ability to reply to a message in a thread.
+
 #### Workspace Settings
 
 As a workspace admin, you have access to some setting like renaming your workspace.

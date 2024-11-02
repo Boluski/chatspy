@@ -84,4 +84,12 @@ This channel type is a way to have one on one conversations between members of a
 
 #### Workspace Settings
 
+As a workspace admin, you have access to some setting like renaming your workspace.
+
+You can also remove a member form a workspace.
+
+#### Delete a workspace
+
+> The action of deleting a workspace can not be undone.
+
 #### User Settings

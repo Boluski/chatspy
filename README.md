@@ -58,13 +58,19 @@ Once you have signed up or logged in, you will be redirected to the workspace hu
 
 In the workspace hub page, you can create a new workspace.
 
+https://github.com/user-attachments/assets/a63156d4-0d30-4404-bbd3-4f668fbe748c
+
 #### Join a workspace via email
 
 If you are joining a workspace, you can give the admin your email so they can add you.
 
+https://github.com/user-attachments/assets/16c1384b-e81f-4531-8095-d6f0eee610ea
+
 #### Join a workspace via share link
 
 You can also join a workspace via a share link. This is provided by the admin.
+
+https://github.com/user-attachments/assets/f9e0add6-253e-4b70-a157-41770f13a7e9
 
 #### Removing members form a workspace
 

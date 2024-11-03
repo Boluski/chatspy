@@ -24,9 +24,7 @@
 
 ### Project Demo
 
-https://github.com/user-attachments/assets/5b984ab2-485c-469a-8967-2efef964ff82
-
-I apologize for the low video frame rate.
+https://github.com/user-attachments/assets/e2d7c571-8502-415a-9ae9-91e0164ee14d
 
 ### How To Use Chatspy
 

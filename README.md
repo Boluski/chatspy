@@ -106,14 +106,18 @@ With Chatspy, you also can reply to a message in a thread.
 
 https://github.com/user-attachments/assets/3a16514a-2f00-48d5-9998-58e1ca63458b
 
-#### Workspace Settings
+#### Removing a member form a workspace
 
-As a workspace admin, you have access to some settings like renaming your workspace.
-
-You can also remove a member from a workspace.
+You can always remove a user form a workspace once they are no longer needed in the workspace.
 
 #### Delete a workspace
 
-> The action of deleting a workspace can not be undone.
+A workspace can also be delete. This will delete all the channels, messages and threads.
 
-#### User Settings
+> Note this action can not be undone.
+
+#### Delete you account
+
+An account can be deleted once it is no longer in use. Once an account is deleted, all workspace, channels, messages and threads will be deleted.
+
+> Note this action can not be undone.

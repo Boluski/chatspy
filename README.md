@@ -110,14 +110,20 @@ https://github.com/user-attachments/assets/3a16514a-2f00-48d5-9998-58e1ca63458b
 
 You can always remove a user form a workspace once they are no longer needed in the workspace.
 
+https://github.com/user-attachments/assets/bdf2f2a3-2eda-4cdc-b3a5-70877222ecb9
+
 #### Delete a workspace
 
 A workspace can also be delete. This will delete all the channels, messages and threads.
+
+https://github.com/user-attachments/assets/0910afe4-5b79-49b2-8913-ca8562a456f4
 
 > Note this action can not be undone.
 
 #### Delete you account
 
 An account can be deleted once it is no longer in use. Once an account is deleted, all workspace, channels, messages and threads will be deleted.
+
+https://github.com/user-attachments/assets/3f326327-545a-40ee-9608-119144620d89
 
 > Note this action can not be undone.

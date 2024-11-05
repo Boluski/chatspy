@@ -17,21 +17,13 @@ public class Channel
             .Channels.Include(c => c.Workspace.Users)
             .SingleOrDefaultAsync(c => c.Id == Id);
 
-        var dbUsers = await dbContext
+        var dbUsers = dbChannel.Workspace.Users.ToList();
+
+        if (Type != ChannelType.Public)
+        {        
+            dbUsers = await dbContext
             .Users.Where((u) => u.Channels.Any(c => c.Id == Id))
             .ToListAsync();
-
-        if (Type == ChannelType.Private)
-        {
-            // dbUsers = dbChannel.Users.ToList();
-        }
-        else if (Type == ChannelType.Direct)
-        {
-            // dbUsers = dbChannel.Users.ToList();
-        }
-        else
-        {
-            dbUsers = dbChannel.Workspace.Users.ToList();
         }
 
         users = dbUsers

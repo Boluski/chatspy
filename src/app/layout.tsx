@@ -7,7 +7,7 @@ import { ChatProvider } from "./contexts/chatContext";
 
 export const metadata: Metadata = {
   title: "Chatspy",
-  description: "Team messaging app",
+  description: "Teams Communication App",
 };
 
 export default function RootLayout({

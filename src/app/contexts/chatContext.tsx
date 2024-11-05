@@ -74,10 +74,8 @@ export function ChatProvider({ children }: ChatProviderProps) {
     usernameChannelMapType[]
   >([]);
 
-  // for Editing a specific message in a channel
   const [messageToEdit, setMessageToEdit] = useState<messageType | null>(null);
 
-  // for Editing a specific thread in a message
   const [threadToEdit, setThreadToEdit] = useState<threadType | null>(null);
 
   const values = {

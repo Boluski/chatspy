@@ -210,7 +210,6 @@ export default function AllWorkspaces() {
     setSearchQuery(event.currentTarget.value);
 
     if (event.currentTarget.value.trim() != "") {
-      // is searching
       setIsSearching(true);
       const filteredWorkspace = workspaces.filter((w) =>
         w.name

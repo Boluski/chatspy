@@ -9,15 +9,13 @@ public class Message
     public string Text { get; set; }
     public DateTime Date { get; set; }
 
-    // To make the subscription dynamic based on the channelId.
-    [GraphQLIgnore]
-    public Guid? ChannelId { get; set; }
-
     [GraphQLIgnore]
     public string? Username { get; set; }
 
     public async Task<User> User(ChatspyContext dbContext)
     {
+        // Specifically using the Username variable to get the user instead for Id
+        // So as to avoid the Sequence contains more than one element error that is thrown.
         var dbUser = await dbContext.Users.SingleAsync(u => u.Username == Username);
 
         var user = new User
@@ -34,9 +32,9 @@ public class Message
     public async Task<List<Thread>> Threads(ChatspyContext dbContext)
     {
         var dbThreads = await dbContext
-            .Threads.Include(dbT => dbT.User)
-            .Where(dbT => dbT.Message.Id == Id)
-            .OrderBy(dbT => dbT.Date)
+            .Threads.Include(th => th.User)
+            .Where(th => th.Message.Id == Id)
+            .OrderBy(th => th.Date)
             .ToListAsync();
 
         var threads = dbThreads

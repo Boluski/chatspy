@@ -46,7 +46,7 @@ public class Query
             Id = dbWorkspace.Id,
             CreatedBy = dbWorkspace.CreatedBy,
             Name = dbWorkspace.Name,
-            UsernameLink = username,
+            ChannelsFilterUsername = username,
         };
         return workspace;
     }

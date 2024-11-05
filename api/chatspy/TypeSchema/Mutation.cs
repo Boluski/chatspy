@@ -198,7 +198,7 @@ public class Mutation
     [GraphQLDescription(
         "Removes a user from a workspace based on the workspaceId and the username."
     )]
-    public async Task<Workspace?> RemoveUserFromWorkspace( /////////
+    public async Task<Workspace?> RemoveUserFromWorkspace( 
         ChatspyContext dbContext,
         Guid workspaceID,
         string username
@@ -258,8 +258,8 @@ public class Mutation
         Guid workspaceId,
         string name,
         ChannelType type,
-        string? rootUsername,
-        string? directUsername,
+        string? rootUsername, // The User who initiated the DM channel creation.
+        string? directUsername, // The User who will be listening for the DM channel creation event.
         [Service] ITopicEventSender sender
     )
     {
@@ -395,10 +395,9 @@ public class Mutation
             Id = dbMessage.Id,
             Date = dbMessage.Date,
             Text = dbMessage.Text,
-            ChannelId = dbChannel.Id,
             Username = username,
         };
-        await sender.SendAsync($"[LISTEN_FOR_MESSAGE]{Message.ChannelId}", Message);
+        await sender.SendAsync($"[LISTEN_FOR_MESSAGE]{channelId}", Message);
         return Message;
     }
 
@@ -474,10 +473,9 @@ public class Mutation
             Id = dbThread.Id,
             Date = dbThread.Date,
             Text = dbThread.Text,
-            MessageId = dbMessage.Id,
             Username = dbUser.Username,
         };
-        await sender.SendAsync($"[CREATE_THREAD]{Thread.MessageId}", Thread);
+        await sender.SendAsync($"[CREATE_THREAD]{messageID}", Thread);
         return Thread;
     }
 
@@ -501,10 +499,9 @@ public class Mutation
             Id = dbThread.Id,
             Date = dbThread.Date,
             Text = dbThread.Text,
-            MessageId = dbThread.Message.Id,
             Username = dbThread.User.Username,
         };
-        await sender.SendAsync($"[EDIT_THREAD]{Thread.MessageId}", Thread);
+        await sender.SendAsync($"[EDIT_THREAD]{dbThread.Message.Id}", Thread);
         return Thread;
     }
 
@@ -527,10 +524,9 @@ public class Mutation
             Id = dbThread.Id,
             Date = dbThread.Date,
             Text = dbThread.Text,
-            MessageId = dbThread.Message.Id,
             Username = dbThread.User.Username,
         };
-        await sender.SendAsync($"[DELETE_THREAD]{Thread.MessageId}", Thread);
+        await sender.SendAsync($"[DELETE_THREAD]{ dbThread.Message.Id}", Thread);
         return Thread;
     }
 }

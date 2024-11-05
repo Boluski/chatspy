@@ -10,7 +10,7 @@ public class Workspace
     public string CreatedBy { get; set; }
 
     [GraphQLIgnore]
-    public string? UsernameLink { get; set; }
+    public string? ChannelsFilterUsername { get; set; }
 
     public async Task<List<User>> Users(ChatspyContext dbContext)
     {
@@ -38,7 +38,7 @@ public class Workspace
                 c.Workspace.Id == Id
                 && (
                     c.Type == (int)ChannelType.Public
-                    || c.Users.Any(u => u.Username == UsernameLink)
+                    || c.Users.Any(u => u.Username == ChannelsFilterUsername)
                 )
             )
             .Include(c => c.Users)
